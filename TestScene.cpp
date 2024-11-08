@@ -1,6 +1,7 @@
 #include "TestScene.h"
 #include"Engine/Input.h"
 #include"Engine\SceneManager.h"
+#include"Stage.h"
 
 TestScene::TestScene(GameObject* parent)
 	:GameObject(parent,"TestScene")
@@ -9,9 +10,10 @@ TestScene::TestScene(GameObject* parent)
 
 void TestScene::Initialize()
 {
-	tex = new Sprite();
-	tex->Load("Assets\\texture.png");
-	transform_.scale_ = { 0.2,0.2,0.2 };   
+	//tex = new Sprite();
+	//tex->Load("Assets\\texture.png");
+	//transform_.scale_ = { 0.2,0.2,0.2 };   
+	Instantiate<Stage>(this);
 }
 
 void TestScene::Update()
@@ -25,7 +27,7 @@ void TestScene::Update()
 
 void TestScene::Draw()
 {
-	tex->Draw(transform_);
+	//tex->Draw(transform_);
 }
 
 void TestScene::Release()
