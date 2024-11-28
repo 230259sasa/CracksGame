@@ -5,6 +5,7 @@ class Stage :
     public GameObject
 {
     int hModel_;
+    std::vector<std::vector<std::vector<int>>> stage;
 public:
     Stage(GameObject* parent);
     void Initialize() override;
