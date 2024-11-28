@@ -6,9 +6,13 @@ Stage::Stage(GameObject* parent)
 {
 }
 
+Stage::~Stage()
+{
+	Release();
+}
+
 void Stage::Initialize()
 {
-	// /OK  \ NO
 	hModel_ = Model::Load("Assets/Model/BoxDefault.fbx");
 	assert(hModel_ >= 0);
 	
