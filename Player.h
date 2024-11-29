@@ -11,5 +11,8 @@ public:
     void Release() override;
     void Update() override;
     void Draw() override;
+private:
+    void Move();
+    float AngleToRadians(float _angle);
 };
 

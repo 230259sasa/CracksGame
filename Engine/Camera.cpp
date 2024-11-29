@@ -13,7 +13,7 @@ namespace Camera
 
 void Camera::Initialize()
 {
-	position_ = XMVectorSet(0, 8, -10, 0);	//カメラの位置
+	position_ = XMVectorSet(0, 7, -10, 0);	//カメラの位置
 	target_ = XMVectorSet(0, 0, 0, 0);	//カメラの焦点
 
 	//プロジェクション行列
@@ -35,14 +35,14 @@ void Camera::Update()
 	viewMatrix_ = XMMatrixLookAtLH(position_, target_, XMVectorSet(0, 1, 0, 0));
 }
 
-void Camera::SetPosition(XMVECTOR position)
+void Camera::SetPosition(XMVECTOR _position)
 {
-	position_ = position;
+	position_ = _position;
 }
 
-void Camera::SetTarget(XMVECTOR target)
+void Camera::SetTarget(XMVECTOR _target)
 {
-	target_ = target;
+	target_ = _target;
 }
 
 XMMATRIX Camera::GetViewMatrix()
@@ -53,4 +53,14 @@ XMMATRIX Camera::GetViewMatrix()
 XMMATRIX Camera::GetProjectionMatrix()
 {
 	return projMatrix_;
+}
+
+XMVECTOR Camera::GetPosition()
+{
+	return position_;
+}
+
+XMVECTOR Camera::GetTarget()
+{
+	return target_;
 }
