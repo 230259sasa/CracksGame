@@ -13,6 +13,5 @@ public:
     void Draw() override;
 private:
     void Move();
-    float AngleToRadians(float _angle);
 };
 

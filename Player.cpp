@@ -52,53 +52,54 @@ void Player::Draw()
 
 void Player::Move()
 {
+	//デバック用の移動
+
 	//移動キーが押されてなければreturn
 	if (!Input::IsKey(DIK_W) && !Input::IsKey(DIK_S) &&
 		!Input::IsKey(DIK_A) && !Input::IsKey(DIK_D))
 		return;
-
+	
 	//ベクトルを求める
-	float z = XMVectorGetZ(Camera::GetTarget())
+	float vectorZ = XMVectorGetZ(Camera::GetTarget())
 		- XMVectorGetZ(Camera::GetPosition());
-	float x = XMVectorGetX(Camera::GetTarget())
+	float vectorX = XMVectorGetX(Camera::GetTarget())
 		- XMVectorGetX(Camera::GetPosition());
-	float len = x * x + z * z;
+	float length = vectorX * vectorX + vectorZ * vectorZ;
+
 	//normalize
-	if(x<0)
-		x = -(x * x) / len;
+	if(vectorX<0)
+		vectorX = -(vectorX * vectorX) / length;
 	else
-		x = (x * x) / len;
+		vectorX = (vectorX * vectorX) / length;
 
-	if(z<0)
-		z = -(z * z) / len;
+	if(vectorZ<0)
+		vectorZ = -(vectorZ * vectorZ) / length;
 	else
-		z = (z * z) / len;
+		vectorZ = (vectorZ * vectorZ) / length;
 
+	//移動する方向を入力
 	if (Input::IsKey(DIK_W)) {
 	}
 	if (Input::IsKey(DIK_S)) {
-		x *= -1;
-		z *= -1;
+		vectorX *= -1;
+		vectorZ *= -1;
 	}
 	if (Input::IsKey(DIK_A)) {
-		float r = AngleToRadians(Set::LEFT_MOVE_ANGLE);
-		float ix = x * cos(r) - z * sin(r);
-		float iz = x * sin(r) + z * cos(r);
-		x = ix;
-		z = iz;
+		float r = XMConvertToRadians(Set::LEFT_MOVE_ANGLE);
+		float ix = vectorX * cos(r) - vectorZ * sin(r);
+		float iz = vectorX * sin(r) + vectorZ * cos(r);
+		vectorX = ix;
+		vectorZ = iz;
 	}
 	if (Input::IsKey(DIK_D)) {
-		float r = AngleToRadians(Set::RIGHT_MOVE_ANGLE);
-		float ix = x * cos(r) - z * sin(r);
-		float iz = x * sin(r) + z * cos(r);
-		x = ix;
-		z = iz;
+		float r = XMConvertToRadians(Set::RIGHT_MOVE_ANGLE);
+		float x = vectorX * cos(r) - vectorZ * sin(r);
+		float z = vectorX * sin(r) + vectorZ * cos(r);
+		vectorX = x;
+		vectorZ = z;
 	}
-	transform_.position_.x += Set::MOVE_SPEED * x;
-	transform_.position_.z += Set::MOVE_SPEED * z;
-}
 
-float Player::AngleToRadians(float _angle)
-{
-	return (_angle * Set::PI)/180;
+	//移動
+	transform_.position_.x += Set::MOVE_SPEED * vectorX;
+	transform_.position_.z += Set::MOVE_SPEED * vectorZ;
 }
