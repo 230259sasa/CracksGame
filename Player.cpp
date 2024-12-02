@@ -26,6 +26,8 @@ void Player::Initialize()
 	assert(hModel_ >= 0);
 	//Stageのブロックに重ならないために足している
 	transform_.position_.y += 1;
+
+	Camera::SetPlayerPointer(this);
 }
 
 void Player::Release()
@@ -35,18 +37,14 @@ void Player::Release()
 void Player::Update()
 {
 	Move();
-
-	//カメラの位置を決める
-	XMVECTOR pos = XMVectorSet(transform_.position_.x,
-		transform_.position_.y, transform_.position_.z, 0);
-	Camera::SetTarget(pos);
-	pos += XMVectorSet(8, 7, -10, 0);
-	Camera::SetPosition(pos);
 }
 
 void Player::Draw()
 {
-	Model::SetTransform(hModel_, transform_);
+	Transform trans = transform_;
+	trans.position_.x = XMVectorGetX(Camera::GetTarget());
+	trans.position_.z = XMVectorGetZ(Camera::GetTarget());
+	Model::SetTransform(hModel_, trans);
 	Model::Draw(hModel_);
 }
 
@@ -80,19 +78,19 @@ void Player::Move()
 	//移動する方向を入力
 	if (Input::IsKey(DIK_W)) {
 	}
-	if (Input::IsKey(DIK_S)) {
+	else if (Input::IsKey(DIK_S)) {
 		vectorX *= -1;
 		vectorZ *= -1;
 	}
-	if (Input::IsKey(DIK_A)) {
-		float r = XMConvertToRadians(Set::LEFT_MOVE_ANGLE);
-		float ix = vectorX * cos(r) - vectorZ * sin(r);
-		float iz = vectorX * sin(r) + vectorZ * cos(r);
-		vectorX = ix;
-		vectorZ = iz;
+	else if (Input::IsKey(DIK_A)) {
+		constexpr float r = XMConvertToRadians(Set::LEFT_MOVE_ANGLE);
+		float x = vectorX * cos(r) - vectorZ * sin(r);
+		float z = vectorX * sin(r) + vectorZ * cos(r);
+		vectorX = x;
+		vectorZ = z;
 	}
-	if (Input::IsKey(DIK_D)) {
-		float r = XMConvertToRadians(Set::RIGHT_MOVE_ANGLE);
+	else if (Input::IsKey(DIK_D)) {
+		constexpr float r = XMConvertToRadians(Set::RIGHT_MOVE_ANGLE);
 		float x = vectorX * cos(r) - vectorZ * sin(r);
 		float z = vectorX * sin(r) + vectorZ * cos(r);
 		vectorX = x;

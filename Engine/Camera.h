@@ -1,6 +1,7 @@
 #pragma once
 #include "Direct3D.h"
 #include <DirectXMath.h>
+#include "../Player.h"
 
 using namespace DirectX;
 
@@ -21,6 +22,8 @@ namespace Camera
 
 	//焦点（見る位置）を設定
 	void SetTarget(XMVECTOR _target);
+
+	void SetPlayerPointer(Player* _player);
 
 	//ビュー行列を取得
 	XMMATRIX GetViewMatrix();
