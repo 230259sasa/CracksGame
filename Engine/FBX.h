@@ -14,8 +14,8 @@
 //レイキャスト用構造体
 struct RayCastData
 {
-	XMFLOAT3	start;	//Rayの位置
-	XMFLOAT3	dir;	//Rayのベクトル
+	XMFLOAT4	start;	//Rayの位置
+	XMFLOAT4	dir;	//Rayのベクトル
 	float       dist;	//衝突までの距離
 	bool		hit;	//Rayが当たったか
 };
@@ -65,6 +65,7 @@ public:
 	FBX();
 	HRESULT Load(std::string fileName);
 	void    Draw(Transform& transform);
-	void    Release();
+	void    Release(); 
+	void	RayCast(RayCastData& rayData, Transform& transform);
 };
 

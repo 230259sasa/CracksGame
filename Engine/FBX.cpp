@@ -1,6 +1,7 @@
 #include "FBX.h"
 #include"Camera.h"
 #include<filesystem>
+#include<DirectXCollision.h>
 
 namespace fs = std::filesystem;
 
@@ -287,4 +288,42 @@ void FBX::Draw(Transform& transform)
 
 void FBX::Release()
 {
+}
+
+void FBX::RayCast(RayCastData& rayData, Transform& transform)
+{
+	transform.Calculation();
+	XMMATRIX invWorld = XMMatrixInverse(nullptr, transform.GetWorldMatrix());
+
+	XMVECTOR start = XMLoadFloat4(&rayData.start);
+	XMVECTOR dir = XMLoadFloat4(&rayData.dir);
+
+	XMVECTOR end = start + dir;
+	//オブジェクトを動かすのではなくレイを動かす
+	//逆行列をもとめる
+	start = XMVector3TransformCoord(start, invWorld);
+	end = XMVector3TransformCoord(end, invWorld);
+	//startからのベクトルを求める
+	dir = end - start;
+	dir = XMVector3Normalize(dir);
+
+	for (int material = 0; material < materialCount_; material++) {
+		//3つごとにするので/3
+		for (int poly = 0; poly < indexCount_[material] / 3; poly++) {
+
+			//local座標なので
+			XMVECTOR v0 = vertices[index[material][poly * 3 + 0]].position;
+			XMVECTOR v1 = vertices[index[material][poly * 3 + 1]].position;
+			XMVECTOR v2 = vertices[index[material][poly * 3 + 2]].position;
+
+			//world座標に変換
+
+			//一か所に当たったらtrueを返している
+			//いずれ総当たりで当たった距離を求める
+			rayData.hit = TriangleTests::Intersects(start, dir, v0, v1, v2, rayData.dist);
+
+			if (rayData.hit)
+				return;
+		}
+	}
 }
