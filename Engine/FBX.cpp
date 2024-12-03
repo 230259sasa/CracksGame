@@ -62,8 +62,7 @@ HRESULT FBX::Load(std::string fileName)
 void FBX::InitVertex(fbxsdk::FbxMesh* mesh)
 {
 	//頂点情報を入れる配列
-	//VERTEX* vertices = new VERTEX[vertexCount_];
-	std::vector<VERTEX> vertices(vertexCount_);
+	vertices = std::vector<VERTEX>(vertexCount_);
 	//全ポリゴン
 	for (DWORD poly = 0; poly < polygonCount_; poly++)
 	{
