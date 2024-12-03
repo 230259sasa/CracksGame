@@ -38,7 +38,7 @@ void Quad::Draw(Transform& transform)
 {
 	Direct3D::SetShader(SHADER_3D);
 	//トランスフォームを計算
-	transform.Calclation();
+	transform.Calculation();
 	PassDataToCB(transform);
 
 	SetBufferToPipeline();

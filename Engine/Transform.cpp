@@ -19,7 +19,7 @@ Transform::~Transform()
 {
 }
 
-void Transform::Calclation()
+void Transform::Calculation()
 {
 	//SRT‚Ì‡”Ô‚Å‚©‚¯‚é‚Æƒ[ƒ‹ƒh•ÏŠ·‚É‚È‚é
 	matTranslate_ = XMMatrixTranslation(position_.x, position_.y, position_.z);

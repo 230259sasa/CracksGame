@@ -229,7 +229,7 @@ void FBX::Draw(Transform& transform)
 {
 	//Quad‚ðƒAƒŒƒ“ƒW
 	Direct3D::SetShader(SHADER_3D);
-	transform.Calclation();
+	transform.Calculation();
 
 	
 	/*UINT stride = sizeof(VERTEX);

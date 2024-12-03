@@ -48,7 +48,7 @@ void Sprite::Draw(Transform& transform)
 {
 	Direct3D::SetShader(SHADER_TYPE::SHADER_2D);
 	
-	transform.Calclation();
+	transform.Calculation();
 
 	PassDataToCB(transform.GetWorldMatrix());
 	SetBufferToPipeline();
