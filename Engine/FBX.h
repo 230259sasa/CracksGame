@@ -46,6 +46,8 @@ class FBX
 	};
 
 	std::vector<VERTEX> vertices;
+	std::vector<int>* index;
+
 	ID3D11Buffer* pVertexBuffer_;//頂点バッファ用メモリ
 	ID3D11Buffer** pIndexBuffer_;//インデックスバッファ用メモリ
 	ID3D11Buffer* pConstantBuffer_;//コンスタントバッファ用メモリ
