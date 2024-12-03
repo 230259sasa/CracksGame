@@ -2,6 +2,7 @@
 #include"Engine/Input.h"
 #include"Engine\SceneManager.h"
 #include"Stage.h"
+#include"Player.h"
 
 TestScene::TestScene(GameObject* parent)
 	:GameObject(parent,"TestScene")
@@ -13,6 +14,7 @@ void TestScene::Initialize()
 	//tex = new Sprite();
 	//tex->Load("Assets\\texture.png");
 	//transform_.scale_ = { 0.2,0.2,0.2 };   
+	Instantiate<Player>(this);
 	Instantiate<Stage>(this);
 }
 
