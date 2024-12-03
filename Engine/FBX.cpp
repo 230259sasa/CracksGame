@@ -117,6 +117,7 @@ void FBX::InitIndex(fbxsdk::FbxMesh* mesh)
 
 	for (int i = 0; i < materialCount_; i++)
 	{
+		index[i] = std::vector<int>(polygonCount_ * 3);
 		int count = 0;
 		//‘Sƒ|ƒŠƒSƒ“
 		for (DWORD poly = 0; poly < polygonCount_; poly++)
@@ -127,7 +128,7 @@ void FBX::InitIndex(fbxsdk::FbxMesh* mesh)
 				//3’¸“_•ª
 				for (DWORD vertex = 0; vertex < 3; vertex++)
 				{
-					index[count] = mesh->GetPolygonVertex(poly, vertex);
+					index[i][count] = mesh->GetPolygonVertex(poly, vertex);
 					count++;
 				}
 			}
@@ -142,7 +143,7 @@ void FBX::InitIndex(fbxsdk::FbxMesh* mesh)
 		bd.MiscFlags = 0;
 
 		D3D11_SUBRESOURCE_DATA InitData;
-		InitData.pSysMem = index.data();
+		InitData.pSysMem = index[i].data();
 		InitData.SysMemPitch = 0;
 		InitData.SysMemSlicePitch = 0;
 
