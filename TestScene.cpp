@@ -14,8 +14,8 @@ void TestScene::Initialize()
 	//tex = new Sprite();
 	//tex->Load("Assets\\texture.png");
 	//transform_.scale_ = { 0.2,0.2,0.2 };   
-	Instantiate<Player>(this);
 	Instantiate<Stage>(this);
+	Instantiate<Player>(this);
 }
 
 void TestScene::Update()

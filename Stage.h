@@ -1,6 +1,6 @@
 #pragma once
 #include "Engine\GameObject.h"
-
+#include "Engine\FBX.h"
 class Stage :
     public GameObject
 {
@@ -13,5 +13,6 @@ public:
     void Update() override;
     void Draw() override;
     void Release() override;
+    void StageBlockRayCast(RayCastData& _rayData);
 };
 

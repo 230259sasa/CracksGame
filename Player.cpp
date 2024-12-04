@@ -3,6 +3,7 @@
 #include"Engine\Input.h"
 #include"Engine\Camera.h"
 #include<numbers>
+#include"Stage.h"
 
 namespace Set {
 	const float PI(3.14);
@@ -37,6 +38,28 @@ void Player::Release()
 void Player::Update()
 {
 	Move();
+
+	//落下
+	Stage* stage = nullptr;
+	stage = (Stage*)FindObject("Stage");
+	if (stage != nullptr) {
+		RayCastData rayData;
+		XMFLOAT3 pos = transform_.position_;
+		rayData.start = {pos.x,pos.y,pos.z,0.0f};
+		rayData.dir = { 0,-1,0,0 };
+		rayData.hit = false;
+		stage->StageBlockRayCast(rayData);
+		if (rayData.hit) {
+			float dist = 0.1f;
+			if ((rayData.dist-0.5f) < dist) {
+				transform_.position_.y -= (rayData.dist - 0.5);
+			}
+			else
+				transform_.position_.y -= 0.1f;
+		}
+		else
+			transform_.position_.y -= 0.1f;
+	}
 }
 
 void Player::Draw()
@@ -53,9 +76,9 @@ void Player::Move()
 	//デバック用の移動
 
 	//移動キーが押されてなければreturn
-	if (!Input::IsKey(DIK_W) && !Input::IsKey(DIK_S) &&
+	/*if (!Input::IsKey(DIK_W) && !Input::IsKey(DIK_S) &&
 		!Input::IsKey(DIK_A) && !Input::IsKey(DIK_D))
-		return;
+		return;*/
 	
 	//ベクトルを求める
 	float vectorZ = XMVectorGetZ(Camera::GetTarget())
@@ -95,6 +118,17 @@ void Player::Move()
 		float z = vectorX * sin(r) + vectorZ * cos(r);
 		vectorX = x;
 		vectorZ = z;
+	}
+	else {
+		vectorX = 0;
+		vectorZ = 0;
+	}
+
+
+	if (Input::IsKey(DIK_UP)) {
+		transform_.position_.y += 0.2;
+		vectorX = 0;
+		vectorZ = 0;
 	}
 
 	//移動
