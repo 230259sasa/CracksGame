@@ -7,6 +7,7 @@
 #include"RootJob.h"
 #include"Input.h"
 #include"Model.h"
+#include"DeltaTime.h"
 //リンカ
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "winmm.lib")
@@ -73,6 +74,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, 
 
 	Input::Initialize(hWnd);
 	Camera::Initialize();
+	DeltaTime::Initialize();
 	RootJob* pRootJob;
 	pRootJob = new RootJob(nullptr);
 	pRootJob->Initialize();
@@ -119,6 +121,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, 
 			//wsprintf(str.data(), L"%u", nowTime - startTime);
 			//wsprintf(str.data(), L"%u", countFps);
 			//SetWindowTextW(hWnd, str.c_str());
+			DeltaTime::Update();
 			Input::Update();
 			//カメラを更新
 			Camera::Update();
