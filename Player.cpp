@@ -6,7 +6,6 @@
 #include"Stage.h"
 
 namespace Set {
-	const float PI(3.14);
 	const float MOVE_SPEED(0.1f);
 	const int LEFT_MOVE_ANGLE(90);
 	const int RIGHT_MOVE_ANGLE(270);
