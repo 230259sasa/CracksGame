@@ -8,6 +8,6 @@ namespace DeltaTime
 	/// </summary>
 	/// ƒtƒŒ[ƒ€ŠÔ‚ÌŠÔ‚ğ•b’PˆÊ‚Å•Ô‚·
 	/// <returns></returns>
-	double GetDelaTime();
+	double GetDeltaTime();
 };
 

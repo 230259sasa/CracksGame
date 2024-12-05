@@ -21,7 +21,7 @@ void DeltaTime::Update()
 	timeEndPeriod(1);
 }
 
-double DeltaTime::GetDelaTime()
+double DeltaTime::GetDeltaTime()
 {
     return (nowTime-pastTime)/1000.0;
 }
