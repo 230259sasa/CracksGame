@@ -2,17 +2,26 @@
 #include"Engine\Model.h"
 #include"Engine\Input.h"
 #include"Engine\Camera.h"
-#include<numbers>
+#include"Engine\DeltaTime.h"
 #include"Stage.h"
+#include<numbers>
 
 namespace Set {
 	const float MOVE_SPEED(0.1f);
 	const int LEFT_MOVE_ANGLE(90);
 	const int RIGHT_MOVE_ANGLE(270);
+
+	const float GRAVITY(25.0f);
+	const float JUMP_HEIGHT(1);
+	const float JUMP_LAUNCH_SPEED(sqrtf(2 * GRAVITY * JUMP_HEIGHT));
+	const float MAX_FALL_VELOCITY(-10.0f);
+	const float LANDING_DISTANCE(0.1f);
 }
 
+namespace DT = DeltaTime;
+
 Player::Player(GameObject* parent)
-	:GameObject(parent,"Player"),hModel_(-1)
+	:GameObject(parent, "Player"), hModel_(-1), jumpVelocity_(0.0f), isGround_(true)
 {
 }
 
@@ -37,28 +46,8 @@ void Player::Release()
 void Player::Update()
 {
 	Move();
-
-	//落下
-	Stage* stage = nullptr;
-	stage = (Stage*)FindObject("Stage");
-	if (stage != nullptr) {
-		RayCastData rayData;
-		XMFLOAT3 pos = transform_.position_;
-		rayData.start = {pos.x,pos.y,pos.z,0.0f};
-		rayData.dir = { 0,-1,0,0 };
-		rayData.hit = false;
-		stage->StageBlockRayCast(rayData);
-		if (rayData.hit) {
-			float dist = 0.1f;
-			if ((rayData.dist-0.5f) < dist) {
-				transform_.position_.y -= (rayData.dist - 0.5);
-			}
-			else
-				transform_.position_.y -= 0.1f;
-		}
-		else
-			transform_.position_.y -= 0.1f;
-	}
+	Jump();
+	Fall();
 }
 
 void Player::Draw()
@@ -125,7 +114,7 @@ void Player::Move()
 
 
 	if (Input::IsKey(DIK_UP)) {
-		transform_.position_.y += 0.2;
+		transform_.position_.y += 1.0f;
 		vectorX = 0;
 		vectorZ = 0;
 	}
@@ -133,4 +122,48 @@ void Player::Move()
 	//移動
 	transform_.position_.x += Set::MOVE_SPEED * vectorX;
 	transform_.position_.z += Set::MOVE_SPEED * vectorZ;
+}
+
+void Player::Jump()
+{
+	if (Input::IsKeyDown(DIK_SPACE) && isGround_) {
+		isGround_ = false;
+		jumpVelocity_ = Set::JUMP_LAUNCH_SPEED;
+		transform_.position_.y += Set::LANDING_DISTANCE;
+	}
+}
+
+void Player::Fall()
+{
+	//ステージ上のブロックとレイキャスト
+	float dist = 0.0f;
+	Stage* stage = nullptr;
+	stage = (Stage*)FindObject("Stage");
+	if (stage != nullptr) {
+		RayCastData rayData;
+		XMFLOAT3 pos = transform_.position_;
+		rayData.start = { pos.x,pos.y,pos.z,0.0f };
+		rayData.dir = { 0,-1,0,0 };
+		rayData.hit = false;
+		stage->StageBlockRayCast(rayData);
+		dist = rayData.dist - (stage->GetBlockSize().x / 2);
+		if (rayData.hit && dist < Set::LANDING_DISTANCE) {
+			transform_.position_.y = (transform_.position_.y - rayData.dist + stage->GetBlockSize().x / 2);
+			isGround_ = true;
+			jumpVelocity_ = 0.0f;
+		}
+		else {
+			isGround_ = false;
+		}
+	}
+
+	if (!isGround_) {
+		jumpVelocity_ -= Set::GRAVITY * DT::GetDeltaTime();
+	}
+
+	if (jumpVelocity_ < Set::MAX_FALL_VELOCITY) {
+		jumpVelocity_ = Set::MAX_FALL_VELOCITY;
+	}
+
+	transform_.position_.y += jumpVelocity_ * DT::GetDeltaTime();
 }

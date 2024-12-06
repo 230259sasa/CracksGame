@@ -4,6 +4,8 @@ class Player :
     public GameObject
 {
     int hModel_;
+    bool isGround_;
+    float jumpVelocity_;
 public:
     Player(GameObject* parent);
     ~Player();
@@ -13,5 +15,7 @@ public:
     void Draw() override;
 private:
     void Move();
+    void Jump();
+    void Fall();
 };
 
