@@ -15,7 +15,8 @@ namespace Set {
 	const float JUMP_HEIGHT(1);
 	const float JUMP_LAUNCH_SPEED(sqrtf(2 * GRAVITY * JUMP_HEIGHT));
 	const float MAX_FALL_VELOCITY(-10.0f);
-	const float LANDING_DISTANCE(0.1f);
+	const float LANDING_DISTANCE(0.01f);
+	const float JUMP_CORRECTION(0.01f);
 }
 
 namespace DT = DeltaTime;
@@ -126,10 +127,10 @@ void Player::Move()
 
 void Player::Jump()
 {
-	if (Input::IsKeyDown(DIK_SPACE) && isGround_) {
+	if (Input::IsKeyDown(DIK_SPACE) &&  isGround_) {
 		isGround_ = false;
 		jumpVelocity_ = Set::JUMP_LAUNCH_SPEED;
-		transform_.position_.y += Set::LANDING_DISTANCE;
+		transform_.position_.y += Set::LANDING_DISTANCE + Set::JUMP_CORRECTION;
 	}
 }
 
@@ -137,6 +138,7 @@ void Player::Fall()
 {
 	//ステージ上のブロックとレイキャスト
 	float dist = 0.0f;
+	isGround_ = false;
 	Stage* stage = nullptr;
 	stage = (Stage*)FindObject("Stage");
 	if (stage != nullptr) {
@@ -146,9 +148,9 @@ void Player::Fall()
 		rayData.dir = { 0,-1,0,0 };
 		rayData.hit = false;
 		stage->StageBlockRayCast(rayData);
-		dist = rayData.dist - (stage->GetBlockSize().x / 2);
+ 		dist = rayData.dist - (stage->GetBlockSize().x / 2);
 		if (rayData.hit && dist < Set::LANDING_DISTANCE) {
-			transform_.position_.y = (transform_.position_.y - rayData.dist + stage->GetBlockSize().x / 2);
+			transform_.position_.y = (transform_.position_.y - dist);
 			isGround_ = true;
 			jumpVelocity_ = 0.0f;
 		}

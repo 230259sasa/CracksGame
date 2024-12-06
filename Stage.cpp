@@ -40,6 +40,36 @@ void Stage::Initialize()
 	stage[1][1][3] = 1;
 	stage[1][1][4] = 1;
 	stage[1][1][5] = 1;
+
+	stage[2][1][3] = 1;
+	stage[2][1][4] = 1;
+	stage[2][1][5] = 1;
+	stage[2][2][3] = 1;
+	stage[2][2][4] = 1;
+	stage[2][2][5] = 1;
+
+	stage[3][1][3] = 1;
+	stage[3][1][4] = 1;
+	stage[3][1][5] = 1;
+	stage[3][2][3] = 1;
+	stage[3][2][4] = 1;
+	stage[3][2][5] = 1;
+	stage[3][3][3] = 1;
+	stage[3][3][4] = 1;
+	stage[3][3][5] = 1;
+
+	stage[4][1][3] = 1;
+	stage[4][1][4] = 1;
+	stage[4][1][5] = 1;
+	stage[4][2][3] = 1;
+	stage[4][2][4] = 1;
+	stage[4][2][5] = 1;
+	stage[4][3][3] = 1;
+	stage[4][3][4] = 1;
+	stage[4][3][5] = 1;
+	stage[4][4][3] = 1;
+	stage[4][4][4] = 1;
+	stage[4][4][5] = 1;
 }
 
 void Stage::Update()
