@@ -1,6 +1,10 @@
 #include "Stage.h"
 #include"Engine\Model.h"
 
+namespace Set {
+	const XMFLOAT2 BLOCK_SIZE(1.0f, 1.0f);
+}
+
 Stage::Stage(GameObject* parent)
 	:GameObject(parent,"Stage"),hModel_(-1)
 {
@@ -72,4 +76,9 @@ void Stage::StageBlockRayCast(RayCastData& _rayData)
 			}
 		}
 	}
+}
+
+XMFLOAT2 Stage::GetBlockSize()
+{
+	return Set::BLOCK_SIZE;
 }

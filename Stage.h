@@ -14,5 +14,6 @@ public:
     void Draw() override;
     void Release() override;
     void StageBlockRayCast(RayCastData& _rayData);
+    XMFLOAT2 GetBlockSize();
 };
 
