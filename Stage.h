@@ -13,6 +13,13 @@ public:
     void Update() override;
     void Draw() override;
     void Release() override;
+    /// <summary>
+    /// ステージ上のブロックとレイキャストして
+    /// もっとも近いブロックとの距離を入れる。
+    /// ブロックのサイズより遠い位置でのhitは
+    /// falseを入れられる。
+    /// </summary>
+    /// <param name="_rayData">RayCast用データ</param>
     void StageBlockRayCast(RayCastData& _rayData);
     XMFLOAT2 GetBlockSize();
 };

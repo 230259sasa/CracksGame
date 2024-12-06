@@ -34,6 +34,12 @@ void Stage::Initialize()
 		}
 		stage.push_back(vec);
 	}
+	stage[0][1][3] = 1;
+	stage[0][1][4] = 1;
+	stage[0][1][5] = 1;
+	stage[1][1][3] = 1;
+	stage[1][1][4] = 1;
+	stage[1][1][5] = 1;
 }
 
 void Stage::Update()
@@ -63,19 +69,24 @@ void Stage::Release()
 void Stage::StageBlockRayCast(RayCastData& _rayData)
 {
 	Transform t;
+	RayCastData data = _rayData;
+	RayCastData minDistData = data;
+	minDistData.dist = Set::BLOCK_SIZE.x;
+
 	for (int z = 0; z < 10; z++) {
 		for (int y = 0; y < 10; y++) {
 			for (int x = 0; x < 10; x++) {
 				if (stage[z][y][x] == 1) {
 					t.position_ = { (float)x,(float)y,(float)z };
-					Model::RayCast(hModel_, _rayData, t);
-					if (_rayData.hit) {
-						return;
+					Model::RayCast(hModel_, data, t);
+					if (data.hit && data.dist < minDistData.dist) {
+						minDistData = data;
 					}
 				}
 			}
 		}
 	}
+	_rayData = minDistData;
 }
 
 XMFLOAT2 Stage::GetBlockSize()
