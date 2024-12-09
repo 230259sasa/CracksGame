@@ -307,6 +307,9 @@ void FBX::RayCast(RayCastData& rayData, Transform& transform)
 	dir = end - start;
 	dir = XMVector3Normalize(dir);
 
+	std::vector<float> distList;
+	float minDist = 0.0f;
+
 	for (int material = 0; material < materialCount_; material++) {
 		//3‚Â‚²‚Æ‚É‚·‚é‚Ì‚Å/3
 		for (int poly = 0; poly < indexCount_[material] / 3; poly++) {
@@ -319,11 +322,25 @@ void FBX::RayCast(RayCastData& rayData, Transform& transform)
 			//worldÀ•W‚É•ÏŠ·
 
 			//ˆê‚©Š‚É“–‚½‚Á‚½‚çtrue‚ð•Ô‚µ‚Ä‚¢‚é
-			//‚¢‚¸‚ê‘“–‚½‚è‚Å“–‚½‚Á‚½‹——£‚ð‹‚ß‚é
 			rayData.hit = TriangleTests::Intersects(start, dir, v0, v1, v2, rayData.dist);
 
-			if (rayData.hit)
-				return;
+			if (rayData.hit) {
+				distList.push_back(rayData.dist);
+				minDist = rayData.dist;
+			}
 		}
 	}
+
+	if (distList.size() <= 0)
+		return;
+
+	//Å¬‚Ì‹——£‚ð‹‚ß‚é
+	for (auto& dist : distList) {
+		if (dist < minDist) {
+			minDist = dist;
+		}
+	}
+
+	rayData.hit = true;
+	rayData.dist = minDist;
 }
