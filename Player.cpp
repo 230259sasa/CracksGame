@@ -12,11 +12,10 @@ namespace Set {
 	const int RIGHT_MOVE_ANGLE(270);
 
 	const float GRAVITY(25.0f);
-	const float JUMP_HEIGHT(1);
-	const float JUMP_LAUNCH_SPEED(sqrtf(2 * GRAVITY * JUMP_HEIGHT));
-	const float MAX_FALL_VELOCITY(-10.0f);
-	const float LANDING_DISTANCE(0.01f);
-	const float JUMP_CORRECTION(0.01f);
+	const float JUMP_HEIGHT(1);//ジャンプの高さ
+	const float JUMP_LAUNCH_SPEED(sqrtf(2 * GRAVITY * JUMP_HEIGHT));//ジャンプの初速
+	const float MAX_FALL_VELOCITY(-10.0f);//落下の最大速度
+	const float FALL_CORRECTION_Y(-0.01f);//落下時のRayCastの開始座標Yに足す補正値
 }
 
 namespace DT = DeltaTime;
@@ -35,7 +34,7 @@ void Player::Initialize()
 	hModel_ = Model::Load("Assets/Model/BoxBrick.fbx");
 	assert(hModel_ >= 0);
 	//Stageのブロックに重ならないために足している
-	transform_.position_.y += 1;
+	transform_.position_.y += 2;
 
 	Camera::SetPlayerPointer(this);
 }
@@ -130,35 +129,11 @@ void Player::Jump()
 	if (Input::IsKeyDown(DIK_SPACE) &&  isGround_) {
 		isGround_ = false;
 		jumpVelocity_ = Set::JUMP_LAUNCH_SPEED;
-		transform_.position_.y += Set::LANDING_DISTANCE + Set::JUMP_CORRECTION;
 	}
 }
 
 void Player::Fall()
 {
-	//ステージ上のブロックとレイキャスト
-	float dist = 0.0f;
-	isGround_ = false;
-	Stage* stage = nullptr;
-	stage = (Stage*)FindObject("Stage");
-	if (stage != nullptr) {
-		RayCastData rayData;
-		XMFLOAT3 pos = transform_.position_;
-		rayData.start = { pos.x,pos.y,pos.z,0.0f };
-		rayData.dir = { 0,-1,0,0 };
-		rayData.hit = false;
-		stage->StageBlockRayCast(rayData);
- 		dist = rayData.dist - (stage->GetBlockSize().x / 2);
-		if (rayData.hit && dist < Set::LANDING_DISTANCE) {
-			transform_.position_.y = (transform_.position_.y - dist);
-			isGround_ = true;
-			jumpVelocity_ = 0.0f;
-		}
-		else {
-			isGround_ = false;
-		}
-	}
-
 	if (!isGround_) {
 		jumpVelocity_ -= Set::GRAVITY * DT::GetDeltaTime();
 	}
@@ -167,5 +142,32 @@ void Player::Fall()
 		jumpVelocity_ = Set::MAX_FALL_VELOCITY;
 	}
 
-	transform_.position_.y += jumpVelocity_ * DT::GetDeltaTime();
+	float fallSpeed = jumpVelocity_ * DT::GetDeltaTime();
+	transform_.position_.y += fallSpeed;
+
+	//ステージ上のブロックとレイキャスト
+	Stage* stage = nullptr;
+	stage = (Stage*)FindObject("Stage");
+	if (stage != nullptr) {
+		RayCastData rayData;
+		XMFLOAT3 pos = transform_.position_;
+		rayData.start = { pos.x,pos.y + Set::FALL_CORRECTION_Y,pos.z,0.0f };
+		rayData.dir = { 0,-1,0,0 };
+		rayData.hit = false;
+		stage->StageBlockRayCast(rayData);
+		float dist = 0.0f;
+ 		dist = rayData.dist;
+		//現在使用しているmodelの底辺が-0.5なので入れている
+		//model変更時に削除
+		dist -= 0.5f;
+
+		if (rayData.hit && dist <= abs(fallSpeed) && jumpVelocity_ <= 0) {
+			transform_.position_.y -= dist;
+			isGround_ = true;
+			jumpVelocity_ = 0.0f;
+		}
+		else {
+			isGround_ = false;
+		}
+	}
 }
