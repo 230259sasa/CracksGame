@@ -147,7 +147,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\BoxCollider.cpp" />
     <ClCompile Include="Engine\Camera.cpp" />
+    <ClCompile Include="Engine\Collider.cpp" />
     <ClCompile Include="Engine\DeltaTime.cpp" />
     <ClCompile Include="Engine\Direct3D.cpp" />
     <ClCompile Include="Engine\FBX.cpp" />
@@ -167,7 +169,9 @@
     <ClCompile Include="TestScene.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Engine\BoxCollider.h" />
     <ClInclude Include="Engine\Camera.h" />
+    <ClInclude Include="Engine\Collider.h" />
     <ClInclude Include="Engine\DeltaTime.h" />
     <ClInclude Include="Engine\Direct3D.h" />
     <ClInclude Include="Engine\FBX.h" />

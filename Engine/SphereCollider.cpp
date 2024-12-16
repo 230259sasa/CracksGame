@@ -1,6 +1,6 @@
 #include "SphereCollider.h"
 
-SphereCollider::SphereCollider(float radius)
+SphereCollider::SphereCollider(float radius_)
 {
-	radius_ = radius;
+	size_.x = radius_;
 }

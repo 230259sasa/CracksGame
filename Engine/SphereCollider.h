@@ -1,9 +1,11 @@
 #pragma once
+#include "Collider.h"
+
 class SphereCollider
+	:public Collider
 {
-	float radius_;
 public:
-	SphereCollider(float radius);
-	float GetRadius() { return radius_; }
+	SphereCollider(float _radius);
+	float GetRadius() { return size_.x; }
 };
 
