@@ -35,13 +35,27 @@ bool Collider::IsHitBoxToBox(BoxCollider* _boxA, BoxCollider* _boxB)
 
 bool Collider::IsHitBoxToSphere(BoxCollider* _box, SphereCollider* _sphere)
 {
+	XMFLOAT3 cPos = AddXMFloat3(_sphere->pGameObject_->GetPosition(), _sphere->center_);
+	XMFLOAT3 bPos = AddXMFloat3(_box->pGameObject_->GetPosition(), _box->center_);
+
+	if (cPos.x > bPos.x - _box->size_.x - _sphere->size_.x &&
+		cPos.x < bPos.x + _box->size_.x + _sphere->size_.x &&
+		cPos.y > bPos.y - _box->size_.y - _sphere->size_.x &&
+		cPos.y < bPos.y + _box->size_.y + _sphere->size_.x &&
+		cPos.z > bPos.z - _box->size_.z - _sphere->size_.x &&
+		cPos.z < bPos.z + _box->size_.z + _sphere->size_.x)
+	{
+		return true;
+	}
 	return false;
 }
 
 bool Collider::IsHitSphereToSphere(SphereCollider* _sphereA, SphereCollider* _sphereB)
 {
-	XMVECTOR APos = XMLoadFloat3(&AddXMFloat3(_sphereA->GetPosition(),_sphereA->center_));
-	XMVECTOR BPos = XMLoadFloat3(&AddXMFloat3(_sphereB->GetPosition(), _sphereB->center_));
+	XMFLOAT3 pos = AddXMFloat3(_sphereA->GetPosition(), _sphereA->center_);
+	XMVECTOR APos = XMLoadFloat3(&pos);
+	pos = AddXMFloat3(_sphereB->GetPosition(), _sphereB->center_);
+	XMVECTOR BPos = XMLoadFloat3(&pos);
 	XMVECTOR d = XMVector3Length(APos - BPos);
 	float dist = XMVectorGetX(d);
 	//“ñ‚Â‚Ì”¼Œa‚ğ‡‚í‚¹‚½’l
