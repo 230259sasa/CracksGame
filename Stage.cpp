@@ -127,15 +127,28 @@ XMFLOAT3 Stage::GetBlockSize()
 
 float Stage::GetPushCenter(XMFLOAT3 _pos, float _radius)
 {
-	XMFLOAT3 pos = GetHitBlockToSphere(_pos, _radius);
-	if (pos.x < 0)
+	XMFLOAT3 pos;
+	if (!GetHitBlockToSphere(_pos, _radius,pos))
 		return 0.0f;
-	float push = -(pos.z + Set::BLOCK_SIZE.z / 2 + _radius);
+	float push = pos.z + Set::BLOCK_SIZE.z / 2 + _radius;
 	push = push - pos.z;
 	return -push;
 }
 
-XMFLOAT3 Stage::GetHitBlockToSphere(XMFLOAT3 _pos, float _radius)
+XMFLOAT3 Stage::GetPushCenter(XMFLOAT3 _pos, float _radius, XMFLOAT3 _dir)
+{
+	XMFLOAT3 pos;
+	XMFLOAT3 push(0, 0, 0);
+	if (!GetHitBlockToSphere(_pos, _radius, pos))
+		return push;
+	push.z = (pos.z + _radius) - _pos.z;
+	push.z *= _dir.z * -1;
+	push.x = pos.x + _radius;
+	push.x *= _dir.x * -1;
+	return push;
+}
+
+bool Stage::GetHitBlockToSphere(XMFLOAT3 _pos, float _radius, XMFLOAT3& _getpos)
 {
 	for (int z = 0; z < Set::STAGE_SIZE.z; z++) {
 		for (int y = 0; y < Set::STAGE_SIZE.y; y++) {
@@ -152,26 +165,24 @@ XMFLOAT3 Stage::GetHitBlockToSphere(XMFLOAT3 _pos, float _radius)
 					len.z = _pos.z - min.z;
 					float length = len.x * len.x + len.y * len.y + len.z * len.z;
 					if (length <= _radius * _radius) {
-						return pos;
+						_getpos = min;
+						return true;
 					}
 				}
 			}
 		}
 	}
-	return XMFLOAT3(-1, -1, -1);
+	return false;
 }
 
 float Stage::GetClosestPoint(float _bpos, float _pos)
 {
-	float min;
+	float min = _pos;
 	if (_pos < _bpos - Set::BLOCK_SIZE.x / 2) {
 		min = _bpos - Set::BLOCK_SIZE.x / 2;
 	}
 	else if (_pos > _bpos + Set::BLOCK_SIZE.x / 2) {
 		min = _bpos + Set::BLOCK_SIZE.x / 2;
-	}
-	else {
-		min = _pos;
 	}
 
 	return min;

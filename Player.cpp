@@ -12,7 +12,7 @@ namespace Set {
 	const int RIGHT_MOVE_ANGLE(270);
 
 	const float GRAVITY(25.0f);
-	const float JUMP_HEIGHT(1);//ジャンプの高さ
+	const float JUMP_HEIGHT(1.5);//ジャンプの高さ
 	const float JUMP_LAUNCH_SPEED(sqrtf(2 * GRAVITY * JUMP_HEIGHT));//ジャンプの初速
 	const float MAX_FALL_VELOCITY(-10.0f);//落下の最大速度
 	const float FALL_CORRECTION_Y(-0.01f);//落下時のRayCastの開始座標Yに足す補正値
@@ -67,6 +67,10 @@ void Player::Move()
 	/*if (!Input::IsKey(DIK_W) && !Input::IsKey(DIK_S) &&
 		!Input::IsKey(DIK_A) && !Input::IsKey(DIK_D))
 		return;*/
+	Stage* stage = nullptr;
+	stage = (Stage*)FindObject("Stage");
+	if (stage == nullptr)
+		return;
 	
 	//ベクトルを求める
 	float vectorZ = XMVectorGetZ(Camera::GetTarget())
@@ -86,19 +90,33 @@ void Player::Move()
 	else
 		vectorZ = (vectorZ * vectorZ) / length;
 
+	XMFLOAT3 dir(vectorX, 0, vectorZ);
+	XMFLOAT3 move(0,0,0),push(0,0,0);
+	XMFLOAT3 pos = transform_.position_;
 	//移動する方向を入力
 	if (Input::IsKey(DIK_W)) {
+		move.x = Set::MOVE_SPEED * vectorX;
+		move.z = Set::MOVE_SPEED * vectorZ;
+		pos.x += move.x;
+		pos.z += move.z;
+		push = stage->GetPushCenter(pos, 0.2, dir);
+		move.x += push.x;
+		move.z += push.z;
 	}
 	else if (Input::IsKey(DIK_S)) {
 		vectorX *= -1;
 		vectorZ *= -1;
+		move.x = Set::MOVE_SPEED * vectorX;
+		move.z = Set::MOVE_SPEED * vectorZ;
 	}
 	else if (Input::IsKey(DIK_A)) {
 		constexpr float r = XMConvertToRadians(Set::LEFT_MOVE_ANGLE);
 		float x = vectorX * cos(r) - vectorZ * sin(r);
 		float z = vectorX * sin(r) + vectorZ * cos(r);
 		vectorX = x;
-		vectorZ = z;
+		vectorZ = z; 
+		move.x = Set::MOVE_SPEED * vectorX;
+		move.z = Set::MOVE_SPEED * vectorZ;
 	}
 	else if (Input::IsKey(DIK_D)) {
 		constexpr float r = XMConvertToRadians(Set::RIGHT_MOVE_ANGLE);
@@ -106,6 +124,8 @@ void Player::Move()
 		float z = vectorX * sin(r) + vectorZ * cos(r);
 		vectorX = x;
 		vectorZ = z;
+		move.x = Set::MOVE_SPEED * vectorX;
+		move.z = Set::MOVE_SPEED * vectorZ;
 	}
 	else {
 		vectorX = 0;
@@ -120,8 +140,8 @@ void Player::Move()
 	}
 
 	//移動
-	transform_.position_.x += Set::MOVE_SPEED * vectorX;
-	transform_.position_.z += Set::MOVE_SPEED * vectorZ;
+	transform_.position_.x += move.x;
+	transform_.position_.z += move.z;
 }
 
 void Player::Jump()

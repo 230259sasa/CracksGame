@@ -20,9 +20,12 @@ public:
     /// <param name="_rayData">RayCast用データ</param>
     void StageBlockRayCast(RayCastData& _rayData);
     XMFLOAT3 GetBlockSize();
-    float GetPushCenter(XMFLOAT3 _pos, float _radisu);
+    float GetPushCenter(XMFLOAT3 _pos, float _radius);
+    XMFLOAT3 GetPushCenter(XMFLOAT3 _pos, float _radius, XMFLOAT3 _dir);
 private:
-    XMFLOAT3 GetHitBlockToSphere(XMFLOAT3 _pos, float _radisu);
+    //関数名を変える
+    //当たったブロックとの距離を返す
+    bool GetHitBlockToSphere(XMFLOAT3 _pos, float _radius, XMFLOAT3& _getpos);
     //球と長方形の最短点を求める
     float GetClosestPoint(float _bpos,float _pos);
 };
