@@ -95,8 +95,8 @@ void Player::Move()
 	if (Input::IsKey(DIK_W)) {
 	}
 	else if (Input::IsKey(DIK_S)) {
-		vectorX *= -1;
-		vectorZ *= -1;
+		vectorX = -vectorX;
+		vectorZ = -vectorZ;
 	}
 	else if (Input::IsKey(DIK_A)) {
 		constexpr float r = XMConvertToRadians(Set::LEFT_MOVE_ANGLE);

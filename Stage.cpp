@@ -129,20 +129,38 @@ XMFLOAT3 Stage::GetBlockSize()
 
 XMFLOAT3 Stage::GetPushBack(XMFLOAT3 _pos, float _radius, XMFLOAT3 _dir)
 {
-	XMFLOAT3 pos;
-	XMFLOAT3 push(0, 0, 0);
-	if (!GetHitBlockToSphere(_pos, _radius, pos))
-		return push;
-	_radius += 0.01;//押し出し後も接触しないように足している
-	XMFLOAT3 temp(0, 0, 0);
-	temp.x = pos.x - _pos.x;//それぞれの距離
-	temp.z = pos.z - _pos.z;
-	float x = pos.x + sqrt(_radius * _radius - temp.z * temp.z);
-	//float z = pos.z + sqrt(_radius * _radius - temp.x * temp.x);
-	push.x = (x - _pos.x) * -_dir.x;
-	//push.z = (z - _pos.z) * -_dir.z;
+	
+
+	//移動量をもとめる
+	//push.x = (移動量) * -_dir.x;
+	//push.z = (移動量) * -_dir.z;
+
 	//push.x = pos.x +  (-_dir.x * _radius) - _pos.x;
 	//push.z = pos.z + (-_dir.z * _radius) - _pos.z;
+	XMFLOAT3 pos;
+	XMFLOAT3 push(0, 0, 0);
+	//衝突位置を求める
+	if (!GetHitBlockToSphere(_pos, _radius, pos))
+		return push;
+
+	//押し出し後も接触しないように足している
+	//_radius += 0.01f;
+	
+	//衝突位置から
+	//float x = pos.x + sqrt(_radius * _radius - temp.z * temp.z);
+	//float z = pos.z + sqrt(_radius * _radius - temp.x * temp.x);
+	//衝突位置+半径*衝突位置から衝突しない位置への方向ベクトル = 押し出し後の位置
+	XMFLOAT3 temp(0, 0, 0);
+	temp.x = pos.x + (_radius * ベクトル);
+	temp.z = pos.z + (_radius * ベクトル);
+	//押し出し後の位置-現在の位置 = 移動量(x,y,z)
+	temp.x -= _pos.x;
+	temp.z -= _pos.z;
+	//x座標,z座標から移動量を求める
+	float move = sqrt(temp.x * temp.x + temp.z * temp.z);
+	//移動量rから反転した方向ベクトルをかける
+	push.x = move * -_dir.x;
+	push.z = move * -_dir.z;
 	return push;
 }
 
