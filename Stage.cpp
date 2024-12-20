@@ -71,6 +71,8 @@ void Stage::Initialize()
 	stage[4][4][3] = 1;
 	stage[4][4][4] = 1;
 	stage[4][4][5] = 1;
+
+	stage[7][1][5] = 1;
 }
 
 void Stage::Update()
@@ -125,26 +127,22 @@ XMFLOAT3 Stage::GetBlockSize()
 	return Set::BLOCK_SIZE;
 }
 
-float Stage::GetPushCenter(XMFLOAT3 _pos, float _radius)
-{
-	XMFLOAT3 pos;
-	if (!GetHitBlockToSphere(_pos, _radius,pos))
-		return 0.0f;
-	float push = pos.z + Set::BLOCK_SIZE.z / 2 + _radius;
-	push = push - pos.z;
-	return -push;
-}
-
-XMFLOAT3 Stage::GetPushCenter(XMFLOAT3 _pos, float _radius, XMFLOAT3 _dir)
+XMFLOAT3 Stage::GetPushBack(XMFLOAT3 _pos, float _radius, XMFLOAT3 _dir)
 {
 	XMFLOAT3 pos;
 	XMFLOAT3 push(0, 0, 0);
 	if (!GetHitBlockToSphere(_pos, _radius, pos))
 		return push;
-	push.z = (pos.z + _radius) - _pos.z;
-	push.z *= _dir.z * -1;
-	push.x = pos.x + _radius;
-	push.x *= _dir.x * -1;
+	_radius += 0.01;//âüÇµèoÇµå„Ç‡ê⁄êGÇµÇ»Ç¢ÇÊÇ§Ç…ë´ÇµÇƒÇ¢ÇÈ
+	XMFLOAT3 temp(0, 0, 0);
+	temp.x = pos.x - _pos.x;//ÇªÇÍÇºÇÍÇÃãóó£
+	temp.z = pos.z - _pos.z;
+	float x = pos.x + sqrt(_radius * _radius - temp.z * temp.z);
+	//float z = pos.z + sqrt(_radius * _radius - temp.x * temp.x);
+	push.x = (x - _pos.x) * -_dir.x;
+	//push.z = (z - _pos.z) * -_dir.z;
+	//push.x = pos.x +  (-_dir.x * _radius) - _pos.x;
+	//push.z = pos.z + (-_dir.z * _radius) - _pos.z;
 	return push;
 }
 

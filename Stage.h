@@ -20,8 +20,7 @@ public:
     /// <param name="_rayData">RayCast用データ</param>
     void StageBlockRayCast(RayCastData& _rayData);
     XMFLOAT3 GetBlockSize();
-    float GetPushCenter(XMFLOAT3 _pos, float _radius);
-    XMFLOAT3 GetPushCenter(XMFLOAT3 _pos, float _radius, XMFLOAT3 _dir);
+    XMFLOAT3 GetPushBack(XMFLOAT3 _pos, float _radius, XMFLOAT3 _dir);
 private:
     //関数名を変える
     //当たったブロックとの距離を返す

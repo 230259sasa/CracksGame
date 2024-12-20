@@ -7,6 +7,7 @@
 #include<numbers>
 
 namespace Set {
+	const float PLAYER_RADIUS(0.5f);
 	const float MOVE_SPEED(0.1f);
 	const int LEFT_MOVE_ANGLE(90);
 	const int RIGHT_MOVE_ANGLE(270);
@@ -15,7 +16,7 @@ namespace Set {
 	const float JUMP_HEIGHT(1.5);//ジャンプの高さ
 	const float JUMP_LAUNCH_SPEED(sqrtf(2 * GRAVITY * JUMP_HEIGHT));//ジャンプの初速
 	const float MAX_FALL_VELOCITY(-10.0f);//落下の最大速度
-	const float FALL_CORRECTION_Y(-0.01f);//落下時のRayCastの開始座標Yに足す補正値
+	const float FALL_CORRECTION_Y(0.01f);//落下時のRayCastの開始座標Yに足す補正値
 }
 
 namespace DT = DeltaTime;
@@ -31,7 +32,7 @@ Player::~Player()
 
 void Player::Initialize()
 {
-	hModel_ = Model::Load("Assets/Model/BoxBrick.fbx");
+	hModel_ = Model::Load("Assets/Model/TestPlayer.fbx");
 	assert(hModel_ >= 0);
 	//Stageのブロックに重ならないために足している
 	transform_.position_.y += 2;
@@ -90,24 +91,12 @@ void Player::Move()
 	else
 		vectorZ = (vectorZ * vectorZ) / length;
 
-	XMFLOAT3 dir(vectorX, 0, vectorZ);
-	XMFLOAT3 move(0,0,0),push(0,0,0);
-	XMFLOAT3 pos = transform_.position_;
 	//移動する方向を入力
 	if (Input::IsKey(DIK_W)) {
-		move.x = Set::MOVE_SPEED * vectorX;
-		move.z = Set::MOVE_SPEED * vectorZ;
-		pos.x += move.x;
-		pos.z += move.z;
-		push = stage->GetPushCenter(pos, 0.2, dir);
-		move.x += push.x;
-		move.z += push.z;
 	}
 	else if (Input::IsKey(DIK_S)) {
 		vectorX *= -1;
 		vectorZ *= -1;
-		move.x = Set::MOVE_SPEED * vectorX;
-		move.z = Set::MOVE_SPEED * vectorZ;
 	}
 	else if (Input::IsKey(DIK_A)) {
 		constexpr float r = XMConvertToRadians(Set::LEFT_MOVE_ANGLE);
@@ -115,8 +104,6 @@ void Player::Move()
 		float z = vectorX * sin(r) + vectorZ * cos(r);
 		vectorX = x;
 		vectorZ = z; 
-		move.x = Set::MOVE_SPEED * vectorX;
-		move.z = Set::MOVE_SPEED * vectorZ;
 	}
 	else if (Input::IsKey(DIK_D)) {
 		constexpr float r = XMConvertToRadians(Set::RIGHT_MOVE_ANGLE);
@@ -124,8 +111,6 @@ void Player::Move()
 		float z = vectorX * sin(r) + vectorZ * cos(r);
 		vectorX = x;
 		vectorZ = z;
-		move.x = Set::MOVE_SPEED * vectorX;
-		move.z = Set::MOVE_SPEED * vectorZ;
 	}
 	else {
 		vectorX = 0;
@@ -139,6 +124,24 @@ void Player::Move()
 		vectorZ = 0;
 	}
 
+
+	XMFLOAT3 dir(0, 0, 0);
+	XMFLOAT3 move(0, 0, 0), push(0, 0, 0);
+	dir.x = vectorX;
+	dir.z = vectorZ;
+	if (dir.x != 0 || dir.z != 0) {
+		XMFLOAT3 pos = transform_.position_;
+		//modelの中心位置で判定するために足している
+		//これがないと地面に当たって押し返してしまう
+		pos.y += 0.6;
+		move.x = Set::MOVE_SPEED * vectorX;
+		move.z = Set::MOVE_SPEED * vectorZ;
+		pos.x += move.x;
+		pos.z += move.z;
+		push = stage->GetPushBack(pos, Set::PLAYER_RADIUS, dir);
+		move.x += push.x;
+		move.z += push.z;
+	}
 	//移動
 	transform_.position_.x += move.x;
 	transform_.position_.z += move.z;
@@ -179,7 +182,7 @@ void Player::Fall()
  		dist = rayData.dist;
 		//現在使用しているmodelの底辺が-0.5なので入れている
 		//model変更時に削除
-		dist -= 0.5f;
+		//dist -= 0.5f;
 
 		if (rayData.hit && dist <= abs(fallSpeed) && jumpVelocity_ <= 0) {
 			transform_.position_.y -= dist;

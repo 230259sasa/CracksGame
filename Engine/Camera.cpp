@@ -34,9 +34,9 @@ void Camera::Initialize(XMVECTOR _position, XMVECTOR _target)
 void Camera::Update()
 {
 	if (player_ != nullptr) {
-		position_ = XMVectorSet(player_->GetPosition().x + 5,
-			player_->GetPosition().y + 7,
-			player_->GetPosition().z - 10,0);
+		position_ = XMVectorSet(player_->GetPosition().x + 0,
+			player_->GetPosition().y + 10,
+			player_->GetPosition().z - 1,0);
 		target_ = XMVectorSet(player_->GetPosition().x,
 			player_->GetPosition().y,
 			player_->GetPosition().z, 0);
