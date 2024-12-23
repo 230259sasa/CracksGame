@@ -138,7 +138,7 @@ void Player::Move()
 		move.z = Set::MOVE_SPEED * vectorZ;
 		pos.x += move.x;
 		pos.z += move.z;
-		push = stage->GetPushBack(pos, Set::PLAYER_RADIUS, dir);
+		push = stage->GetPushBack(pos, Set::PLAYER_RADIUS);
 		move.x += push.x;
 		move.z += push.z;
 	}

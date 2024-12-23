@@ -4,6 +4,7 @@
 namespace Set {
 	const XMFLOAT3 BLOCK_SIZE(1.0f, 1.0f,1.0f);
 	const XMFLOAT3 STAGE_SIZE(10, 10, 10);
+	const int MAX_PUSH_LOOP_NUM(9);
 }
 
 Stage::Stage(GameObject* parent)
@@ -127,45 +128,46 @@ XMFLOAT3 Stage::GetBlockSize()
 	return Set::BLOCK_SIZE;
 }
 
-XMFLOAT3 Stage::GetPushBack(XMFLOAT3 _pos, float _radius, XMFLOAT3 _dir)
+XMFLOAT3 Stage::GetPushBack(XMFLOAT3 _pos, float _radius)
 {
-	
-
-	//移動量をもとめる
-	//push.x = (移動量) * -_dir.x;
-	//push.z = (移動量) * -_dir.z;
-
-	//push.x = pos.x +  (-_dir.x * _radius) - _pos.x;
-	//push.z = pos.z + (-_dir.z * _radius) - _pos.z;
 	XMFLOAT3 pos;
 	XMFLOAT3 push(0, 0, 0);
-	//衝突位置を求める
-	if (!GetHitBlockToSphere(_pos, _radius, pos))
-		return push;
+	int count(0);
 
-	//押し出し後も接触しないように足している
-	//_radius += 0.01f;
-	
-	//衝突位置から
-	//float x = pos.x + sqrt(_radius * _radius - temp.z * temp.z);
-	//float z = pos.z + sqrt(_radius * _radius - temp.x * temp.x);
-	//衝突位置+半径*衝突位置から衝突しない位置への方向ベクトル = 押し出し後の位置
-	XMFLOAT3 temp(0, 0, 0);
-	temp.x = pos.x + (_radius * ベクトル);
-	temp.z = pos.z + (_radius * ベクトル);
-	//押し出し後の位置-現在の位置 = 移動量(x,y,z)
-	temp.x -= _pos.x;
-	temp.z -= _pos.z;
-	//x座標,z座標から移動量を求める
-	float move = sqrt(temp.x * temp.x + temp.z * temp.z);
-	//移動量rから反転した方向ベクトルをかける
-	push.x = move * -_dir.x;
-	push.z = move * -_dir.z;
+	while (true) {
+		_pos.x += push.x;
+		_pos.z += push.z;
+		if (!GetHitBlockToSphere(_pos, _radius, pos) || count > Set::MAX_PUSH_LOOP_NUM)
+			return push;
+
+		float x = pos.x - _pos.x;
+		float z = pos.z - _pos.z;
+		float length = x * x + z * z;
+		float dirX(0);
+		float dirZ(0);
+		if (x != 0) {
+			dirX = (x * x) / length;
+			if (x > 0)
+				dirX = -dirX;
+		}
+		if (z != 0) {
+			dirZ = (z * z) / length;
+			if (z > 0)
+				dirZ = -dirZ;
+		}
+		float move = (_radius * _radius) - length;
+		push.x += move * dirX;
+		push.z += move * dirZ;
+		count++;
+	}
+
 	return push;
 }
 
 bool Stage::GetHitBlockToSphere(XMFLOAT3 _pos, float _radius, XMFLOAT3& _getpos)
 {
+	float minLength = _radius * _radius;
+	bool is = false;
 	for (int z = 0; z < Set::STAGE_SIZE.z; z++) {
 		for (int y = 0; y < Set::STAGE_SIZE.y; y++) {
 			for (int x = 0; x < Set::STAGE_SIZE.x; x++) {
@@ -180,15 +182,15 @@ bool Stage::GetHitBlockToSphere(XMFLOAT3 _pos, float _radius, XMFLOAT3& _getpos)
 					len.y = _pos.y - min.y;
 					len.z = _pos.z - min.z;
 					float length = len.x * len.x + len.y * len.y + len.z * len.z;
-					if (length <= _radius * _radius) {
+					if (length <= _radius * _radius && length < minLength) {
 						_getpos = min;
-						return true;
+						is = true;
 					}
 				}
 			}
 		}
 	}
-	return false;
+	return is;
 }
 
 float Stage::GetClosestPoint(float _bpos, float _pos)
