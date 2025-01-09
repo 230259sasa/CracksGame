@@ -49,6 +49,7 @@ void Player::Update()
 	Move();
 	Jump();
 	Fall();
+	MoveCamera();
 }
 
 void Player::Draw()
@@ -190,4 +191,12 @@ void Player::Fall()
 			isGround_ = false;
 		}
 	}
+}
+
+void Player::MoveCamera()
+{
+	if (Input::IsKey(DIK_Q))
+		Camera::RotateCameraLeft();
+	else if (Input::IsKey(DIK_E))
+		Camera::RotateCameraRight();
 }
