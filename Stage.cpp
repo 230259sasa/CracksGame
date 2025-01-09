@@ -143,8 +143,8 @@ XMFLOAT3 Stage::GetPushBack(XMFLOAT3 _pos, float _radius)
 		float x = pos.x - _pos.x;
 		float z = pos.z - _pos.z;
 		float length = x * x + z * z;
-		float dirX(0);
-		float dirZ(0);
+		float dirX = 0;
+		float dirZ = 0;
 		if (x != 0) {
 			dirX = (x * x) / length;
 			if (x > 0)
@@ -184,6 +184,7 @@ bool Stage::GetHitBlockToSphere(XMFLOAT3 _pos, float _radius, XMFLOAT3& _getpos)
 					float length = len.x * len.x + len.y * len.y + len.z * len.z;
 					if (length <= _radius * _radius && length < minLength) {
 						_getpos = min;
+						minLength = length;
 						is = true;
 					}
 				}

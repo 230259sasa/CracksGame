@@ -180,9 +180,6 @@ void Player::Fall()
 		stage->StageBlockRayCast(rayData);
 		float dist = 0.0f;
  		dist = rayData.dist;
-		//Œ»İg—p‚µ‚Ä‚¢‚émodel‚Ì’ê•Ó‚ª-0.5‚È‚Ì‚Å“ü‚ê‚Ä‚¢‚é
-		//model•ÏX‚Éíœ
-		//dist -= 0.5f;
 
 		if (rayData.hit && dist <= abs(fallSpeed) && jumpVelocity_ <= 0) {
 			transform_.position_.y -= dist;
