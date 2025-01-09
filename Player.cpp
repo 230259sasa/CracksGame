@@ -32,7 +32,7 @@ Player::~Player()
 
 void Player::Initialize()
 {
-	hModel_ = Model::Load("Assets/Model/TestPlayer.fbx");
+	hModel_ = Model::Load("Assets/Model/TestPlayer2.fbx");
 	assert(hModel_ >= 0);
 	//Stageのブロックに重ならないために足している
 	transform_.position_.y += 2;
