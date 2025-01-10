@@ -7,16 +7,17 @@
 #include<numbers>
 
 namespace Set {
+	const float GRAVITY(25.0f);
+	const float MAX_FALL_VELOCITY(-10.0f);//落下の最大速度
+	const float FALL_CORRECTION_Y(0.01f);//落下時のRayCastの開始座標Yに足す補正値
+	const XMFLOAT3 FORWARD_VECTOR(0, 0, 1);//前方へのベクトル
+
 	const float PLAYER_RADIUS(0.5f);
 	const float MOVE_SPEED(0.1f);
 	const int LEFT_MOVE_ANGLE(90);
 	const int RIGHT_MOVE_ANGLE(270);
-
-	const float GRAVITY(25.0f);
 	const float JUMP_HEIGHT(1.5);//ジャンプの高さ
 	const float JUMP_LAUNCH_SPEED(sqrtf(2 * GRAVITY * JUMP_HEIGHT));//ジャンプの初速
-	const float MAX_FALL_VELOCITY(-10.0f);//落下の最大速度
-	const float FALL_CORRECTION_Y(0.01f);//落下時のRayCastの開始座標Yに足す補正値
 }
 
 namespace DT = DeltaTime;
@@ -142,6 +143,11 @@ void Player::Move()
 		push = stage->GetPushBack(pos, Set::PLAYER_RADIUS);
 		move.x += push.x;
 		move.z += push.z;
+
+		//移動方向をプレイヤーが向く
+		transform_.rotate_.y = XMConvertToDegrees(
+			atan2(Set::FORWARD_VECTOR.z, Set::FORWARD_VECTOR.x) -
+			atan2(vectorZ, vectorX));
 	}
 	//移動
 	transform_.position_.x += move.x;
