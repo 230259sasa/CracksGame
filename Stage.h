@@ -4,6 +4,11 @@
 class Stage :
     public GameObject
 {
+    enum STAGE_BLOCK {
+        NONE = 0,
+        NORMAL,
+        NAIL
+    };
     int hModel_;
     std::vector<std::vector<std::vector<int>>> stage;
 public:

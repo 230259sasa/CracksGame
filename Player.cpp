@@ -12,10 +12,10 @@ namespace Set {
 	const float FALL_CORRECTION_Y(0.01f);//落下時のRayCastの開始座標Yに足す補正値
 	const XMFLOAT3 FORWARD_VECTOR(0, 0, 1);//前方へのベクトル
 
-	const float PLAYER_RADIUS(0.5f);
-	const float MOVE_SPEED(0.1f);
 	const int LEFT_MOVE_ANGLE(90);
 	const int RIGHT_MOVE_ANGLE(270);
+	const float PLAYER_RADIUS(0.5f);
+	const float MOVE_SPEED(0.1f);
 	const float JUMP_HEIGHT(1.5);//ジャンプの高さ
 	const float JUMP_LAUNCH_SPEED(sqrtf(2 * GRAVITY * JUMP_HEIGHT));//ジャンプの初速
 }
@@ -134,8 +134,8 @@ void Player::Move()
 	if (dir.x != 0 || dir.z != 0) {
 		XMFLOAT3 pos = transform_.position_;
 		//modelの中心位置で判定するために足している
-		//これがないと地面に当たって押し返してしまう
-		pos.y += 0.6;
+		//これがないと底辺を基準に判定してしまう
+		pos.y += Set::PLAYER_RADIUS;
 		move.x = Set::MOVE_SPEED * vectorX;
 		move.z = Set::MOVE_SPEED * vectorZ;
 		pos.x += move.x;
