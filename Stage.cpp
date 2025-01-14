@@ -4,7 +4,6 @@
 namespace Set {
 	const XMFLOAT3 BLOCK_SIZE(1.0f, 1.0f,1.0f);
 	const XMFLOAT3 STAGE_SIZE(10, 10, 10);
-	const int MAX_PUSH_LOOP_NUM(10);
 }
 
 Stage::Stage(GameObject* parent)
@@ -134,33 +133,32 @@ XMFLOAT3 Stage::GetPushBack(XMFLOAT3 _pos, float _radius)
 	XMFLOAT3 pos;
 	XMFLOAT3 push(0, 0, 0);
 	int count(0);
+	_radius += 0.02;
 
-	while (true) {
-		_pos.x += push.x;
-		_pos.z += push.z;
-		if (!GetHitBlockToSphere(_pos, _radius, pos) || count > Set::MAX_PUSH_LOOP_NUM)
-			return push;
+	_pos.x += push.x;
+	_pos.z += push.z;
 
-		float x = pos.x - _pos.x;
-		float z = pos.z - _pos.z;
-		float length = x * x + z * z;
-		float dirX = 0;
-		float dirZ = 0;
-		if (x != 0) {
-			dirX = (x * x) / length;
-			if (x > 0)
-				dirX = -dirX;
-		}
-		if (z != 0) {
-			dirZ = (z * z) / length;
-			if (z > 0)
-				dirZ = -dirZ;
-		}
-		float move = (_radius * _radius) - length;
-		push.x += move * dirX;
-		push.z += move * dirZ;
-		count++;
+	if (!GetHitBlockToCircle(_pos, _radius, pos))
+		return push;
+
+	float x = pos.x - _pos.x;
+	float z = pos.z - _pos.z;
+	float length = x * x + z * z;
+	float dirX = 0;
+	float dirZ = 0;
+	if (x != 0) {
+		dirX = (x * x) / length;
+		if (x > 0)
+			dirX = -dirX;
 	}
+	if (z != 0) {
+		dirZ = (z * z) / length;
+		if (z > 0)
+			dirZ = -dirZ;
+	}
+	float move = (_radius * _radius) - length;
+	push.x += move * dirX;
+	push.z += move * dirZ;
 
 	return push;
 }
@@ -195,6 +193,36 @@ bool Stage::GetHitBlockToSphere(XMFLOAT3 _pos, float _radius, XMFLOAT3& _getpos)
 						minLength = length;
 						is = true;
 					}
+				}
+			}
+		}
+	}
+	return is;
+}
+
+bool Stage::GetHitBlockToCircle(XMFLOAT3 _pos, float _radius, XMFLOAT3& _getpos)
+{
+	float minLength = _radius + _radius;
+	bool is = false;
+	//­”Ø‚èã‚°
+	if (_pos.y - (int)_pos.y > 0)
+		_pos.y += 1;
+	int y = _pos.y/1;
+	for (int z = 0; z < Set::STAGE_SIZE.z; z++) {
+		for (int x = 0; x < Set::STAGE_SIZE.x; x++) {
+			if (stage_[z][y][x] == NORMAL) {
+				XMFLOAT3 pos = { (float)x,(float)y,(float)z };
+				XMFLOAT3 min;
+				min.x = GetClosestPoint(pos.x, _pos.x);
+				min.z = GetClosestPoint(pos.z, _pos.z);
+				XMFLOAT3 len;
+				len.x = _pos.x - min.x;
+				len.z = _pos.z - min.z;
+				float length = len.x * len.x + len.z * len.z;
+				if (length <= _radius * _radius && length < minLength) {
+					_getpos = min;
+					minLength = length;
+					is = true;
 				}
 			}
 		}

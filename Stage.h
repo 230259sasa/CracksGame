@@ -31,6 +31,7 @@ private:
     //関数名を変える
     //当たったブロックとの距離を返す
     bool GetHitBlockToSphere(XMFLOAT3 _pos, float _radius, XMFLOAT3& _getpos);
+    bool GetHitBlockToCircle(XMFLOAT3 _pos, float _radius, XMFLOAT3& _getpos);
     //球と長方形の最短点を求める
     float GetClosestPoint(float _bpos,float _pos);
 };

@@ -14,8 +14,8 @@ namespace Set {
 
 	const int LEFT_MOVE_ANGLE(90);
 	const int RIGHT_MOVE_ANGLE(270);
-	const float PLAYER_RADIUS(0.5f);
-	const float MOVE_SPEED(0.1f);
+	const float PLAYER_RADIUS(0.4f);
+	const float MOVE_SPEED(0.05f);
 	const float JUMP_HEIGHT(1.5);//ジャンプの高さ
 	const float JUMP_LAUNCH_SPEED(sqrtf(2 * GRAVITY * JUMP_HEIGHT));//ジャンプの初速
 }
@@ -51,9 +51,7 @@ void Player::Update()
 	Jump();
 	Fall();
 	MoveCamera();
-	if (Input::IsKey(DIK_F)) {
-		SetBlock();
-	}
+	SetBlock();
 }
 
 void Player::Draw()
@@ -61,6 +59,7 @@ void Player::Draw()
 	Transform trans = transform_;
 	trans.position_.x = XMVectorGetX(Camera::GetTarget());
 	trans.position_.z = XMVectorGetZ(Camera::GetTarget());
+	trans.scale_ = XMFLOAT3(0.8, 1, 0.8);
 	Model::SetTransform(hModel_, trans);
 	Model::Draw(hModel_);
 }
@@ -136,9 +135,6 @@ void Player::Move()
 	dir.z = vectorZ;
 	if (dir.x != 0 || dir.z != 0) {
 		XMFLOAT3 pos = transform_.position_;
-		//modelの中心位置で判定するために足している
-		//これがないと底辺を基準に判定してしまう
-		pos.y += Set::PLAYER_RADIUS;
 		move.x = Set::MOVE_SPEED * vectorX;
 		move.z = Set::MOVE_SPEED * vectorZ;
 		pos.x += move.x;
@@ -191,6 +187,7 @@ void Player::Fall()
 		float dist = 0.0f;
  		dist = rayData.dist;
 
+		//レイキャストが当たったかつ距離が現在のフレームの落下距離より小さいかつ落下中ならtrue
 		if (rayData.hit && dist <= abs(fallSpeed) && jumpVelocity_ <= 0) {
 			transform_.position_.y -= dist;
 			isGround_ = true;
@@ -219,28 +216,56 @@ void Player::SetBlock()
 
 	int x, y, z;
 	x = (int)(transform_.position_.x + Set::PLAYER_RADIUS);
-	y = (int)(transform_.position_.y + Set::PLAYER_RADIUS);
+	y = (int)(transform_.position_.y + 1);
 	z = (int)(transform_.position_.z + Set::PLAYER_RADIUS);
 
-	int dir = ((int)transform_.rotate_.y % 360) / 45;
+	/*int dir = ((int)transform_.rotate_.y % 360) / 45;
 
 	if (dir <= 0 || dir == 7) {
-		z += 1;
-		z += (int)Set::PLAYER_RADIUS * 3.5;
-		stage->SetBlock(x, y + 1, z);
+		z = (int)(transform_.position_.z) + 2;
 	}
 	else if (dir <= 2) {
-		/*x += 1;
-		x += (int)Set::PLAYER_RADIUS * 2;*/
+		x = (int)(transform_.position_.x) + 2;
 	}
 	else if (dir <= 4) {
-		z -= 1;
-		z -= (int)Set::PLAYER_RADIUS * 3.5;
-		stage->SetBlock(x, y + 1, z);
+		z = (int)(transform_.position_.z) - 1;
 	}
 	else if (dir <= 6) {
-		/*x -= 1;
-		x -= (int)Set::PLAYER_RADIUS * 2;*/
+		x = (int)(transform_.position_.x) - 1;
+	}*/
+
+	float dir = ((int)transform_.rotate_.y % 360) / (360/16);
+
+	if (dir <= 0 || dir == 15) {
+		z = (int)(transform_.position_.z) + 2;
+	}
+	else if (dir <= 2) {
+		z = (int)(transform_.position_.z) + 2;
+		x = (int)(transform_.position_.x) + 2;
+	}
+	else if (dir <= 4) {
+		x = (int)(transform_.position_.x) + 2;
+	}
+	else if (dir <= 6) {
+		x = (int)(transform_.position_.x) + 2;
+		z = (int)(transform_.position_.z) - 1;
+	}
+	else if (dir <= 8) {
+		z = (int)(transform_.position_.z) - 1;
+	}
+	else if (dir < 10) {
+		z = (int)(transform_.position_.z) - 1;
+		x = (int)(transform_.position_.x) - 1;
+	}
+	else if (dir <= 12) {
+		x = (int)(transform_.position_.x) - 1;
+	}
+	else if(dir <= 14) {
+		x = (int)(transform_.position_.x) - 1;
+		z = (int)(transform_.position_.z) + 2;
 	}
 
+	if (Input::IsKey(DIK_F)) {
+		stage->SetBlock(x, y, z);
+	}
 }
