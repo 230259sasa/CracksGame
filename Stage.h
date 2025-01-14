@@ -10,7 +10,7 @@ class Stage :
         NAIL
     };
     int hModel_;
-    std::vector<std::vector<std::vector<int>>> stage;
+    std::vector<std::vector<std::vector<int>>> stage_;
 public:
     Stage(GameObject* parent);
     ~Stage();
@@ -26,6 +26,7 @@ public:
     void StageBlockRayCast(RayCastData& _rayData);
     XMFLOAT3 GetBlockSize();
     XMFLOAT3 GetPushBack(XMFLOAT3 _pos, float _radius);
+    void SetBlock(int x, int y, int z);
 private:
     //ŠÖ”–¼‚ğ•Ï‚¦‚é
     //“–‚½‚Á‚½ƒuƒƒbƒN‚Æ‚Ì‹——£‚ğ•Ô‚·

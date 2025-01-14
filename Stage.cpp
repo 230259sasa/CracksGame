@@ -4,7 +4,7 @@
 namespace Set {
 	const XMFLOAT3 BLOCK_SIZE(1.0f, 1.0f,1.0f);
 	const XMFLOAT3 STAGE_SIZE(10, 10, 10);
-	const int MAX_PUSH_LOOP_NUM(9);
+	const int MAX_PUSH_LOOP_NUM(10);
 }
 
 Stage::Stage(GameObject* parent)
@@ -34,47 +34,47 @@ void Stage::Initialize()
 			}
 			vec.push_back(v);
 		}
-		stage.push_back(vec);
+		stage_.push_back(vec);
 	}
 
-	stage[0][1][3] = NORMAL;
-	stage[0][1][4] = 1;
-	stage[0][1][5] = 1;
-	stage[1][1][3] = 1;
-	stage[1][1][4] = 1;
-	stage[1][1][5] = 1;
+	/*stage_[0][1][3] = NORMAL;
+	stage_[0][1][4] = 1;
+	stage_[0][1][5] = 1;
+	stage_[1][1][3] = 1;
+	stage_[1][1][4] = 1;
+	stage_[1][1][5] = 1;
 
-	stage[2][1][3] = 1;
-	stage[2][1][4] = 1;
-	stage[2][1][5] = 1;
-	stage[2][2][3] = 1;
-	stage[2][2][4] = 1;
-	stage[2][2][5] = 1;
+	stage_[2][1][3] = 1;
+	stage_[2][1][4] = 1;
+	stage_[2][1][5] = 1;
+	stage_[2][2][3] = 1;
+	stage_[2][2][4] = 1;
+	stage_[2][2][5] = 1;
 
-	stage[3][1][3] = 1;
-	stage[3][1][4] = 1;
-	stage[3][1][5] = 1;
-	stage[3][2][3] = 1;
-	stage[3][2][4] = 1;
-	stage[3][2][5] = 1;
-	stage[3][3][3] = 1;
-	stage[3][3][4] = 1;
-	stage[3][3][5] = 1;
+	stage_[3][1][3] = 1;
+	stage_[3][1][4] = 1;
+	stage_[3][1][5] = 1;
+	stage_[3][2][3] = 1;
+	stage_[3][2][4] = 1;
+	stage_[3][2][5] = 1;
+	stage_[3][3][3] = 1;
+	stage_[3][3][4] = 1;
+	stage_[3][3][5] = 1;
 
-	stage[4][1][3] = 1;
-	stage[4][1][4] = 1;
-	stage[4][1][5] = 1;
-	stage[4][2][3] = 1;
-	stage[4][2][4] = 1;
-	stage[4][2][5] = 1;
-	stage[4][3][3] = 1;
-	stage[4][3][4] = 1;
-	stage[4][3][5] = 1;
-	stage[4][4][3] = 1;
-	stage[4][4][4] = 1;
-	stage[4][4][5] = 1;
+	stage_[4][1][3] = 1;
+	stage_[4][1][4] = 1;
+	stage_[4][1][5] = 1;
+	stage_[4][2][3] = 1;
+	stage_[4][2][4] = 1;
+	stage_[4][2][5] = 1;
+	stage_[4][3][3] = 1;
+	stage_[4][3][4] = 1;
+	stage_[4][3][5] = 1;
+	stage_[4][4][3] = 1;
+	stage_[4][4][4] = 1;
+	stage_[4][4][5] = 1;
 
-	stage[7][1][5] = 1;
+	stage_[7][1][5] = 1;*/
 }
 
 void Stage::Update()
@@ -87,7 +87,7 @@ void Stage::Draw()
 	for (int z = 0; z < Set::STAGE_SIZE.z; z++) {
 		for (int y = 0; y < Set::STAGE_SIZE.y; y++) {
 			for (int x = 0; x < Set::STAGE_SIZE.x; x++) {
-				if (stage[z][y][x] == NORMAL) {
+				if (stage_[z][y][x] == NORMAL) {
 					t.position_ = { (float)x,(float)y,(float)z};
 					Model::SetTransform(hModel_, t);
 					Model::Draw(hModel_);
@@ -111,7 +111,7 @@ void Stage::StageBlockRayCast(RayCastData& _rayData)
 	for (int z = 0; z < Set::STAGE_SIZE.z; z++) {
 		for (int y = 0; y < Set::STAGE_SIZE.y; y++) {
 			for (int x = 0; x < Set::STAGE_SIZE.x; x++) {
-				if (stage[z][y][x] == NORMAL) {
+				if (stage_[z][y][x] == NORMAL) {
 					t.position_ = { (float)x,(float)y,(float)z };
 					Model::RayCast(hModel_, data, t);
 					if (data.hit && data.dist < minDistData.dist) {
@@ -165,6 +165,13 @@ XMFLOAT3 Stage::GetPushBack(XMFLOAT3 _pos, float _radius)
 	return push;
 }
 
+void Stage::SetBlock(int x, int y, int z)
+{
+	if (x >= 0 && x < Set::STAGE_SIZE.x && y >= 0 && y < Set::STAGE_SIZE.y && z >= 0 && z < Set::STAGE_SIZE.z) {
+		stage_[z][y][x] = NORMAL;
+	}
+}
+
 bool Stage::GetHitBlockToSphere(XMFLOAT3 _pos, float _radius, XMFLOAT3& _getpos)
 {
 	float minLength = _radius * _radius;
@@ -172,7 +179,7 @@ bool Stage::GetHitBlockToSphere(XMFLOAT3 _pos, float _radius, XMFLOAT3& _getpos)
 	for (int z = 0; z < Set::STAGE_SIZE.z; z++) {
 		for (int y = 0; y < Set::STAGE_SIZE.y; y++) {
 			for (int x = 0; x < Set::STAGE_SIZE.x; x++) {
-				if (stage[z][y][x] == NORMAL) {
+				if (stage_[z][y][x] == NORMAL) {
 					XMFLOAT3 pos = { (float)x,(float)y,(float)z };
 					XMFLOAT3 min;
 					min.x = GetClosestPoint(pos.x, _pos.x);

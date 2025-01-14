@@ -18,5 +18,6 @@ private:
     void Jump();
     void Fall();
     void MoveCamera();
+    void SetBlock();
 };
 

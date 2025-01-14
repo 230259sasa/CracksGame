@@ -51,6 +51,9 @@ void Player::Update()
 	Jump();
 	Fall();
 	MoveCamera();
+	if (Input::IsKey(DIK_F)) {
+		SetBlock();
+	}
 }
 
 void Player::Draw()
@@ -205,4 +208,39 @@ void Player::MoveCamera()
 		Camera::RotateCameraLeft();
 	else if (Input::IsKey(DIK_E))
 		Camera::RotateCameraRight();
+}
+
+void Player::SetBlock()
+{
+	Stage* stage = nullptr;
+	stage = (Stage*)FindObject("Stage");
+	if (stage == nullptr)
+		return;
+
+	int x, y, z;
+	x = (int)(transform_.position_.x + Set::PLAYER_RADIUS);
+	y = (int)(transform_.position_.y + Set::PLAYER_RADIUS);
+	z = (int)(transform_.position_.z + Set::PLAYER_RADIUS);
+
+	int dir = ((int)transform_.rotate_.y % 360) / 45;
+
+	if (dir <= 0 || dir == 7) {
+		z += 1;
+		z += (int)Set::PLAYER_RADIUS * 3.5;
+		stage->SetBlock(x, y + 1, z);
+	}
+	else if (dir <= 2) {
+		/*x += 1;
+		x += (int)Set::PLAYER_RADIUS * 2;*/
+	}
+	else if (dir <= 4) {
+		z -= 1;
+		z -= (int)Set::PLAYER_RADIUS * 3.5;
+		stage->SetBlock(x, y + 1, z);
+	}
+	else if (dir <= 6) {
+		/*x -= 1;
+		x -= (int)Set::PLAYER_RADIUS * 2;*/
+	}
+
 }
