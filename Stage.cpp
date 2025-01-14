@@ -28,15 +28,16 @@ void Stage::Initialize()
 			std::vector<int> v;
 			for (int x = 0; x < Set::STAGE_SIZE.z; x++) {
 				if(y<1)
-					v.push_back(1);
+					v.push_back(NORMAL);
 				else
-					v.push_back(0);
+					v.push_back(NONE);
 			}
 			vec.push_back(v);
 		}
 		stage.push_back(vec);
 	}
-	stage[0][1][3] = 1;
+
+	stage[0][1][3] = NORMAL;
 	stage[0][1][4] = 1;
 	stage[0][1][5] = 1;
 	stage[1][1][3] = 1;
@@ -86,7 +87,7 @@ void Stage::Draw()
 	for (int z = 0; z < Set::STAGE_SIZE.z; z++) {
 		for (int y = 0; y < Set::STAGE_SIZE.y; y++) {
 			for (int x = 0; x < Set::STAGE_SIZE.x; x++) {
-				if (stage[z][y][x] == 1) {
+				if (stage[z][y][x] == NORMAL) {
 					t.position_ = { (float)x,(float)y,(float)z};
 					Model::SetTransform(hModel_, t);
 					Model::Draw(hModel_);
@@ -110,7 +111,7 @@ void Stage::StageBlockRayCast(RayCastData& _rayData)
 	for (int z = 0; z < Set::STAGE_SIZE.z; z++) {
 		for (int y = 0; y < Set::STAGE_SIZE.y; y++) {
 			for (int x = 0; x < Set::STAGE_SIZE.x; x++) {
-				if (stage[z][y][x] == 1) {
+				if (stage[z][y][x] == NORMAL) {
 					t.position_ = { (float)x,(float)y,(float)z };
 					Model::RayCast(hModel_, data, t);
 					if (data.hit && data.dist < minDistData.dist) {
@@ -171,7 +172,7 @@ bool Stage::GetHitBlockToSphere(XMFLOAT3 _pos, float _radius, XMFLOAT3& _getpos)
 	for (int z = 0; z < Set::STAGE_SIZE.z; z++) {
 		for (int y = 0; y < Set::STAGE_SIZE.y; y++) {
 			for (int x = 0; x < Set::STAGE_SIZE.x; x++) {
-				if (stage[z][y][x] == 1) {
+				if (stage[z][y][x] == NORMAL) {
 					XMFLOAT3 pos = { (float)x,(float)y,(float)z };
 					XMFLOAT3 min;
 					min.x = GetClosestPoint(pos.x, _pos.x);
