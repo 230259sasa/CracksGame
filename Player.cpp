@@ -9,7 +9,7 @@
 namespace Set {
 	const float GRAVITY(25.0f);
 	const float MAX_FALL_VELOCITY(-10.0f);//落下の最大速度
-	const float FALL_CORRECTION_Y(0.01f);//落下時のRayCastの開始座標Yに足す補正値
+	const float FALL_CORRECTION_Y(0.02f);//落下時のRayCastの開始座標Yに足す補正値
 	const XMFLOAT3 FORWARD_VECTOR(0, 0, 1);//前方へのベクトル
 
 	const int LEFT_MOVE_ANGLE(90);
@@ -138,6 +138,7 @@ void Player::Move()
 		move.x = Set::MOVE_SPEED * vectorX;
 		move.z = Set::MOVE_SPEED * vectorZ;
 		pos.x += move.x;
+		pos.y += 0.01f;
 		pos.z += move.z;
 		push = stage->GetPushBack(pos, Set::PLAYER_RADIUS);
 		move.x += push.x;

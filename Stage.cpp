@@ -36,7 +36,7 @@ void Stage::Initialize()
 		stage_.push_back(vec);
 	}
 
-	/*stage_[0][1][3] = NORMAL;
+	stage_[0][1][3] = NORMAL;
 	stage_[0][1][4] = 1;
 	stage_[0][1][5] = 1;
 	stage_[1][1][3] = 1;
@@ -73,7 +73,7 @@ void Stage::Initialize()
 	stage_[4][4][4] = 1;
 	stage_[4][4][5] = 1;
 
-	stage_[7][1][5] = 1;*/
+	stage_[7][1][5] = 1;
 }
 
 void Stage::Update()
@@ -132,8 +132,8 @@ void Stage::FallRayCast(RayCastData& _rayData)
 
 	int rx = (int)_rayData.start.x;
 	int rz = (int)_rayData.start.z;
-	if (rx == 1 && rz == 0)
-		int ds = 0;
+	if (rx < 0 || rx >= Set::STAGE_SIZE.x || rz < 0 || rz >= Set::STAGE_SIZE.z)
+		return;
 	//for (int z = rz; z <= rz; z++) {
 		for (int y = 0; y < Set::STAGE_SIZE.y; y++) {
 			//for (int x = rx; x <= rx; x++) {
@@ -208,9 +208,9 @@ bool Stage::GetHitBlockToSphere(XMFLOAT3 _pos, float _radius, XMFLOAT3& _getpos)
 				if (stage_[z][y][x] == NORMAL) {
 					XMFLOAT3 pos = { (float)x,(float)y,(float)z };
 					XMFLOAT3 min;
-					min.x = GetClosestPoint(pos.x, _pos.x);
-					min.y = GetClosestPoint(pos.y, _pos.y);
-					min.z = GetClosestPoint(pos.z, _pos.z);
+					min.x = GetClosestPoint(pos.x + Set::BLOCK_SIZE.x / 2, _pos.x);
+					min.y = GetClosestPoint(pos.y + Set::BLOCK_SIZE.y / 2, _pos.y);
+					min.z = GetClosestPoint(pos.z - Set::BLOCK_SIZE.z / 2, _pos.z);
 					XMFLOAT3 len;
 					len.x = _pos.x - min.x;
 					len.y = _pos.y - min.y;
@@ -233,8 +233,8 @@ bool Stage::GetHitBlockToCircle(XMFLOAT3 _pos, float _radius, XMFLOAT3& _getpos)
 	float minLength = _radius + _radius;
 	bool is = false;
 	//­”Ø‚èã‚°
-	if (_pos.y - (int)_pos.y > 0)
-		_pos.y += 1;
+	/*if (_pos.y - (int)_pos.y > 0)
+		_pos.y += 1;*/
 	int y = _pos.y;
 
 	//
@@ -246,8 +246,8 @@ bool Stage::GetHitBlockToCircle(XMFLOAT3 _pos, float _radius, XMFLOAT3& _getpos)
 			if (stage_[z][y][x] == NORMAL) {
 				XMFLOAT3 pos = { (float)x,(float)y,(float)z };
 				XMFLOAT3 min;
-				min.x = GetClosestPoint(pos.x, _pos.x);
-				min.z = GetClosestPoint(pos.z, _pos.z);
+				min.x = GetClosestPoint(pos.x + Set::BLOCK_SIZE.x / 2, _pos.x);
+				min.z = GetClosestPoint(pos.z - Set::BLOCK_SIZE.z / 2, _pos.z);
 				XMFLOAT3 len;
 				len.x = _pos.x - min.x;
 				len.z = _pos.z - min.z;
