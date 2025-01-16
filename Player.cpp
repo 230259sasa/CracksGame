@@ -183,7 +183,14 @@ void Player::Fall()
 		rayData.start = { pos.x,pos.y + Set::FALL_CORRECTION_Y,pos.z,0.0f };
 		rayData.dir = { 0,-1,0,0 };
 		rayData.hit = false;
-		stage->StageBlockRayCast(rayData);
+		//stage->StageBlockRayCast(rayData);
+		XMFLOAT3 u(0,0,0);
+		u.x = transform_.position_.x + Set::PLAYER_RADIUS;
+		u.z = transform_.position_.z + Set::PLAYER_RADIUS;
+		XMFLOAT3 d(0, 0, 0);
+		d.x = transform_.position_.x - Set::PLAYER_RADIUS;
+		d.z = transform_.position_.z - Set::PLAYER_RADIUS;
+		stage->PartitionRayCast(rayData, u, d);
 		float dist = 0.0f;
  		dist = rayData.dist;
 

@@ -21,11 +21,11 @@ void Stage::Initialize()
 	hModel_ = Model::Load("Assets/Model/BoxDefault.fbx");
 	assert(hModel_ >= 0);
 	
-	for (int z = 0; z < Set::STAGE_SIZE.x; z++) {
+	for (int z = 0; z < Set::STAGE_SIZE.z; z++) {
 		std::vector<std::vector<int>> vec;
 		for (int y = 0; y < Set::STAGE_SIZE.y; y++) {
 			std::vector<int> v;
-			for (int x = 0; x < Set::STAGE_SIZE.z; x++) {
+			for (int x = 0; x < Set::STAGE_SIZE.x; x++) {
 				if(y<1)
 					v.push_back(NORMAL);
 				else
@@ -122,6 +122,38 @@ void Stage::StageBlockRayCast(RayCastData& _rayData)
 	}
 	_rayData = minDistData;
 }
+
+void Stage::PartitionRayCast(RayCastData& _rayData, XMFLOAT3 _uLeft, XMFLOAT3 _dRight)
+{
+	int ux = (int)_uLeft.x;
+	int uz = (int)_uLeft.z;
+	int dx = (int)_dRight.x;
+	int dz = (int)_dRight.z;
+	//‚ ‚Æ‚ÅabsŠO‚·
+	int distX = abs(ux - dx);
+	int distZ = abs(uz - dz);
+
+	Transform t;
+	RayCastData data = _rayData;
+	RayCastData minDistData = data;
+	minDistData.dist = Set::BLOCK_SIZE.x;
+
+	for (int z = uz; z < uz + distZ; z++) {
+		for (int y = 0; y < Set::STAGE_SIZE.y; y++) {
+			for (int x = dx; x < dx + distX; x++) {
+				if (stage_[z][y][x] == NORMAL) {
+					t.position_ = { (float)x,(float)y,(float)z };
+					Model::RayCast(hModel_, data, t);
+					if (data.hit && data.dist < minDistData.dist) {
+						minDistData = data;
+					}
+				}
+			}
+		}
+	}
+	_rayData = minDistData;
+}
+
 
 XMFLOAT3 Stage::GetBlockSize()
 {
