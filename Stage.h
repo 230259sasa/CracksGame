@@ -24,7 +24,7 @@ public:
     /// </summary>
     /// <param name="_rayData">RayCast用データ</param>
     void StageBlockRayCast(RayCastData& _rayData);
-    void PartitionRayCast(RayCastData& _rayData,XMFLOAT3 _uLeft,XMFLOAT3 _dRight);
+    void FallRayCast(RayCastData& _rayData);
     XMFLOAT3 GetBlockSize();
     XMFLOAT3 GetPushBack(XMFLOAT3 _pos, float _radius);
     void SetBlock(int x, int y, int z);

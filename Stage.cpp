@@ -123,34 +123,31 @@ void Stage::StageBlockRayCast(RayCastData& _rayData)
 	_rayData = minDistData;
 }
 
-void Stage::PartitionRayCast(RayCastData& _rayData, XMFLOAT3 _uLeft, XMFLOAT3 _dRight)
+void Stage::FallRayCast(RayCastData& _rayData)
 {
-	int ux = (int)_uLeft.x;
-	int uz = (int)_uLeft.z;
-	int dx = (int)_dRight.x;
-	int dz = (int)_dRight.z;
-	//‚ ‚Æ‚ÅabsŠO‚·
-	int distX = abs(ux - dx);
-	int distZ = abs(uz - dz);
-
 	Transform t;
 	RayCastData data = _rayData;
 	RayCastData minDistData = data;
 	minDistData.dist = Set::BLOCK_SIZE.x;
 
-	for (int z = uz; z < uz + distZ; z++) {
+	int rx = (int)_rayData.start.x;
+	int rz = (int)_rayData.start.z;
+	if (rx == 1 && rz == 0)
+		int ds = 0;
+	//for (int z = rz; z <= rz; z++) {
 		for (int y = 0; y < Set::STAGE_SIZE.y; y++) {
-			for (int x = dx; x < dx + distX; x++) {
-				if (stage_[z][y][x] == NORMAL) {
-					t.position_ = { (float)x,(float)y,(float)z };
+			//for (int x = rx; x <= rx; x++) {
+				if (stage_[rz][y][rx] == NORMAL) {
+					t.position_ = { (float)rx,(float)y,(float)rz };
 					Model::RayCast(hModel_, data, t);
 					if (data.hit && data.dist < minDistData.dist) {
 						minDistData = data;
 					}
 				}
-			}
+			//}
 		}
-	}
+	//}
+	
 	_rayData = minDistData;
 }
 
@@ -162,11 +159,10 @@ XMFLOAT3 Stage::GetBlockSize()
 
 XMFLOAT3 Stage::GetPushBack(XMFLOAT3 _pos, float _radius)
 {
-	XMFLOAT3 pos;
+	XMFLOAT3 pos(0,0,0);
 	XMFLOAT3 push(0, 0, 0);
-	int count(0);
-	_radius += 0.02;
 
+	_radius += 0.02;
 	_pos.x += push.x;
 	_pos.z += push.z;
 
@@ -239,7 +235,12 @@ bool Stage::GetHitBlockToCircle(XMFLOAT3 _pos, float _radius, XMFLOAT3& _getpos)
 	//­”Ø‚èã‚°
 	if (_pos.y - (int)_pos.y > 0)
 		_pos.y += 1;
-	int y = _pos.y/1;
+	int y = _pos.y;
+
+	//
+	if (y < 0 || y >= Set::STAGE_SIZE.y)
+		return is;
+
 	for (int z = 0; z < Set::STAGE_SIZE.z; z++) {
 		for (int x = 0; x < Set::STAGE_SIZE.x; x++) {
 			if (stage_[z][y][x] == NORMAL) {
