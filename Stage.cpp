@@ -3,7 +3,7 @@
 
 namespace Set {
 	const XMFLOAT3 BLOCK_SIZE(1.0f, 1.0f,1.0f);
-	const XMFLOAT3 STAGE_SIZE(10, 10, 10);
+	const XMFLOAT3 STAGE_SIZE(50, 5, 50);
 }
 
 Stage::Stage(GameObject* parent)
@@ -159,7 +159,7 @@ XMFLOAT3 Stage::GetBlockSize()
 
 XMFLOAT3 Stage::GetPushBack(XMFLOAT3 _pos, float _radius)
 {
-	XMFLOAT3 pos(0,0,0);
+	XMFLOAT3 pos(0, 0, 0);
 	XMFLOAT3 push(0, 0, 0);
 
 	_radius += 0.02;

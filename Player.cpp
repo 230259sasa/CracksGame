@@ -9,12 +9,12 @@
 namespace Set {
 	const float GRAVITY(25.0f);
 	const float MAX_FALL_VELOCITY(-10.0f);//落下の最大速度
-	const float FALL_CORRECTION_Y(0.02f);//落下時のRayCastの開始座標Yに足す補正値
+	//const float FALL_CORRECTION_Y(0.1f);//落下時のRayCastの開始座標Yに足す補正値
 	const XMFLOAT3 FORWARD_VECTOR(0, 0, 1);//前方へのベクトル
 
 	const int LEFT_MOVE_ANGLE(90);
 	const int RIGHT_MOVE_ANGLE(270);
-	const float PLAYER_RADIUS(0.4f);
+	const float PLAYER_RADIUS(0.5f);
 	const float MOVE_SPEED(0.05f);
 	const float JUMP_HEIGHT(1.5);//ジャンプの高さ
 	const float JUMP_LAUNCH_SPEED(sqrtf(2 * GRAVITY * JUMP_HEIGHT));//ジャンプの初速
@@ -36,7 +36,7 @@ void Player::Initialize()
 	hModel_ = Model::Load("Assets/Model/TestPlayer2.fbx");
 	assert(hModel_ >= 0);
 	//Stageのブロックに重ならないために足している
-	transform_.position_.y += 2;
+	transform_.position_.y += 1.0f;
 
 	Camera::SetPlayerPointer(this);
 }
@@ -138,9 +138,9 @@ void Player::Move()
 		move.x = Set::MOVE_SPEED * vectorX;
 		move.z = Set::MOVE_SPEED * vectorZ;
 		pos.x += move.x;
-		pos.y += 0.01f;
+		pos.y += 0.1f;
 		pos.z += move.z;
-		push = stage->GetPushBack(pos, Set::PLAYER_RADIUS);
+		//push = stage->GetPushBack(pos, Set::PLAYER_RADIUS);
 		move.x += push.x;
 		move.z += push.z;
 
@@ -173,33 +173,58 @@ void Player::Fall()
 	}
 
 	float fallSpeed = jumpVelocity_ * DT::GetDeltaTime();
-	transform_.position_.y += fallSpeed;
 
 	//ステージ上のブロックとレイキャスト
 	Stage* stage = nullptr;
 	stage = (Stage*)FindObject("Stage");
 	if (stage != nullptr) {
-		RayCastData rayData;
-		XMFLOAT3 pos = transform_.position_;
-		rayData.start = { pos.x,pos.y + Set::FALL_CORRECTION_Y,pos.z,0.0f };
-		rayData.dir = { 0,-1,0,0 };
-		rayData.hit = false;
-		rayData.dist = 0;
-		stage->StageBlockRayCast(rayData);
-		//stage->FallRayCast(rayData);
-		float dist = 0.0f;
- 		dist = rayData.dist;
+		//RayCastData rayData;
+		//XMFLOAT3 pos = transform_.position_;
+		//rayData.start = { pos.x,pos.y,pos.z,0.0f };
+		//rayData.dir = { 0,-1,0,0 };
+		//rayData.hit = false;
+		//rayData.dist = 0;
+		//stage->StageBlockRayCast(rayData);
+		////stage->FallRayCast(rayData);
+		//float dist = 0.0f;
+ 		//dist = rayData.dist;
 
-		//レイキャストが当たったかつ距離が現在のフレームの落下距離より小さいかつ落下中ならtrue
-		if (rayData.hit && dist <= abs(fallSpeed) && jumpVelocity_ <= 0) {
-			transform_.position_.y -= dist;
-			isGround_ = true;
-			jumpVelocity_ = 0.0f;
-		}
-		else {
-			isGround_ = false;
+		////レイキャストが当たったかつ距離が現在のフレームの落下距離より小さいかつ落下中ならtrue
+		//if (rayData.hit && dist <= abs(fallSpeed) && jumpVelocity_ <= 0) {
+		//	transform_.position_.y -= dist;
+		//	isGround_ = true;
+		//	jumpVelocity_ = 0.0f;
+		//}
+		//else {
+		//	isGround_ = false;
+		//	transform_.position_.y += fallSpeed;
+		//}
+
+		for (int i = 0; i < 8; i++) {
+			RayCastData rayData;
+			XMFLOAT3 pos = transform_.position_;
+			float r = XMConvertToRadians(45*i);
+			float x = 0 * cos(r) - Set::PLAYER_RADIUS * sin(r);
+			float z = 0 * sin(r) + Set::PLAYER_RADIUS * cos(r);
+			rayData.start = { pos.x + x,pos.y,pos.z + z,0.0f };
+			rayData.dir = { 0,-1,0,0 };
+			rayData.hit = false;
+			rayData.dist = 0;
+			stage->FallRayCast(rayData);
+			float dist = 0.0f;
+			dist = rayData.dist;
+
+			//レイキャストが当たったかつ距離が現在のフレームの落下距離より小さいかつ落下中ならtrue
+			if (rayData.hit && dist <= abs(fallSpeed) && jumpVelocity_ <= 0) {
+				transform_.position_.y -= dist;
+				isGround_ = true;
+				jumpVelocity_ = 0.0f;
+				return;
+			}
 		}
 	}
+	isGround_ = false;
+	transform_.position_.y += fallSpeed;
 }
 
 void Player::MoveCamera()
