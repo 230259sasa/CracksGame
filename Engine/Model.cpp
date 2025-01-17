@@ -39,7 +39,12 @@ void Model::SetTransform(int hModel, Transform transform)
 
 void Model::Draw(int hModel)
 {
-	modelList[hModel]->pFbx_->Draw(modelList[hModel]->transform_);
+	modelList[hModel]->pFbx_->ThreeDimensionalDraw(modelList[hModel]->transform_);
+}
+
+void Model::OutLineDraw(int hModel)
+{
+	modelList[hModel]->pFbx_->OutLineDraw(modelList[hModel]->transform_);
 }
 
 void Model::Release()

@@ -9,8 +9,13 @@ class Stage :
         NORMAL,
         NAIL
     };
+    struct STAGE_BLOCK_DATA {
+        bool isOutLineDraw;
+        STAGE_BLOCK block;
+    };
     int hModel_;
-    std::vector<std::vector<std::vector<int>>> stage_;
+    //std::vector<std::vector<std::vector<int>>> stage_;
+    std::vector<std::vector<std::vector<STAGE_BLOCK_DATA>>> blockData_;
 public:
     Stage(GameObject* parent);
     ~Stage();

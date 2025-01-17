@@ -22,58 +22,60 @@ void Stage::Initialize()
 	assert(hModel_ >= 0);
 	
 	for (int z = 0; z < Set::STAGE_SIZE.z; z++) {
-		std::vector<std::vector<int>> vec;
+		std::vector<std::vector<STAGE_BLOCK_DATA>> vec;
 		for (int y = 0; y < Set::STAGE_SIZE.y; y++) {
-			std::vector<int> v;
+			std::vector<STAGE_BLOCK_DATA> v;
 			for (int x = 0; x < Set::STAGE_SIZE.x; x++) {
+				STAGE_BLOCK_DATA data;
+				data.isOutLineDraw = false;
 				if(y<1)
-					v.push_back(NORMAL);
+					data.block = NORMAL;
 				else
-					v.push_back(NONE);
+					data.block = NONE;
 			}
 			vec.push_back(v);
 		}
-		stage_.push_back(vec);
+		blockData_.push_back(vec);
 	}
 
-	stage_[0][1][3] = NORMAL;
-	stage_[0][1][4] = 1;
-	stage_[0][1][5] = 1;
-	stage_[1][1][3] = 1;
-	stage_[1][1][4] = 1;
-	stage_[1][1][5] = 1;
+	blockData_[0][1][3].block = NORMAL;
+	blockData_[0][1][4].block = NORMAL;
+	blockData_[0][1][5].block = NORMAL;
+	blockData_[1][1][3].block = NORMAL;
+	blockData_[1][1][4].block = NORMAL;
+	blockData_[1][1][5].block = NORMAL;
 
-	stage_[2][1][3] = 1;
-	stage_[2][1][4] = 1;
-	stage_[2][1][5] = 1;
-	stage_[2][2][3] = 1;
-	stage_[2][2][4] = 1;
-	stage_[2][2][5] = 1;
+	blockData_[2][1][3].block = NORMAL;
+	blockData_[2][1][4].block = NORMAL;
+	blockData_[2][1][5].block = NORMAL;
+	blockData_[2][2][3].block = NORMAL;
+	blockData_[2][2][4].block = NORMAL;
+	blockData_[2][2][5].block = NORMAL;
 
-	stage_[3][1][3] = 1;
-	stage_[3][1][4] = 1;
-	stage_[3][1][5] = 1;
-	stage_[3][2][3] = 1;
-	stage_[3][2][4] = 1;
-	stage_[3][2][5] = 1;
-	stage_[3][3][3] = 1;
-	stage_[3][3][4] = 1;
-	stage_[3][3][5] = 1;
+	blockData_[3][1][3].block = NORMAL;
+	blockData_[3][1][4].block = NORMAL;
+	blockData_[3][1][5].block = NORMAL;
+	blockData_[3][2][3].block = NORMAL;
+	blockData_[3][2][4].block = NORMAL;
+	blockData_[3][2][5].block = NORMAL;
+	blockData_[3][3][3].block = NORMAL;
+	blockData_[3][3][4].block = NORMAL;
+	blockData_[3][3][5].block = NORMAL;
 
-	stage_[4][1][3] = 1;
-	stage_[4][1][4] = 1;
-	stage_[4][1][5] = 1;
-	stage_[4][2][3] = 1;
-	stage_[4][2][4] = 1;
-	stage_[4][2][5] = 1;
-	stage_[4][3][3] = 1;
-	stage_[4][3][4] = 1;
-	stage_[4][3][5] = 1;
-	stage_[4][4][3] = 1;
-	stage_[4][4][4] = 1;
-	stage_[4][4][5] = 1;
+	blockData_[4][1][3].block = NORMAL;
+	blockData_[4][1][4].block = NORMAL;
+	blockData_[4][1][5].block = NORMAL;
+	blockData_[4][2][3].block = NORMAL;
+	blockData_[4][2][4].block = NORMAL;
+	blockData_[4][2][5].block = NORMAL;
+	blockData_[4][3][3].block = NORMAL;
+	blockData_[4][3][4].block = NORMAL;
+	blockData_[4][3][5].block = NORMAL;
+	blockData_[4][4][3].block = NORMAL;
+	blockData_[4][4][4].block = NORMAL;
+	blockData_[4][4][5].block = NORMAL;
 
-	stage_[7][1][5] = 1;
+	blockData_[7][1][5].block = NORMAL;
 }
 
 void Stage::Update()
@@ -86,10 +88,15 @@ void Stage::Draw()
 	for (int z = 0; z < Set::STAGE_SIZE.z; z++) {
 		for (int y = 0; y < Set::STAGE_SIZE.y; y++) {
 			for (int x = 0; x < Set::STAGE_SIZE.x; x++) {
-				if (stage_[z][y][x] == NORMAL) {
+				if (blockData_[z][y][x].block == NORMAL) {
 					t.position_ = { (float)x,(float)y,(float)z};
 					Model::SetTransform(hModel_, t);
 					Model::Draw(hModel_);
+					if (blockData_[z][y][x].isOutLineDraw) {
+						t.position_ = { (float)x,(float)y + 0.2f,(float)z };
+						Model::SetTransform(hModel_, t);
+						Model::OutLineDraw(hModel_);
+					}
 				}
 			}
 		}
@@ -110,7 +117,7 @@ void Stage::StageBlockRayCast(RayCastData& _rayData)
 	for (int z = 0; z < Set::STAGE_SIZE.z; z++) {
 		for (int y = 0; y < Set::STAGE_SIZE.y; y++) {
 			for (int x = 0; x < Set::STAGE_SIZE.x; x++) {
-				if (stage_[z][y][x] == NORMAL) {
+				if (blockData_[z][y][x].block == NORMAL) {
 					t.position_ = { (float)x,(float)y,(float)z };
 					Model::RayCast(hModel_, data, t);
 					if (data.hit && data.dist < minDistData.dist) {
@@ -135,7 +142,7 @@ void Stage::FallRayCast(RayCastData& _rayData)
 	if (rx < 0 || rx >= Set::STAGE_SIZE.x || rz < 0 || rz >= Set::STAGE_SIZE.z)
 		return;
 	for (int y = 0; y < Set::STAGE_SIZE.y; y++) {
-		if (stage_[rz][y][rx] == NORMAL) {
+		if (blockData_[rz][y][rx].block == NORMAL) {
 			t.position_ = { (float)rx,(float)y,(float)rz };
 			Model::RayCast(hModel_, data, t);
 			if (data.hit && data.dist < minDistData.dist) {
@@ -190,7 +197,7 @@ XMFLOAT3 Stage::GetPushBack(XMFLOAT3 _pos, float _radius)
 void Stage::SetBlock(int x, int y, int z)
 {
 	if (x >= 0 && x < Set::STAGE_SIZE.x && y >= 0 && y < Set::STAGE_SIZE.y && z >= 0 && z < Set::STAGE_SIZE.z) {
-		stage_[z][y][x] = NORMAL;
+		blockData_[z][y][x].block = NORMAL;
 	}
 }
 
@@ -201,7 +208,7 @@ bool Stage::GetHitBlockToSphere(XMFLOAT3 _pos, float _radius, XMFLOAT3& _getpos)
 	for (int z = 0; z < Set::STAGE_SIZE.z; z++) {
 		for (int y = 0; y < Set::STAGE_SIZE.y; y++) {
 			for (int x = 0; x < Set::STAGE_SIZE.x; x++) {
-				if (stage_[z][y][x] == NORMAL) {
+				if (blockData_[z][y][x].block == NORMAL) {
 					XMFLOAT3 pos = { (float)x,(float)y,(float)z };
 					XMFLOAT3 min;
 					min.x = GetClosestPoint(pos.x + Set::BLOCK_SIZE.x / 2, _pos.x);
@@ -239,7 +246,7 @@ bool Stage::GetHitBlockToCircle(XMFLOAT3 _pos, float _radius, XMFLOAT3& _getpos)
 
 	for (int z = 0; z < Set::STAGE_SIZE.z; z++) {
 		for (int x = 0; x < Set::STAGE_SIZE.x; x++) {
-			if (stage_[z][y][x] == NORMAL) {
+			if (blockData_[z][y][x].block == NORMAL) {
 				XMFLOAT3 pos = { (float)x,(float)y,(float)z };
 				XMFLOAT3 min;
 				min.x = GetClosestPoint(pos.x, _pos.x);

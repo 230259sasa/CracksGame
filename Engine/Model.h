@@ -15,6 +15,7 @@ namespace Model
 	int Load(std::string filename);
 	void SetTransform(int hModel, Transform transform);
 	void Draw(int hModel);
+	void OutLineDraw(int hModel);
 	void Release();
 	void RayCast(int hModel, RayCastData& rayData, Transform& transform);
 }

@@ -229,13 +229,8 @@ void FBX::InitMaterial(fbxsdk::FbxNode* pNode)
 void FBX::Draw(Transform& transform)
 {
 	//Quad‚ðƒAƒŒƒ“ƒW
-	Direct3D::SetShader(SHADER_3D);
+	//Direct3D::SetShader(SHADER_3D);
 	transform.Calculation();
-
-	
-	/*UINT stride = sizeof(VERTEX);
-	UINT offset = 0;
-	Direct3D::pContext->IASetVertexBuffers(0, 1, &pVertexBuffer_, &stride, &offset);*/
 
 	CONSTANT_BUFFER cb;
 	cb.matWVP = XMMatrixTranspose(transform.GetWorldMatrix() * Camera::GetViewMatrix() * Camera::GetProjectionMatrix());
@@ -284,6 +279,18 @@ void FBX::Draw(Transform& transform)
 		//•`‰æ
 		Direct3D::pContext->DrawIndexed(indexCount_[i], 0, 0);
 	}
+}
+
+void FBX::OutLineDraw(Transform& transform)
+{
+	Direct3D::SetShader(SHADER_OUTLINE);
+	Draw(transform);
+}
+
+void FBX::ThreeDimensionalDraw(Transform& transform)
+{
+	Direct3D::SetShader(SHADER_3D);
+	Draw(transform);
 }
 
 void FBX::Release()

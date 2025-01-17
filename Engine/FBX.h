@@ -65,6 +65,8 @@ public:
 	FBX();
 	HRESULT Load(std::string fileName);
 	void    Draw(Transform& transform);
+	void    OutLineDraw(Transform& transform);
+	void	ThreeDimensionalDraw(Transform& transform);
 	void    Release(); 
 	void	RayCast(RayCastData& rayData, Transform& transform);
 };
