@@ -8,11 +8,11 @@ FBXHeaderExtension:  {
 		Version: 1000
 		Year: 2025
 		Month: 1
-		Day: 16
-		Hour: 17
-		Minute: 39
-		Second: 43
-		Millisecond: 297
+		Day: 17
+		Hour: 10
+		Minute: 46
+		Second: 51
+		Millisecond: 480
 	}
 	Creator: "FBX SDK/FBX Plugins version 2020.3.4"
 	OtherFlags:  {
@@ -37,13 +37,13 @@ FBXHeaderExtension:  {
 			P: "Original|ApplicationVendor", "KString", "", "", "Autodesk"
 			P: "Original|ApplicationName", "KString", "", "", "Maya"
 			P: "Original|ApplicationVersion", "KString", "", "", "2024"
-			P: "Original|DateTime_GMT", "DateTime", "", "", "16/01/2025 08:39:43.295"
+			P: "Original|DateTime_GMT", "DateTime", "", "", "17/01/2025 01:46:51.477"
 			P: "Original|FileName", "KString", "", "", "D:\GE2A09\program\CracksGame\Assets\Model\BoxGrass.fbx"
 			P: "LastSaved", "Compound", "", ""
 			P: "LastSaved|ApplicationVendor", "KString", "", "", "Autodesk"
 			P: "LastSaved|ApplicationName", "KString", "", "", "Maya"
 			P: "LastSaved|ApplicationVersion", "KString", "", "", "2024"
-			P: "LastSaved|DateTime_GMT", "DateTime", "", "", "16/01/2025 08:39:43.295"
+			P: "LastSaved|DateTime_GMT", "DateTime", "", "", "17/01/2025 01:46:51.477"
 			P: "Original|ApplicationActiveProject", "KString", "", "", "D:\GE2A09\program\CracksGame\Assets\Model"
 		}
 	}
@@ -79,7 +79,7 @@ GlobalSettings:  {
 
 Documents:  {
 	Count: 1
-	Document: 2013774993024, "", "Scene" {
+	Document: 2606122362144, "", "Scene" {
 		Properties70:  {
 			P: "SourceObject", "object", "", ""
 			P: "ActiveAnimStackName", "KString", "", "", "Take 001"
@@ -302,9 +302,9 @@ Definitions:  {
 ;------------------------------------------------------------------
 
 Objects:  {
-	Geometry: 2013509980880, "Geometry::", "Mesh" {
+	Geometry: 2606163813840, "Geometry::", "Mesh" {
 		Vertices: *108 {
-			a: 0,0,0,1,0,0,0,1,0,1,1,0,0,1,-1,1,1,-1,0,0,-1,1,0,-1,0,1,0,1,0,0,0,1,0,1,1,0,0,1,-1,1,1,0,0,1,-1,1,1,-1,0,0,-1,1,1,-1,0,0,-1,1,0,-1,0,0,0,0,0,0,1,0,-1,1,0,0,1,0,0,1,0,-1,1,1,0,1,1,0,1,0,-1,1,1,-1,0,0,-1,0,0,0,0,1,-1,0,1,-1,0,0,0,0,1,0
+			a: 0,0,1,1,0,1,0,1,1,1,1,1,0,1,0,1,1,0,0,0,0,1,0,0,0,1,1,1,0,1,0,1,1,1,1,1,0,1,0,1,1,1,0,1,0,1,1,0,0,0,0,1,1,0,0,0,0,1,0,0,0,0,1,0,0,1,1,0,0,1,0,1,1,0,1,1,0,0,1,1,1,1,1,1,1,0,0,1,1,0,0,0,0,0,0,1,0,1,0,0,1,0,0,0,1,0,1,1
 		} 
 		PolygonVertexIndex: *36 {
 			a: 0,1,-3,8,9,-4,10,11,-5,12,13,-6,14,15,-7,16,17,-8,18,19,-21,21,22,-24,24,25,-27,27,28,-30,30,31,-33,33,34,-36
@@ -395,11 +395,11 @@ Objects:  {
 			}
 		}
 	}
-	Model: 2013737267984, "Model::pCube1", "Mesh" {
+	Model: 2606171828992, "Model::pCube1", "Mesh" {
 		Version: 232
 		Properties70:  {
-			P: "RotationPivot", "Vector3D", "Vector", "",0.5,0.5,-0.5
-			P: "ScalingPivot", "Vector3D", "Vector", "",0.5,0.5,-0.5
+			P: "RotationPivot", "Vector3D", "Vector", "",0.5,0.5,0.5
+			P: "ScalingPivot", "Vector3D", "Vector", "",0.5,0.5,0.5
 			P: "RotationActive", "bool", "", "",1
 			P: "InheritType", "enum", "", "",1
 			P: "ScalingMax", "Vector3D", "Vector", "",0,0,0
@@ -409,7 +409,7 @@ Objects:  {
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Material: 2013571211328, "Material::lambert5", "" {
+	Material: 2605634170688, "Material::lambert5", "" {
 		Version: 102
 		ShadingModel: "lambert"
 		MultiLayer: 0
@@ -424,17 +424,7 @@ Objects:  {
 			P: "Opacity", "double", "Number", "",1
 		}
 	}
-	Video: 2013747290736, "Video::file1", "Clip" {
-		Type: "Clip"
-		Properties70:  {
-			P: "Path", "KString", "XRefUrl", "", "D:/GE2A09/program/CracksGame/Assets/Model/texture.png"
-			P: "RelPath", "KString", "XRefUrl", "", "texture.png"
-		}
-		UseMipMap: 0
-		Filename: "D:/GE2A09/program/CracksGame/Assets/Model/texture.png"
-		RelativeFilename: "texture.png"
-	}
-	Video: 2013747303216, "Video::file4", "Clip" {
+	Video: 2605009968288, "Video::file6", "Clip" {
 		Type: "Clip"
 		Properties70:  {
 			P: "Path", "KString", "XRefUrl", "", "D:\GE2A09\program\CracksGame\Assets\Model\texture.png"
@@ -444,33 +434,26 @@ Objects:  {
 		Filename: "D:\GE2A09\program\CracksGame\Assets\Model\texture.png"
 		RelativeFilename: "texture.png"
 	}
-	Texture: 2013747280176, "Texture::file1", "" {
-		Type: "TextureVideoClip"
-		Version: 202
-		TextureName: "Texture::file1"
+	Video: 2605009970208, "Video::file5", "Clip" {
+		Type: "Clip"
 		Properties70:  {
-			P: "CurrentTextureBlendMode", "enum", "", "",0
-			P: "UVSet", "KString", "", "", "map1"
-			P: "UseMaterial", "bool", "", "",1
+			P: "Path", "KString", "XRefUrl", "", "D:\GE2A09\program\CracksGame\Assets\Model\texture.png"
+			P: "RelPath", "KString", "XRefUrl", "", "texture.png"
 		}
-		Media: "Video::file1"
-		FileName: "D:/GE2A09/program/CracksGame/Assets/Model/texture.png"
+		UseMipMap: 0
+		Filename: "D:\GE2A09\program\CracksGame\Assets\Model\texture.png"
 		RelativeFilename: "texture.png"
-		ModelUVTranslation: 0,0
-		ModelUVScaling: 1,1
-		Texture_Alpha_Source: "None"
-		Cropping: 0,0,0,0
 	}
-	Texture: 2013747284016, "Texture::file4", "" {
+	Texture: 2605009990368, "Texture::file6", "" {
 		Type: "TextureVideoClip"
 		Version: 202
-		TextureName: "Texture::file4"
+		TextureName: "Texture::file6"
 		Properties70:  {
 			P: "CurrentTextureBlendMode", "enum", "", "",0
 			P: "UVSet", "KString", "", "", "map1"
 			P: "UseMaterial", "bool", "", "",1
 		}
-		Media: "Video::file4"
+		Media: "Video::file6"
 		FileName: "D:\GE2A09\program\CracksGame\Assets\Model\texture.png"
 		RelativeFilename: "texture.png"
 		ModelUVTranslation: 0,0
@@ -478,7 +461,24 @@ Objects:  {
 		Texture_Alpha_Source: "None"
 		Cropping: 0,0,0,0
 	}
-	AnimationStack: 2013599033776, "AnimStack::Take 001", "" {
+	Texture: 2605009978848, "Texture::file5", "" {
+		Type: "TextureVideoClip"
+		Version: 202
+		TextureName: "Texture::file5"
+		Properties70:  {
+			P: "CurrentTextureBlendMode", "enum", "", "",0
+			P: "UVSet", "KString", "", "", "map1"
+			P: "UseMaterial", "bool", "", "",1
+		}
+		Media: "Video::file5"
+		FileName: "D:\GE2A09\program\CracksGame\Assets\Model\texture.png"
+		RelativeFilename: "texture.png"
+		ModelUVTranslation: 0,0
+		ModelUVScaling: 1,1
+		Texture_Alpha_Source: "None"
+		Cropping: 0,0,0,0
+	}
+	AnimationStack: 2606175259312, "AnimStack::Take 001", "" {
 		Properties70:  {
 			P: "LocalStart", "KTime", "Time", "",1924423250
 			P: "LocalStop", "KTime", "Time", "",230930790000
@@ -486,7 +486,7 @@ Objects:  {
 			P: "ReferenceStop", "KTime", "Time", "",230930790000
 		}
 	}
-	AnimationLayer: 2013808643584, "AnimLayer::BaseLayer", "" {
+	AnimationLayer: 2606125291792, "AnimLayer::BaseLayer", "" {
 	}
 }
 
@@ -496,28 +496,28 @@ Objects:  {
 Connections:  {
 	
 	;Model::pCube1, Model::RootNode
-	C: "OO",2013737267984,0
+	C: "OO",2606171828992,0
 	
 	;AnimLayer::BaseLayer, AnimStack::Take 001
-	C: "OO",2013808643584,2013599033776
+	C: "OO",2606125291792,2606175259312
 	
-	;Texture::file4, Material::lambert5
-	C: "OP",2013747284016,2013571211328, "AmbientColor"
+	;Texture::file5, Material::lambert5
+	C: "OP",2605009978848,2605634170688, "AmbientColor"
 	
-	;Texture::file1, Material::lambert5
-	C: "OP",2013747280176,2013571211328, "DiffuseColor"
+	;Texture::file6, Material::lambert5
+	C: "OP",2605009990368,2605634170688, "DiffuseColor"
 	
-	;Video::file1, Texture::file1
-	C: "OO",2013747290736,2013747280176
+	;Video::file6, Texture::file6
+	C: "OO",2605009968288,2605009990368
 	
-	;Video::file4, Texture::file4
-	C: "OO",2013747303216,2013747284016
+	;Video::file5, Texture::file5
+	C: "OO",2605009970208,2605009978848
 	
 	;Geometry::, Model::pCube1
-	C: "OO",2013509980880,2013737267984
+	C: "OO",2606163813840,2606171828992
 	
 	;Material::lambert5, Model::pCube1
-	C: "OO",2013571211328,2013737267984
+	C: "OO",2605634170688,2606171828992
 }
 ;Takes section
 ;----------------------------------------------------

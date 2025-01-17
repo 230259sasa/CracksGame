@@ -18,7 +18,7 @@ namespace Set {
 
 	const int LEFT_MOVE_ANGLE(90);
 	const int RIGHT_MOVE_ANGLE(270);
-	const float PLAYER_RADIUS(0.5f);
+	const float PLAYER_RADIUS(0.4f);
 	const float MOVE_SPEED(0.05f);
 	const float JUMP_HEIGHT(1.5);//ジャンプの高さ
 	const float JUMP_LAUNCH_SPEED(sqrtf(2 * GRAVITY * JUMP_HEIGHT));//ジャンプの初速
@@ -151,7 +151,7 @@ void Player::Move()
 		pos.x += move.x;
 		pos.y += 0.1f;
 		pos.z += move.z;
-		//push = stage->GetPushBack(pos, Set::PLAYER_RADIUS);
+		push = stage->GetPushBack(pos, Set::PLAYER_RADIUS);
 		move.x += push.x;
 		move.z += push.z;
 
@@ -254,9 +254,9 @@ void Player::SetBlock()
 		return;
 
 	int x, y, z;
-	x = (int)(transform_.position_.x + Set::PLAYER_RADIUS);
-	y = (int)(transform_.position_.y + 1);
-	z = (int)(transform_.position_.z + Set::PLAYER_RADIUS);
+	x = (int)(transform_.position_.x);
+	y = (int)(transform_.position_.y);
+	z = (int)(transform_.position_.z);
 
 	/*int dir = ((int)transform_.rotate_.y % 360) / 45;
 

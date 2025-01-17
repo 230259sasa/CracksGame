@@ -3,7 +3,7 @@
 
 namespace Set {
 	const XMFLOAT3 BLOCK_SIZE(1.0f, 1.0f,1.0f);
-	const XMFLOAT3 STAGE_SIZE(50, 5, 50);
+	const XMFLOAT3 STAGE_SIZE(20, 5, 20);
 }
 
 Stage::Stage(GameObject* parent)
@@ -134,19 +134,15 @@ void Stage::FallRayCast(RayCastData& _rayData)
 	int rz = (int)_rayData.start.z;
 	if (rx < 0 || rx >= Set::STAGE_SIZE.x || rz < 0 || rz >= Set::STAGE_SIZE.z)
 		return;
-	//for (int z = rz; z <= rz; z++) {
-		for (int y = 0; y < Set::STAGE_SIZE.y; y++) {
-			//for (int x = rx; x <= rx; x++) {
-				if (stage_[rz][y][rx] == NORMAL) {
-					t.position_ = { (float)rx,(float)y,(float)rz };
-					Model::RayCast(hModel_, data, t);
-					if (data.hit && data.dist < minDistData.dist) {
-						minDistData = data;
-					}
-				}
-			//}
+	for (int y = 0; y < Set::STAGE_SIZE.y; y++) {
+		if (stage_[rz][y][rx] == NORMAL) {
+			t.position_ = { (float)rx,(float)y,(float)rz };
+			Model::RayCast(hModel_, data, t);
+			if (data.hit && data.dist < minDistData.dist) {
+				minDistData = data;
+			}
 		}
-	//}
+	}
 	
 	_rayData = minDistData;
 }
@@ -246,8 +242,8 @@ bool Stage::GetHitBlockToCircle(XMFLOAT3 _pos, float _radius, XMFLOAT3& _getpos)
 			if (stage_[z][y][x] == NORMAL) {
 				XMFLOAT3 pos = { (float)x,(float)y,(float)z };
 				XMFLOAT3 min;
-				min.x = GetClosestPoint(pos.x + Set::BLOCK_SIZE.x / 2, _pos.x);
-				min.z = GetClosestPoint(pos.z - Set::BLOCK_SIZE.z / 2, _pos.z);
+				min.x = GetClosestPoint(pos.x, _pos.x);
+				min.z = GetClosestPoint(pos.z, _pos.z);
 				XMFLOAT3 len;
 				len.x = _pos.x - min.x;
 				len.z = _pos.z - min.z;
@@ -266,11 +262,11 @@ bool Stage::GetHitBlockToCircle(XMFLOAT3 _pos, float _radius, XMFLOAT3& _getpos)
 float Stage::GetClosestPoint(float _bpos, float _pos)
 {
 	float min = _pos;
-	if (_pos < _bpos - Set::BLOCK_SIZE.x / 2) {
-		min = _bpos - Set::BLOCK_SIZE.x / 2;
+	if (_pos < _bpos) {
+		min = _bpos;
 	}
-	else if (_pos > _bpos + Set::BLOCK_SIZE.x / 2) {
-		min = _bpos + Set::BLOCK_SIZE.x / 2;
+	else if (_pos > _bpos + Set::BLOCK_SIZE.x) {
+		min = _bpos + Set::BLOCK_SIZE.x;
 	}
 
 	return min;

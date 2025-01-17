@@ -7,7 +7,7 @@
 #include"../imgui/imgui_impl_win32.h"
 
 enum SHADER_TYPE {
-	SHADER_2D,SHADER_3D,SHADER_MAX
+	SHADER_2D,SHADER_3D,SHADER_OUTLINE,SHADER_MAX
 };
 //ƒŠƒ“ƒJ
 #pragma comment(lib, "d3d11.lib")
@@ -25,6 +25,7 @@ namespace Direct3D
 	HRESULT InitShader();
 	HRESULT InitShader3D();
 	HRESULT InitShader2D();
+	HRESULT InitShaderOutLine();
 	void SetShader(SHADER_TYPE type);
 	//•`‰æŠJŽn
 	void BeginDraw();
