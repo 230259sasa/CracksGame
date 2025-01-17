@@ -19,6 +19,7 @@ Stage::~Stage()
 void Stage::Initialize()
 {
 	hModel_ = Model::Load("Assets/Model/BoxDefault.fbx");
+	hFrame_ = Model::Load("Assets/Model/Frame/RedBigFrame.fbx");
 	assert(hModel_ >= 0);
 	
 	for (int z = 0; z < Set::STAGE_SIZE.z; z++) {
@@ -32,6 +33,7 @@ void Stage::Initialize()
 					data.block = NORMAL;
 				else
 					data.block = NONE;
+				v.push_back(data);
 			}
 			vec.push_back(v);
 		}
@@ -39,7 +41,7 @@ void Stage::Initialize()
 	}
 
 	blockData_[0][1][3].block = NORMAL;
-	blockData_[0][1][4].block = NORMAL;
+	/*blockData_[0][1][4].block = NORMAL;
 	blockData_[0][1][5].block = NORMAL;
 	blockData_[1][1][3].block = NORMAL;
 	blockData_[1][1][4].block = NORMAL;
@@ -75,7 +77,7 @@ void Stage::Initialize()
 	blockData_[4][4][4].block = NORMAL;
 	blockData_[4][4][5].block = NORMAL;
 
-	blockData_[7][1][5].block = NORMAL;
+	blockData_[7][1][5].block = NORMAL;*/
 }
 
 void Stage::Update()
