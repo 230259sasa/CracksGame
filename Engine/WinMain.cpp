@@ -8,6 +8,9 @@
 #include"Input.h"
 #include"Model.h"
 #include"DeltaTime.h"
+#include "../imgui/imgui.h"
+#include "../imgui/imgui_impl_dx11.h"
+#include "../imgui/imgui_impl_win32.h"
 //リンカ
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "winmm.lib")
@@ -70,6 +73,14 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, 
 	{
 		MessageBox(NULL, L"DirectXの初期化に失敗", NULL, MB_OK);
 		return 0;
+	}
+	{
+		IMGUI_CHECKVERSION();
+		ImGui::CreateContext();
+		ImGuiIO& io = ImGui::GetIO();
+		ImGui_ImplWin32_Init(hWnd);
+		ImGui_ImplDX11_Init(Direct3D::pDevice, Direct3D::pContext);
+		ImGui::StyleColorsLight();
 	}
 
 	Input::Initialize(hWnd);
@@ -145,9 +156,14 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, 
 	return 0;
 }
 
+//  ImGuiのメッセージ処理
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
 //ウィンドウプロシージャ（何かあった時によばれる関数）
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
+	if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
+		return true;
 	switch (msg)
 	{
 	case WM_DESTROY:

@@ -6,6 +6,10 @@
 #include"Stage.h"
 #include<numbers>
 
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_dx11.h"
+#include "imgui/imgui_impl_win32.h"
+
 namespace Set {
 	const float GRAVITY(25.0f);
 	const float MAX_FALL_VELOCITY(-10.0f);//óéâ∫ÇÃç≈ëÂë¨ìx
@@ -62,6 +66,13 @@ void Player::Draw()
 	trans.scale_ = XMFLOAT3(0.8, 1, 0.8);
 	Model::SetTransform(hModel_, trans);
 	Model::Draw(hModel_);
+	{
+		ImGui::Text("position x=%5.3li,y=%5.3li,z=%5.3li", (int)transform_.position_.x,
+			(int)transform_.position_.y, (int)transform_.position_.z);
+		ImGui::Text("position x=%5.3lf,y=%5.3lf,z=%5.3lf", transform_.position_.x,
+			transform_.position_.y, transform_.position_.z);
+
+	}
 }
 
 void Player::Move()
