@@ -30,7 +30,7 @@ void Stage::Initialize()
 			for (int x = 0; x < Set::STAGE_SIZE.x; x++) {
 				STAGE_BLOCK_DATA data;
 				data.isOutLineDraw = false;
-				if(y<1)
+				if(y<2)
 					data.block = NORMAL;
 				else
 					data.block = NONE;
@@ -41,17 +41,17 @@ void Stage::Initialize()
 		blockData_.push_back(vec);
 	}
 
-	blockData_[0][1][3].block = NORMAL;
-	blockData_[0][1][4].block = NORMAL;
-	blockData_[0][1][5].block = NORMAL;
-	blockData_[1][1][3].block = NORMAL;
-	blockData_[1][1][4].block = NORMAL;
-	blockData_[1][1][5].block = NORMAL;
+	blockData_[9][2][3].block = NORMAL;
+	blockData_[9][2][4].block = NORMAL;
+	blockData_[9][2][5].block = NORMAL;
+	blockData_[8][2][3].block = NORMAL;
+	blockData_[8][2][4].block = NORMAL;
+	blockData_[8][2][5].block = NORMAL;
 
-	/*blockData_[2][1][3].block = NORMAL;
-	blockData_[2][1][4].block = NORMAL;
-	blockData_[2][1][5].block = NORMAL;
-	blockData_[2][2][3].block = NORMAL;
+	blockData_[7][2][3].block = NORMAL;
+	blockData_[7][2][4].block = NORMAL;
+	blockData_[7][2][5].block = NORMAL;
+	/*blockData_[2][2][3].block = NORMAL;
 	blockData_[2][2][4].block = NORMAL;
 	blockData_[2][2][5].block = NORMAL;
 

@@ -11,13 +11,13 @@
 #include "imgui/imgui_impl_win32.h"
 
 namespace Set {
-	const int MAX_FALL_BLOCK(20);
+	const int MAX_FALL_BLOCK(24);
 	const float DEFAULT_HIGHT(10);
 	const float BLOCK_SIZE(1);
 
 	const int ACTIVE_BLOCK_NUM(1);
 	const int GAME_OVER_ON_GROUND_BLOCK_NUM(8);
-	const float NEXT_FALL_TIME(3.0f);
+	const float NEXT_FALL_TIME(2.5f);
 }
 
 namespace DT = DeltaTime;

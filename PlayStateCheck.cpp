@@ -1,6 +1,7 @@
 #include "PlayStateCheck.h"
 #include "FallBlockManager.h"
 #include"Engine/Sprite.h"
+#include"Engine/Input.h"
 #include<sstream>
 
 namespace Set {
@@ -63,9 +64,13 @@ bool PlayStateCheck::IsClear()
 
 bool PlayStateCheck::IsGameOver()
 {
+	if (Input::IsKey(DIK_I))
+		return true;
+
 	FallBlockManager* fall = nullptr;
 	fall = (FallBlockManager*)FindObject("FallBlockManager");
 	if (fall != nullptr)
 		return (fall->GetOnGroundBlockNum() >= Set::GAME_OVER_ON_GROUND_BLOCK_NUM);
+
 	return false;
 }

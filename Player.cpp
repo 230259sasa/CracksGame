@@ -41,8 +41,9 @@ void Player::Initialize()
 	hModel_ = Model::Load("Assets/Model/TestPlayer2.fbx");
 	assert(hModel_ >= 0);
 	//Stageのブロックに重ならないために足している
-	transform_.position_.y += 1.0f;
-
+	transform_.position_.y += 2.0f;
+	framePos_ = { (int)transform_.position_.x, (int)transform_.position_.y-1,
+		(int)transform_.position_.z+1 };
 	Camera::SetPlayerPointer(this);
 }
 
