@@ -3,11 +3,11 @@
 
 namespace Set {
 	const XMFLOAT3 BLOCK_SIZE(1.0f, 1.0f,1.0f);
-	const XMFLOAT3 STAGE_SIZE(20, 5, 20);
+	const XMINT3 STAGE_SIZE(11, 5, 11);
 }
 
 Stage::Stage(GameObject* parent)
-	:GameObject(parent,"Stage"),hModel_(-1)
+	:GameObject(parent,"Stage"),hModel_(-1),hFrame_(-1)
 {
 }
 
@@ -18,9 +18,10 @@ Stage::~Stage()
 
 void Stage::Initialize()
 {
-	hModel_ = Model::Load("Assets/Model/BoxDefault.fbx");
-	hFrame_ = Model::Load("Assets/Model/Frame/RedBigFrame.fbx");
+	hModel_ = Model::Load("Assets/Model/BoxGrass.fbx");
 	assert(hModel_ >= 0);
+	hFrame_ = Model::Load("Assets/Model/Frame/RedFrame.fbx");
+	assert(hFrame_ >= 0);
 	
 	for (int z = 0; z < Set::STAGE_SIZE.z; z++) {
 		std::vector<std::vector<STAGE_BLOCK_DATA>> vec;
@@ -41,13 +42,13 @@ void Stage::Initialize()
 	}
 
 	blockData_[0][1][3].block = NORMAL;
-	/*blockData_[0][1][4].block = NORMAL;
+	blockData_[0][1][4].block = NORMAL;
 	blockData_[0][1][5].block = NORMAL;
 	blockData_[1][1][3].block = NORMAL;
 	blockData_[1][1][4].block = NORMAL;
 	blockData_[1][1][5].block = NORMAL;
 
-	blockData_[2][1][3].block = NORMAL;
+	/*blockData_[2][1][3].block = NORMAL;
 	blockData_[2][1][4].block = NORMAL;
 	blockData_[2][1][5].block = NORMAL;
 	blockData_[2][2][3].block = NORMAL;
@@ -201,6 +202,73 @@ void Stage::SetBlock(int x, int y, int z)
 	if (x >= 0 && x < Set::STAGE_SIZE.x && y >= 0 && y < Set::STAGE_SIZE.y && z >= 0 && z < Set::STAGE_SIZE.z) {
 		blockData_[z][y][x].block = NORMAL;
 	}
+}
+
+void Stage::SetNoneBlock(int x, int y, int z)
+{
+	if (x >= 0 && x < Set::STAGE_SIZE.x && y >= 0 && y < Set::STAGE_SIZE.y && z >= 0 && z < Set::STAGE_SIZE.z) {
+		blockData_[z][y][x].block = NONE;
+	}
+}
+
+void Stage::DrawFrame(XMFLOAT3 _pos)
+{
+	Transform t;
+	t.position_ = _pos;
+	t.position_.x -= 0.05;
+	t.position_.z -= 0.05;
+	t.scale_ = { 1.1f,1.1f,1.1f };
+	Model::SetTransform(hFrame_, t);
+	Model::OutLineDraw(hFrame_);
+}
+
+XMINT3 Stage::GetStageSize()
+{
+	return Set::STAGE_SIZE;
+}
+
+XMFLOAT3 Stage::GetScaffoldPos()
+{
+	for (int z = 0; z < Set::STAGE_SIZE.z; z++) {
+		for (int x = 0; x < Set::STAGE_SIZE.x; x++) {
+			for (int y = Set::STAGE_SIZE.y - 1; y >= 0; y--) {
+				if (blockData_[z][y][x].block == NORMAL) {
+					return XMFLOAT3((float)x, (float)y, (float)z);
+				}
+			}
+		}
+	}
+	return XMFLOAT3(0,0,0);
+}
+
+XMFLOAT3 Stage::GetRandomScaffoldPos()
+{
+	XMFLOAT3 pos(0,0,0);
+	std::vector<XMFLOAT3> vPos;
+	for (int z = 0; z < Set::STAGE_SIZE.z; z++) {
+		for (int x = 0; x < Set::STAGE_SIZE.x; x++) {
+			for (int y = Set::STAGE_SIZE.y - 1; y >= 0; y--) {
+				if (blockData_[z][y][x].block == NORMAL) {
+					vPos.push_back(XMFLOAT3((float)x, (float)y, (float)z));
+				}
+			}
+		}
+	}
+
+	if(vPos.size() > 0)
+		pos = vPos[rand() % vPos.size()];
+
+	return pos;
+}
+
+bool Stage::GetIsOnBlock(XMINT3 _pos)
+{
+	if (_pos.x >= 0 && _pos.x < Set::STAGE_SIZE.x && _pos.y >= 0 && _pos.y < Set::STAGE_SIZE.y &&
+		_pos.z >= 0 && _pos.z < Set::STAGE_SIZE.z) {
+		if (blockData_[_pos.z][_pos.y][_pos.x].block == NORMAL)
+			return true;
+	}
+	return false;
 }
 
 bool Stage::GetHitBlockToSphere(XMFLOAT3 _pos, float _radius, XMFLOAT3& _getpos)

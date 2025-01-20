@@ -67,7 +67,7 @@ public:
 		if (pTmp != nullptr)
 		{
 			pTmp->Initialize();
-			pParent->childList_.push_back(pTmp);
+			childList_.push_back(pTmp);
 		}
 		return pTmp;
 	}

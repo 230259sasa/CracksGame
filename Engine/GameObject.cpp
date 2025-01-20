@@ -88,8 +88,8 @@ GameObject* GameObject::FindChildObject(std::string objName)
 	else {
 		for (auto itr : childList_) {
 			GameObject* obj = itr->FindChildObject(objName);
-			if (obj != nullptr);
-			return obj;
+			if (obj != nullptr)
+				return obj;
 		}
 	}
 	return nullptr;

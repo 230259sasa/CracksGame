@@ -9,7 +9,7 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_dx11.h"
 #include "imgui/imgui_impl_win32.h"
-
+#include "FallBlockManager.h"
 namespace Set {
 	const float GRAVITY(25.0f);
 	const float MAX_FALL_VELOCITY(-10.0f);//落下の最大速度
@@ -27,7 +27,8 @@ namespace Set {
 namespace DT = DeltaTime;
 
 Player::Player(GameObject* parent)
-	:GameObject(parent, "Player"), hModel_(-1), jumpVelocity_(0.0f), isGround_(true)
+	:GameObject(parent, "Player"), hModel_(-1), jumpVelocity_(0.0f), isGround_(true),
+	framePos_({ 0,0,0 })
 {
 }
 
@@ -54,25 +55,37 @@ void Player::Update()
 	Move();
 	Jump();
 	Fall();
-	MoveCamera();
-	SetBlock();
+	Relocate();
+	//MoveCamera();
+	BreakStageBlock();
 }
 
 void Player::Draw()
 {
+	/*{
+		ImGui::Text("position x=%5.3li,y=%5.3li,z=%5.3li", (int)transform_.position_.x,
+			(int)transform_.position_.y, (int)transform_.position_.z);
+		ImGui::Text("position x=%5.3lf,y=%5.3lf,z=%5.3lf", transform_.position_.x,
+			transform_.position_.y, transform_.position_.z);
+
+	}*/
+
+	FallBlockManager* fall = nullptr;
+	GameObject* p = (FallBlockManager*)FindObject("FallBlockManager");
+	if (p == nullptr)
+		return;
 	Transform trans = transform_;
 	trans.position_.x = XMVectorGetX(Camera::GetTarget());
 	trans.position_.z = XMVectorGetZ(Camera::GetTarget());
 	trans.scale_ = XMFLOAT3(0.8, 1, 0.8);
 	Model::SetTransform(hModel_, trans);
 	Model::Draw(hModel_);
-	{
-		ImGui::Text("position x=%5.3li,y=%5.3li,z=%5.3li", (int)transform_.position_.x,
-			(int)transform_.position_.y, (int)transform_.position_.z);
-		ImGui::Text("position x=%5.3lf,y=%5.3lf,z=%5.3lf", transform_.position_.x,
-			transform_.position_.y, transform_.position_.z);
-
-	}
+	
+	Stage* stage = nullptr;
+	stage = (Stage*)FindObject("Stage");
+	if (stage == nullptr)
+		return;
+	stage->DrawFrame({(float)framePos_.x,(float)framePos_.y,(float)framePos_.z});
 }
 
 void Player::Move()
@@ -161,6 +174,8 @@ void Player::Move()
 			atan2(vectorZ, vectorX));
 	}
 	//移動
+	pastPos_ = { (int)transform_.position_.x,(int)transform_.position_.y,
+		(int)transform_.position_.z };
 	transform_.position_.x += move.x;
 	transform_.position_.z += move.z;
 }
@@ -189,28 +204,6 @@ void Player::Fall()
 	Stage* stage = nullptr;
 	stage = (Stage*)FindObject("Stage");
 	if (stage != nullptr) {
-		//RayCastData rayData;
-		//XMFLOAT3 pos = transform_.position_;
-		//rayData.start = { pos.x,pos.y,pos.z,0.0f };
-		//rayData.dir = { 0,-1,0,0 };
-		//rayData.hit = false;
-		//rayData.dist = 0;
-		//stage->StageBlockRayCast(rayData);
-		////stage->FallRayCast(rayData);
-		//float dist = 0.0f;
- 		//dist = rayData.dist;
-
-		////レイキャストが当たったかつ距離が現在のフレームの落下距離より小さいかつ落下中ならtrue
-		//if (rayData.hit && dist <= abs(fallSpeed) && jumpVelocity_ <= 0) {
-		//	transform_.position_.y -= dist;
-		//	isGround_ = true;
-		//	jumpVelocity_ = 0.0f;
-		//}
-		//else {
-		//	isGround_ = false;
-		//	transform_.position_.y += fallSpeed;
-		//}
-
 		for (int i = 0; i < 8; i++) {
 			RayCastData rayData;
 			XMFLOAT3 pos = transform_.position_;
@@ -236,6 +229,18 @@ void Player::Fall()
 	}
 	isGround_ = false;
 	transform_.position_.y += fallSpeed;
+}
+
+void Player::Relocate()
+{
+	if (transform_.position_.y < -5) {
+		Stage* stage = nullptr;
+		stage = (Stage*)FindObject("Stage");
+		if (stage == nullptr)
+			return;
+		transform_.position_ = stage->GetScaffoldPos();
+		transform_.position_.y += 1;
+	}
 }
 
 void Player::MoveCamera()
@@ -306,5 +311,52 @@ void Player::SetBlock()
 
 	if (Input::IsKey(DIK_F)) {
 		stage->SetBlock(x, y, z);
+	}
+}
+
+void Player::BreakStageBlock()
+{
+	Stage* stage = nullptr;
+	stage = (Stage*)FindObject("Stage");
+	if (stage == nullptr)
+		return;
+
+	int x, y, z;
+	x = (int)(transform_.position_.x);
+	y = (int)(transform_.position_.y) - 1;
+	z = (int)(transform_.position_.z);
+
+	int dir = ((int)transform_.rotate_.y % 360) / 45;
+
+	//前
+	if (dir <= 0 || dir == 7) {
+		z = (int)(transform_.position_.z) + 1;
+	}
+	//右
+	else if (dir <= 2) {
+		x = (int)(transform_.position_.x) + 1;
+	}
+	//後ろ
+	else if (dir <= 4) {
+		z = (int)(transform_.position_.z) - 1;
+	}
+	//左
+	else if (dir <= 6) {
+		x = (int)(transform_.position_.x) - 1;
+	}
+
+	if (Input::IsKeyDown(DIK_J)) {
+		for(int sy = stage->GetStageSize().y; sy>=0;sy--){
+			stage->SetNoneBlock(x, sy, z);
+		}
+	}
+
+	if (pastPos_.x != transform_.position_.x || pastPos_.z != transform_.position_.z) {
+		int height = 0;
+		for (int sy = stage->GetStageSize().y; sy >= 0; sy--) {
+			if (stage->GetIsOnBlock({ x,sy,z }) && height == 0)
+				height = sy;
+		}
+		framePos_ = XMINT3(x, height, z);
 	}
 }

@@ -1,13 +1,13 @@
 #pragma once
 #include "Engine\GameObject.h"
 #include "Engine\FBX.h"
+
 class Stage :
     public GameObject
 {
     enum STAGE_BLOCK {
         NONE = 0,
-        NORMAL,
-        NAIL
+        NORMAL
     };
     struct STAGE_BLOCK_DATA {
         bool isOutLineDraw;
@@ -34,6 +34,12 @@ public:
     XMFLOAT3 GetBlockSize();
     XMFLOAT3 GetPushBack(XMFLOAT3 _pos, float _radius);
     void SetBlock(int x, int y, int z);
+    void SetNoneBlock(int x, int y, int z);
+    void DrawFrame(XMFLOAT3 _pos);
+    XMINT3 GetStageSize();
+    XMFLOAT3 GetScaffoldPos();
+    XMFLOAT3 GetRandomScaffoldPos();
+    bool GetIsOnBlock(XMINT3 _pos);
 private:
     //ä÷êîñºÇïœÇ¶ÇÈ
     //ìñÇΩÇ¡ÇΩÉuÉçÉbÉNÇ∆ÇÃãóó£Çï‘Ç∑

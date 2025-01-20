@@ -3,6 +3,7 @@
 #include"Engine\SceneManager.h"
 #include"Stage.h"
 #include"Player.h"
+#include"FallBlockManager.h"
 
 TestScene::TestScene(GameObject* parent)
 	:GameObject(parent,"TestScene")
@@ -16,6 +17,7 @@ void TestScene::Initialize()
 	//transform_.scale_ = { 0.2,0.2,0.2 };   
 	Instantiate<Stage>(this);
 	Instantiate<Player>(this);
+	Instantiate<FallBlockManager>(this);
 }
 
 void TestScene::Update()

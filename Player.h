@@ -6,6 +6,8 @@ class Player :
     int hModel_;
     bool isGround_;
     float jumpVelocity_;
+    XMINT3 framePos_;
+    XMINT3 pastPos_;
 public:
     Player(GameObject* parent);
     ~Player();
@@ -17,7 +19,9 @@ private:
     void Move();
     void Jump();
     void Fall();
+    void Relocate();
     void MoveCamera();
     void SetBlock();
+    void BreakStageBlock();
 };
 

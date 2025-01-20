@@ -16,7 +16,7 @@ void Camera::Initialize()
 {
 	position_ = XMVectorSet(0, 7, -10, 0);	//カメラの位置
 	target_ = XMVectorSet(0, 0, 0, 0);	//カメラの焦点
-	cpos = XMFLOAT3(0, 10, -10);
+	cpos = XMFLOAT3(0, 10, -4);
 	player_ = nullptr;
 
 	//プロジェクション行列

@@ -3,14 +3,12 @@
 
 class Sprite;
 
-class FallDistanceIsland :
+class FallIsland :
 	public GameObject
 {
-    Sprite* Number[10];
-    Sprite* DistS_;
 public:
-    FallDistanceIsland(GameObject* parent);
-    ~FallDistanceIsland();
+    FallIsland(GameObject* parent);
+    ~FallIsland();
     void Initialize() override;
     void Release() override;
     void Update() override;
