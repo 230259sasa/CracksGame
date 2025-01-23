@@ -4,12 +4,13 @@
 #include"Engine\Camera.h"
 #include"Engine\DeltaTime.h"
 #include"Stage.h"
+#include "FallBlockManager.h"
 #include<numbers>
 
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_dx11.h"
 #include "imgui/imgui_impl_win32.h"
-#include "FallBlockManager.h"
+
 namespace Set {
 	const float GRAVITY(25.0f);
 	const float MAX_FALL_VELOCITY(-10.0f);//óéâ∫ÇÃç≈ëÂë¨ìx
@@ -70,11 +71,6 @@ void Player::Draw()
 			transform_.position_.y, transform_.position_.z);
 
 	}*/
-
-	FallBlockManager* fall = nullptr;
-	GameObject* p = (FallBlockManager*)FindObject("FallBlockManager");
-	if (p == nullptr)
-		return;
 	Transform trans = transform_;
 	trans.position_.x = XMVectorGetX(Camera::GetTarget());
 	trans.position_.z = XMVectorGetZ(Camera::GetTarget());
