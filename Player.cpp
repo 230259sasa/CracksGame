@@ -29,7 +29,7 @@ namespace DT = DeltaTime;
 
 Player::Player(GameObject* parent)
 	:GameObject(parent, "Player"), hModel_(-1), jumpVelocity_(0.0f), isGround_(true),
-	framePos_({ 0,0,0 })
+	framePos_({ 0,0,0 }), pastPos_(0, 0, 0)
 {
 }
 
@@ -58,7 +58,7 @@ void Player::Update()
 	Jump();
 	Fall();
 	Relocate();
-	//MoveCamera();
+	MoveCamera();
 	BreakStageBlock();
 }
 

@@ -33,6 +33,10 @@ class Sprite
 	ID3D11Buffer* pConstantBuffer_;
 
 	Texture* pTexture_;
+
+	float blendFactor_[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	ID3D11BlendState* mBlendState_;
+	D3D11_BLEND_DESC BlendDesc_;
 public:
 	Sprite();
 	~Sprite();

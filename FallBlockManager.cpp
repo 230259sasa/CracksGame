@@ -11,7 +11,7 @@
 #include "imgui/imgui_impl_win32.h"
 
 namespace Set {
-	const int MAX_FALL_BLOCK(24);
+	const int MAX_FALL_BLOCK(20);
 	const float DEFAULT_HIGHT(10);
 	const float BLOCK_SIZE(1);
 

@@ -9,6 +9,18 @@ Sprite::Sprite()
 	pIndexBuffer_(nullptr), pConstantBuffer_(nullptr),
 	vertexNum_(0), indexNum_(0)
 {
+	blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	ZeroMemory(&BlendDesc_, sizeof(BlendDesc_));
+	BlendDesc_.AlphaToCoverageEnable = FALSE;
+	BlendDesc_.IndependentBlendEnable = FALSE;
+	BlendDesc_.RenderTarget[0].BlendEnable = TRUE;
+	BlendDesc_.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	BlendDesc_.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;;
+	BlendDesc_.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	BlendDesc_.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	BlendDesc_.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+	BlendDesc_.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	BlendDesc_.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 }
 
 Sprite::~Sprite()
@@ -52,6 +64,16 @@ void Sprite::Draw(Transform& transform)
 
 	PassDataToCB(transform.GetWorldMatrix());
 	SetBufferToPipeline();
+
+	//“§‰ß
+	//float blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	/*ID3D11BlendState* mBlendState;
+
+	D3D11_BLEND_DESC BlendDesc;*/
+	
+
+	Direct3D::pDevice->CreateBlendState(&BlendDesc_, &mBlendState_);
+	Direct3D::pContext->OMSetBlendState(mBlendState_, blendFactor, 0xffffffff);
 	Direct3D::pContext->DrawIndexed(indexNum_, 0, 0);
 }
 

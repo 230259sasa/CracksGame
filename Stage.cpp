@@ -3,7 +3,7 @@
 
 namespace Set {
 	const XMFLOAT3 BLOCK_SIZE(1.0f, 1.0f,1.0f);
-	const XMINT3 STAGE_SIZE(11, 5, 11);
+	const XMINT3 STAGE_SIZE(10, 5, 10);
 }
 
 Stage::Stage(GameObject* parent)
@@ -95,11 +95,11 @@ void Stage::Draw()
 					t.position_ = { (float)x,(float)y,(float)z};
 					Model::SetTransform(hModel_, t);
 					Model::Draw(hModel_);
-					if (blockData_[z][y][x].isOutLineDraw) {
+					/*if (blockData_[z][y][x].isOutLineDraw) {
 						t.position_ = { (float)x,(float)y + 0.2f,(float)z };
 						Model::SetTransform(hModel_, t);
 						Model::OutLineDraw(hModel_);
-					}
+					}*/
 				}
 			}
 		}
@@ -305,14 +305,10 @@ bool Stage::GetHitBlockToCircle(XMFLOAT3 _pos, float _radius, XMFLOAT3& _getpos)
 {
 	float minLength = _radius + _radius;
 	bool is = false;
-	//­”Ø‚èã‚°
-	/*if (_pos.y - (int)_pos.y > 0)
-		_pos.y += 1;*/
 	int y = _pos.y;
 
-	//
 	if (y < 0 || y >= Set::STAGE_SIZE.y)
-		return is;
+		return false;
 
 	for (int z = 0; z < Set::STAGE_SIZE.z; z++) {
 		for (int x = 0; x < Set::STAGE_SIZE.x; x++) {
