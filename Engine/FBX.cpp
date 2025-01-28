@@ -236,25 +236,7 @@ void FBX::Draw(Transform& transform)
 	cb.matWVP = XMMatrixTranspose(transform.GetWorldMatrix() * Camera::GetViewMatrix() * Camera::GetProjectionMatrix());
 	cb.matNormal = XMMatrixTranspose(transform.GetNormalMatrix());
 
-	//非透過
-	float blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-	ID3D11BlendState* mBlendState;
-
-	D3D11_BLEND_DESC BlendDesc;
-	ZeroMemory(&BlendDesc, sizeof(BlendDesc));
-	BlendDesc.AlphaToCoverageEnable = FALSE;
-	BlendDesc.IndependentBlendEnable = FALSE;
-	BlendDesc.RenderTarget[0].BlendEnable = FALSE;
-	BlendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
-	BlendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;;
-	BlendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
-	BlendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
-	BlendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
-	BlendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-	BlendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-
-	Direct3D::pDevice->CreateBlendState(&BlendDesc, &mBlendState);
-	Direct3D::pContext->OMSetBlendState(mBlendState, blendFactor, 0xffffffff);
+	Direct3D::SetBlend(BLEND_INVALID);
 	// インデックスバッファーをセット
 	for (int i = 0; i < materialCount_; i++) {
 		

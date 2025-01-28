@@ -1,5 +1,5 @@
 #pragma once
-
+#include <Windows.h>
 #include <d3d11.h>
 #include <assert.h>
 #include"../imgui/imgui.h"
@@ -8,6 +8,9 @@
 
 enum SHADER_TYPE {
 	SHADER_2D,SHADER_3D,SHADER_OUTLINE,SHADER_MAX
+};
+enum BLEND_TYPE {
+	BLEND_INVALID,BLEND_VALID,BLEND_MAX
 };
 //リンカ
 #pragma comment(lib, "d3d11.lib")
@@ -27,6 +30,7 @@ namespace Direct3D
 	HRESULT InitShader2D();
 	HRESULT InitShaderOutLine();
 	void SetShader(SHADER_TYPE type);
+	void SetBlend(BLEND_TYPE type);
 	//描画開始
 	void BeginDraw();
 	//描画終了

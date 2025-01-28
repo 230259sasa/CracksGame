@@ -1,7 +1,7 @@
 #include <d3dcompiler.h>
 #include "Direct3D.h"
 #include <DirectXMath.h>
-
+#include "Transform.h"
 
 //変数
 namespace Direct3D
@@ -26,6 +26,9 @@ namespace Direct3D
 		ID3D11RasterizerState* pRasterizerState = nullptr;	//ラスタライザー
 	};
 	SHADER_BUNDLE shaderBundle[SHADER_MAX];
+
+	ID3D11BlendState* mBlendState[BLEND_MAX];
+	D3D11_BLEND_DESC BlendDesc;
 }
 
 
@@ -122,6 +125,25 @@ HRESULT Direct3D::Initialize(int winW, int winH, HWND hWnd)
 	descDepth.MiscFlags = 0;
 	pDevice->CreateTexture2D(&descDepth, NULL, &pDepthStencil);
 	pDevice->CreateDepthStencilView(pDepthStencil, NULL, &pDepthStencilView);
+
+	//blend設定
+	ZeroMemory(&BlendDesc, sizeof(BlendDesc));
+	BlendDesc.AlphaToCoverageEnable = FALSE;
+	BlendDesc.IndependentBlendEnable = FALSE;
+	BlendDesc.RenderTarget[0].BlendEnable = FALSE;
+	BlendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	BlendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;;
+	BlendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	BlendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	BlendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+	BlendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	BlendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
+	float blendFactor[4] = { 0.0f,0.0f,0.0f,0.0f };
+	Direct3D::pDevice->CreateBlendState(&BlendDesc, &mBlendState[BLEND_INVALID]);
+	Direct3D::pContext->OMSetBlendState(mBlendState[BLEND_INVALID], blendFactor, 0xffffffff);
+	BlendDesc.RenderTarget[0].BlendEnable = TRUE;
+	Direct3D::pDevice->CreateBlendState(&BlendDesc, &mBlendState[BLEND_VALID]);
 
 	//データを画面に描画するための一通りの設定（パイプライン）
 	pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);  // データの入力種類を指定
@@ -348,6 +370,12 @@ void Direct3D::SetShader(SHADER_TYPE type)
 	pContext->PSSetShader(shaderBundle[type].pPixelShader, NULL, 0);//ピクセルシェーダー
 	pContext->IASetInputLayout(shaderBundle[type].pVertexLayout);//頂点インプットレイアウト
 	pContext->RSSetState(shaderBundle[type].pRasterizerState);//ラスタライザー
+}
+
+void Direct3D::SetBlend(BLEND_TYPE type)
+{
+	float blendFactor[4] = { 0.0f,0.0f,0.0f,0.0f };
+	Direct3D::pContext->OMSetBlendState(mBlendState[type], blendFactor, 0xffffffff);
 }
 
 //描画開始
