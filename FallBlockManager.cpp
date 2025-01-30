@@ -38,10 +38,10 @@ void FallBlockManager::Initialize()
 	assert(hModel_ >= 0);
 
 	for (int i = 0; i < Set::MAX_FALL_BLOCK; i++) {
-		XMFLOAT3 pos = { (float)(rand()%10),Set::DEFAULT_HIGHT,(float)(rand() % 10) };
+		XMFLOAT3 pos = { 0,Set::DEFAULT_HIGHT,0 };
 		FallBlock b;
 		b.pos = pos;
-		b.isActive_ = false;
+		b.isActive = false;
 		b.isDead = false;
 		blocks.push_back(b);
 	}
@@ -73,7 +73,7 @@ void FallBlockManager::Update()
 void FallBlockManager::Draw()
 {
 	for (int i = 0; i < Set::MAX_FALL_BLOCK; i++) {
-		if (!blocks[i].isActive_ || blocks[i].isDead)
+		if (!blocks[i].isActive || blocks[i].isDead)
 			continue;
 		Transform t;
 		t.position_ = blocks[i].pos;
@@ -116,6 +116,7 @@ int FallBlockManager::GetOnGroundBlockNum()
 void FallBlockManager::Fall()
 {
 	//ステージ上のブロックとレイキャスト
+	//atode teisuu ni
 	float fallSpeed = 5 * DT::GetDeltaTime();
 
 	Stage* stage = nullptr;
@@ -125,7 +126,7 @@ void FallBlockManager::Fall()
 
 	onGroundBlockNum_ = 0;
 	for (int i = 0; i < Set::MAX_FALL_BLOCK; i++) {
-		if (!blocks[i].isActive_ || blocks[i].isDead)
+		if (!blocks[i].isActive || blocks[i].isDead)
 			continue;
 		if (blocks[i].pos.y <= -5) {
 			blocks[i].isDead = true;
@@ -133,24 +134,31 @@ void FallBlockManager::Fall()
 			continue;
 		}
 
-		RayCastData rayData;
+		RayCastData rayData,stageRayData,tmpRayData;
 		XMFLOAT3 pos = blocks[i].pos;
 		rayData.start = { pos.x + Set::BLOCK_SIZE / 2,pos.y,pos.z + Set::BLOCK_SIZE / 2,0.0f };
 		rayData.dir = { 0,-1,0,0 };
 		rayData.hit = false;
 		rayData.dist = 0;
-		stage->FallRayCast(rayData);
-		float dist = 0.0f;
-		dist = rayData.dist;
+		stageRayData = rayData;
+		FallBlockRayCast(rayData,i);
+		stage->FallRayCast(stageRayData);
+
+		if (rayData.dist < stageRayData.dist && rayData.hit)
+			tmpRayData = rayData;
+		else
+			tmpRayData = stageRayData;
 
 		//レイキャストが当たったかつ距離が現在のフレームの落下距離より小さいかつ落下中ならtrue
-		if (rayData.hit && dist <= abs(fallSpeed)) {
-			blocks[i].pos.y -= dist;
+		if (tmpRayData.hit && tmpRayData.dist <= abs(fallSpeed)) {
+			blocks[i].pos.y -= tmpRayData.dist;
+			blocks[i].isFall = false;
 			onGroundBlockNum_++;
 			continue;
 		}
 		else {
 			blocks[i].pos.y -= fallSpeed;
+			blocks[i].isFall = true;
 		}
 	}
 }
@@ -258,11 +266,31 @@ void FallBlockManager::FallControle()
 			blocks[i].isActive_ = true;
 			blocks[i].pos = XMFLOAT3(fallPos_[i].x, fallPos_[i].y, fallPos_[i].z);
 		}*/
-		blocks[i].isActive_ = true;
+		blocks[i].isActive = true;
 		
 		blocks[i].pos = stage->GetRandomScaffoldPos();
 		blocks[i].pos.y = Set::DEFAULT_HIGHT;
 	}
 
 	nowFallBlock_ += Set::ACTIVE_BLOCK_NUM;
+}
+
+void FallBlockManager::FallBlockRayCast(RayCastData& _rayData, int _number)
+{
+	Transform t;
+	RayCastData data = _rayData;
+	RayCastData minDistData = data;
+	minDistData.dist = Set::BLOCK_SIZE;
+
+	for (int i = 0; i < Set::MAX_FALL_BLOCK; i++) {
+		if (!blocks[i].isActive || blocks[i].isDead || i == _number || blocks[i].isFall)
+			continue;
+		t.position_ = blocks[i].pos;
+		Model::RayCast(hModel_, data, t);
+		if (data.hit && data.dist < minDistData.dist) {
+			minDistData = data;
+		}
+	}
+
+	_rayData = minDistData;
 }
