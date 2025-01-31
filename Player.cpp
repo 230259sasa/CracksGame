@@ -23,6 +23,8 @@ namespace Set {
 	const float MOVE_SPEED(0.05f);
 	const float JUMP_HEIGHT(1.5);//ジャンプの高さ
 	const float JUMP_LAUNCH_SPEED(sqrtf(2 * GRAVITY * JUMP_HEIGHT));//ジャンプの初速
+
+	const int CAMERA_ROTATE_SPEED(5);
 }
 
 namespace DT = DeltaTime;
@@ -243,9 +245,9 @@ void Player::Relocate()
 void Player::MoveCamera()
 {
 	if (Input::IsKey(DIK_Q))
-		Camera::RotateCameraLeft();
+		Camera::RotateCameraLeft(Set::CAMERA_ROTATE_SPEED);
 	else if (Input::IsKey(DIK_E))
-		Camera::RotateCameraRight();
+		Camera::RotateCameraRight(Set::CAMERA_ROTATE_SPEED);
 }
 
 void Player::SetBlock()

@@ -37,7 +37,9 @@ namespace Camera
 	//Å“_‚ğæ“¾
 	XMVECTOR GetTarget();
 
-	void RotateCameraLeft();
+	int GetRotate();
 
-	void RotateCameraRight();
+	void RotateCameraLeft(int _angle);
+
+	void RotateCameraRight(int _angle);
 };
