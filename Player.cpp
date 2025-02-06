@@ -245,9 +245,9 @@ void Player::Relocate()
 void Player::MoveCamera()
 {
 	if (Input::IsKey(DIK_Q))
-		Camera::RotateCameraLeft(Set::CAMERA_ROTATE_SPEED);
+		Camera::RotateCamera(-Set::CAMERA_ROTATE_SPEED);
 	else if (Input::IsKey(DIK_E))
-		Camera::RotateCameraRight(Set::CAMERA_ROTATE_SPEED);
+		Camera::RotateCamera(Set::CAMERA_ROTATE_SPEED);
 }
 
 void Player::SetBlock()

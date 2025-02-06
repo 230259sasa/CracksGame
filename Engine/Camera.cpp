@@ -8,7 +8,7 @@ namespace Camera
 	XMMATRIX viewMatrix_;	//ビュー行列
 	XMMATRIX projMatrix_;	//プロジェクション行列
 	Player* player_;
-	XMFLOAT3 cpos;
+	XMFLOAT3 cpos_;
 	const XMFLOAT3 CAMERA_POS(0, 10, -10);
 	int rotate_;
 }
@@ -18,7 +18,7 @@ void Camera::Initialize()
 {
 	position_ = XMVectorSet(0, 7, -10, 0);	//カメラの位置
 	target_ = XMVectorSet(0, 0, 0, 0);	//カメラの焦点
-	cpos = CAMERA_POS;
+	cpos_ = CAMERA_POS;
 	rotate_ = 0;
 	player_ = nullptr;
 
@@ -39,9 +39,9 @@ void Camera::Initialize(XMVECTOR _position, XMVECTOR _target)
 void Camera::Update()
 {
 	if (player_ != nullptr) {
-		position_ = XMVectorSet(player_->GetPosition().x + cpos.x,
-			player_->GetPosition().y + cpos.y,
-			player_->GetPosition().z + cpos.z,0);
+		position_ = XMVectorSet(player_->GetPosition().x + cpos_.x,
+			player_->GetPosition().y + cpos_.y,
+			player_->GetPosition().z + cpos_.z,0);
 		target_ = XMVectorSet(player_->GetPosition().x,
 			player_->GetPosition().y,
 			player_->GetPosition().z, 0);
@@ -89,18 +89,11 @@ int Camera::GetRotate()
 {
 	return rotate_;
 }
-void Camera::RotateCameraLeft(int _angle)
-{
-	float r = XMConvertToRadians(360-_angle);
-	rotate_ -= _angle;
-	cpos.x = cpos.x * cos(r) - cpos.z * sin(r);
-	cpos.z = cpos.x * sin(r) + cpos.z * cos(r);
-}
 
-void Camera::RotateCameraRight(int _angle)
+void Camera::RotateCamera(int _angle)
 {
-	float r = XMConvertToRadians(_angle);
 	rotate_ += _angle;
-	cpos.x = cpos.x * cos(r) - cpos.z * sin(r);
-	cpos.z = cpos.x * sin(r) + cpos.z * cos(r);
+	float r = XMConvertToRadians(rotate_);
+	cpos_.x = CAMERA_POS.x * cos(r) - CAMERA_POS.z * sin(r);
+	cpos_.z = CAMERA_POS.x * sin(r) + CAMERA_POS.z * cos(r);
 }

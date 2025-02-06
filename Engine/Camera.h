@@ -39,7 +39,5 @@ namespace Camera
 
 	int GetRotate();
 
-	void RotateCameraLeft(int _angle);
-
-	void RotateCameraRight(int _angle);
+	void RotateCamera(int _angle);
 };
