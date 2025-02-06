@@ -129,6 +129,9 @@
     <ClCompile Include="PlayStateCheck.cpp">
       <Filter>ソース ファイル\PlaySceneCpp</Filter>
     </ClCompile>
+    <ClCompile Include="PlaySceneBackground.cpp">
+      <Filter>ソース ファイル\PlaySceneCpp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Camera.h">
@@ -231,6 +234,9 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="PlayStateCheck.h">
+      <Filter>ヘッダー ファイル\PlaySceneHeader</Filter>
+    </ClInclude>
+    <ClInclude Include="PlaySceneBackground.h">
       <Filter>ヘッダー ファイル\PlaySceneHeader</Filter>
     </ClInclude>
   </ItemGroup>

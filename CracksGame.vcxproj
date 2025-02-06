@@ -177,6 +177,7 @@
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayScene.cpp" />
+    <ClCompile Include="PlaySceneBackground.cpp" />
     <ClCompile Include="PlayStateCheck.cpp" />
     <ClCompile Include="Stage.cpp" />
     <ClCompile Include="TestScene.cpp" />
@@ -213,6 +214,7 @@
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayScene.h" />
+    <ClInclude Include="PlaySceneBackground.h" />
     <ClInclude Include="PlayStateCheck.h" />
     <ClInclude Include="Stage.h" />
     <ClInclude Include="TestScene.h" />

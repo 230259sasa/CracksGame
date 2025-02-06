@@ -5,6 +5,7 @@
 #include"Player.h"
 #include"FallBlockManager.h"
 #include"PlayStateCheck.h"
+#include"PlaySceneBackground.h"
 
 PlayScene::PlayScene(GameObject* parent)
 	:GameObject(parent, "PlayScene")
@@ -17,6 +18,7 @@ void PlayScene::Initialize()
 	Instantiate<FallBlockManager>(this);
 	Instantiate<Player>(this);
 	Instantiate<PlayStateCheck>(this);
+	//Instantiate<PlaySceneBackground>(this);
 }
 
 void PlayScene::Update()
