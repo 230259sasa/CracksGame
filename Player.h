@@ -5,6 +5,8 @@ class Player :
 {
     int hModel_;
     bool isGround_;
+    bool isCameraRotateStart_;
+    int CameraRotateDir_;
     float jumpVelocity_;
     XMINT3 framePos_;
     XMINT3 pastPos_;

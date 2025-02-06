@@ -85,7 +85,7 @@ XMVECTOR Camera::GetTarget()
 	return target_;
 }
 
-int Camera::GetRotate()
+int Camera::GetRotateAngle()
 {
 	return rotate_;
 }

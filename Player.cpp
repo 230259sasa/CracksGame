@@ -31,7 +31,8 @@ namespace DT = DeltaTime;
 
 Player::Player(GameObject* parent)
 	:GameObject(parent, "Player"), hModel_(-1), jumpVelocity_(0.0f), isGround_(true),
-	framePos_({ 0,0,0 }), pastPos_(0, 0, 0)
+	framePos_({ 0,0,0 }), pastPos_(0, 0, 0),isCameraRotateStart_(false),
+	CameraRotateDir_(0)
 {
 }
 
@@ -244,10 +245,21 @@ void Player::Relocate()
 
 void Player::MoveCamera()
 {
-	if (Input::IsKey(DIK_Q))
-		Camera::RotateCamera(-Set::CAMERA_ROTATE_SPEED);
-	else if (Input::IsKey(DIK_E))
-		Camera::RotateCamera(Set::CAMERA_ROTATE_SPEED);
+	if (Input::IsKey(DIK_Q)) {
+		CameraRotateDir_ = -1;
+		isCameraRotateStart_ = true;
+	}
+	else if (Input::IsKey(DIK_E)) {
+		CameraRotateDir_ = 1;
+		isCameraRotateStart_ = true;
+	}
+
+	if (isCameraRotateStart_) {
+		Camera::RotateCamera(CameraRotateDir_ * Set::CAMERA_ROTATE_SPEED);
+		if (Camera::GetRotateAngle()%90 == 0) {
+			isCameraRotateStart_ = false;
+		}
+	}
 }
 
 void Player::SetBlock()
