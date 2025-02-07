@@ -24,7 +24,8 @@ namespace Set {
 	const float JUMP_HEIGHT(1.5);//ジャンプの高さ
 	const float JUMP_LAUNCH_SPEED(sqrtf(2 * GRAVITY * JUMP_HEIGHT));//ジャンプの初速
 
-	const int CAMERA_ROTATE_SPEED(5);
+	const int CAMERA_ROTATE_SPEED(3);
+	const int CAMERA_ROTATE_ANGLE(90);
 }
 
 namespace DT = DeltaTime;
@@ -246,82 +247,19 @@ void Player::Relocate()
 void Player::MoveCamera()
 {
 	if (Input::IsKey(DIK_Q)) {
-		CameraRotateDir_ = -1;
+		CameraRotateDir_ = CaneraDir::LEFT;
 		isCameraRotateStart_ = true;
 	}
 	else if (Input::IsKey(DIK_E)) {
-		CameraRotateDir_ = 1;
+		CameraRotateDir_ = CaneraDir::RIGHT;
 		isCameraRotateStart_ = true;
 	}
 
 	if (isCameraRotateStart_) {
 		Camera::RotateCamera(CameraRotateDir_ * Set::CAMERA_ROTATE_SPEED);
-		if (Camera::GetRotateAngle()%90 == 0) {
+		if (Camera::GetRotateAngle()%Set::CAMERA_ROTATE_ANGLE == 0) {
 			isCameraRotateStart_ = false;
 		}
-	}
-}
-
-void Player::SetBlock()
-{
-	Stage* stage = nullptr;
-	stage = (Stage*)FindObject("Stage");
-	if (stage == nullptr)
-		return;
-
-	int x, y, z;
-	x = (int)(transform_.position_.x);
-	y = (int)(transform_.position_.y);
-	z = (int)(transform_.position_.z);
-
-	/*int dir = ((int)transform_.rotate_.y % 360) / 45;
-
-	if (dir <= 0 || dir == 7) {
-		z = (int)(transform_.position_.z) + 2;
-	}
-	else if (dir <= 2) {
-		x = (int)(transform_.position_.x) + 2;
-	}
-	else if (dir <= 4) {
-		z = (int)(transform_.position_.z) - 1;
-	}
-	else if (dir <= 6) {
-		x = (int)(transform_.position_.x) - 1;
-	}*/
-
-	float dir = ((int)transform_.rotate_.y % 360) / (360/16);
-
-	if (dir <= 0 || dir == 15) {
-		z = (int)(transform_.position_.z) + 2;
-	}
-	else if (dir <= 2) {
-		z = (int)(transform_.position_.z) + 2;
-		x = (int)(transform_.position_.x) + 2;
-	}
-	else if (dir <= 4) {
-		x = (int)(transform_.position_.x) + 2;
-	}
-	else if (dir <= 6) {
-		x = (int)(transform_.position_.x) + 2;
-		z = (int)(transform_.position_.z) - 1;
-	}
-	else if (dir <= 8) {
-		z = (int)(transform_.position_.z) - 1;
-	}
-	else if (dir < 10) {
-		z = (int)(transform_.position_.z) - 1;
-		x = (int)(transform_.position_.x) - 1;
-	}
-	else if (dir <= 12) {
-		x = (int)(transform_.position_.x) - 1;
-	}
-	else if(dir <= 14) {
-		x = (int)(transform_.position_.x) - 1;
-		z = (int)(transform_.position_.z) + 2;
-	}
-
-	if (Input::IsKey(DIK_F)) {
-		stage->SetBlock(x, y, z);
 	}
 }
 

@@ -5,18 +5,27 @@
 class Stage :
     public GameObject
 {
-    enum STAGE_BLOCK {
+    enum STAGE_BLOCK_TYPE {
         NONE = 0,
-        NORMAL
+        GROUND
+    };
+    enum STAGE_BLOCK_STATE {
+        NORMAL,
+        FALL,
+        RETURN
     };
     struct STAGE_BLOCK_DATA {
         bool isOutLineDraw;
-        STAGE_BLOCK block;
+        STAGE_BLOCK_TYPE type;
+        STAGE_BLOCK_STATE state;
+        Transform trans;
     };
     int hModel_;
     int hFrame_;
-    std::vector<std::vector<std::vector<int>>> stage_;
+    std::vector<std::vector<std::vector<STAGE_BLOCK_DATA>>> initialBlockData_;
     std::vector<std::vector<std::vector<STAGE_BLOCK_DATA>>> blockData_;
+    std::vector<XMINT3> fallBlock_;
+    std::vector<XMINT3> returnBlock_;
 public:
     Stage(GameObject* parent);
     ~Stage();
@@ -33,7 +42,6 @@ public:
     void FallRayCast(RayCastData& _rayData);
     XMFLOAT3 GetBlockSize();
     XMFLOAT3 GetPushBack(XMFLOAT3 _pos, float _radius);
-    void SetBlock(int x, int y, int z);
     void SetNoneBlock(int x, int y, int z);
     void DrawFrame(XMFLOAT3 _pos);
     XMINT3 GetStageSize();
@@ -47,5 +55,7 @@ private:
     bool GetHitBlockToCircle(XMFLOAT3 _pos, float _radius, XMFLOAT3& _getpos);
     //ãÖÇ∆í∑ï˚å`ÇÃç≈íZì_ÇãÅÇﬂÇÈ
     float GetClosestPoint(float _bpos,float _pos);
+    void FallStageBlock();
+    void ReturnBlock();
 };
 

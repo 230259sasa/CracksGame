@@ -3,13 +3,17 @@
 class Player :
     public GameObject
 {
+    enum CaneraDir {
+        LEFT = -1,
+        RIGHT = 1
+    };
     int hModel_;
     bool isGround_;
-    bool isCameraRotateStart_;
-    int CameraRotateDir_;
     float jumpVelocity_;
     XMINT3 framePos_;
     XMINT3 pastPos_;
+    bool isCameraRotateStart_;
+    int CameraRotateDir_;
 public:
     Player(GameObject* parent);
     ~Player();

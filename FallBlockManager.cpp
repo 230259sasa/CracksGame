@@ -13,6 +13,7 @@
 namespace Set {
 	const int MAX_FALL_BLOCK(20);
 	const float DEFAULT_HIGHT(10);
+	const float BLOCK_DEAD_HIGHT(-10);
 	const float BLOCK_SIZE(1);
 
 	const int ACTIVE_BLOCK_NUM(1);
@@ -128,7 +129,7 @@ void FallBlockManager::Fall()
 	for (int i = 0; i < Set::MAX_FALL_BLOCK; i++) {
 		if (!blocks[i].isActive || blocks[i].isDead)
 			continue;
-		if (blocks[i].pos.y <= -5) {
+		if (blocks[i].pos.y <= Set::BLOCK_DEAD_HIGHT) {
 			blocks[i].isDead = true;
 			blockNum_--;
 			continue;

@@ -1,10 +1,15 @@
 #include "Stage.h"
 #include"Engine\Model.h"
+#include"Engine\DeltaTime.h"
 
 namespace Set {
 	const XMFLOAT3 BLOCK_SIZE(1.0f, 1.0f,1.0f);
 	const XMINT3 STAGE_SIZE(10, 5, 10);
+	const float FALL_SPEED(5.0f);
+	const float BLOCK_RETURN_HEIGHT(-10.0f);
 }
+
+namespace DT = DeltaTime;
 
 Stage::Stage(GameObject* parent)
 	:GameObject(parent,"Stage"),hModel_(-1),hFrame_(-1)
@@ -31,9 +36,10 @@ void Stage::Initialize()
 				STAGE_BLOCK_DATA data;
 				data.isOutLineDraw = false;
 				if(y<2)
-					data.block = NORMAL;
+					data.type = GROUND;
 				else
-					data.block = NONE;
+					data.type = NONE;
+
 				v.push_back(data);
 			}
 			vec.push_back(v);
@@ -41,58 +47,27 @@ void Stage::Initialize()
 		blockData_.push_back(vec);
 	}
 
-	blockData_[9][2][3].block = NORMAL;
-	blockData_[9][2][4].block = NORMAL;
-	blockData_[9][2][5].block = NORMAL;
-	blockData_[8][2][3].block = NORMAL;
-	blockData_[8][2][4].block = NORMAL;
-	blockData_[8][2][5].block = NORMAL;
-
-	blockData_[7][2][3].block = NORMAL;
-	blockData_[7][2][4].block = NORMAL;
-	blockData_[7][2][5].block = NORMAL;
-	/*blockData_[2][2][3].block = NORMAL;
-	blockData_[2][2][4].block = NORMAL;
-	blockData_[2][2][5].block = NORMAL;
-
-	blockData_[3][1][3].block = NORMAL;
-	blockData_[3][1][4].block = NORMAL;
-	blockData_[3][1][5].block = NORMAL;
-	blockData_[3][2][3].block = NORMAL;
-	blockData_[3][2][4].block = NORMAL;
-	blockData_[3][2][5].block = NORMAL;
-	blockData_[3][3][3].block = NORMAL;
-	blockData_[3][3][4].block = NORMAL;
-	blockData_[3][3][5].block = NORMAL;
-
-	blockData_[4][1][3].block = NORMAL;
-	blockData_[4][1][4].block = NORMAL;
-	blockData_[4][1][5].block = NORMAL;
-	blockData_[4][2][3].block = NORMAL;
-	blockData_[4][2][4].block = NORMAL;
-	blockData_[4][2][5].block = NORMAL;
-	blockData_[4][3][3].block = NORMAL;
-	blockData_[4][3][4].block = NORMAL;
-	blockData_[4][3][5].block = NORMAL;
-	blockData_[4][4][3].block = NORMAL;
-	blockData_[4][4][4].block = NORMAL;
-	blockData_[4][4][5].block = NORMAL;
-
-	blockData_[7][1][5].block = NORMAL;*/
+	initialBlockData_ = blockData_;
 }
 
 void Stage::Update()
 {
+	FallStageBlock();
 }
 
 void Stage::Draw()
 {
 	Transform t;
+	STAGE_BLOCK_DATA block;
 	for (int z = 0; z < Set::STAGE_SIZE.z; z++) {
 		for (int y = 0; y < Set::STAGE_SIZE.y; y++) {
 			for (int x = 0; x < Set::STAGE_SIZE.x; x++) {
-				if (blockData_[z][y][x].block == NORMAL) {
-					t.position_ = { (float)x,(float)y,(float)z};
+				block = blockData_[z][y][x];
+				if (block.type == GROUND || block.state == FALL) {
+					if (block.state != FALL)
+						t.position_ = { (float)x,(float)y,(float)z };
+					else
+						t = block.trans;
 					Model::SetTransform(hModel_, t);
 					Model::Draw(hModel_);
 					/*if (blockData_[z][y][x].isOutLineDraw) {
@@ -120,7 +95,7 @@ void Stage::StageBlockRayCast(RayCastData& _rayData)
 	for (int z = 0; z < Set::STAGE_SIZE.z; z++) {
 		for (int y = 0; y < Set::STAGE_SIZE.y; y++) {
 			for (int x = 0; x < Set::STAGE_SIZE.x; x++) {
-				if (blockData_[z][y][x].block == NORMAL) {
+				if (blockData_[z][y][x].type == GROUND) {
 					t.position_ = { (float)x,(float)y,(float)z };
 					Model::RayCast(hModel_, data, t);
 					if (data.hit && data.dist < minDistData.dist) {
@@ -145,7 +120,7 @@ void Stage::FallRayCast(RayCastData& _rayData)
 	if (rx < 0 || rx >= Set::STAGE_SIZE.x || rz < 0 || rz >= Set::STAGE_SIZE.z)
 		return;
 	for (int y = 0; y < Set::STAGE_SIZE.y; y++) {
-		if (blockData_[rz][y][rx].block == NORMAL) {
+		if (blockData_[rz][y][rx].type == GROUND) {
 			t.position_ = { (float)rx,(float)y,(float)rz };
 			Model::RayCast(hModel_, data, t);
 			if (data.hit && data.dist < minDistData.dist) {
@@ -197,17 +172,14 @@ XMFLOAT3 Stage::GetPushBack(XMFLOAT3 _pos, float _radius)
 	return push;
 }
 
-void Stage::SetBlock(int x, int y, int z)
-{
-	if (x >= 0 && x < Set::STAGE_SIZE.x && y >= 0 && y < Set::STAGE_SIZE.y && z >= 0 && z < Set::STAGE_SIZE.z) {
-		blockData_[z][y][x].block = NORMAL;
-	}
-}
-
 void Stage::SetNoneBlock(int x, int y, int z)
 {
-	if (x >= 0 && x < Set::STAGE_SIZE.x && y >= 0 && y < Set::STAGE_SIZE.y && z >= 0 && z < Set::STAGE_SIZE.z) {
-		blockData_[z][y][x].block = NONE;
+	if (x >= 0 && x < Set::STAGE_SIZE.x && y >= 0 && y < Set::STAGE_SIZE.y &&
+		blockData_[z][y][x].type != NONE) {
+		blockData_[z][y][x].type = NONE;
+		blockData_[z][y][x].state = FALL;
+		blockData_[z][y][x].trans.position_ = XMFLOAT3(x, y, z);
+		fallBlock_.push_back(XMINT3(x,y,z));
 	}
 }
 
@@ -232,7 +204,7 @@ XMFLOAT3 Stage::GetScaffoldPos()
 	for (int z = 0; z < Set::STAGE_SIZE.z; z++) {
 		for (int x = 0; x < Set::STAGE_SIZE.x; x++) {
 			for (int y = Set::STAGE_SIZE.y - 1; y >= 0; y--) {
-				if (blockData_[z][y][x].block == NORMAL) {
+				if (blockData_[z][y][x].type == GROUND) {
 					return XMFLOAT3((float)x, (float)y, (float)z);
 				}
 			}
@@ -248,7 +220,7 @@ XMFLOAT3 Stage::GetRandomScaffoldPos()
 	for (int z = 0; z < Set::STAGE_SIZE.z; z++) {
 		for (int x = 0; x < Set::STAGE_SIZE.x; x++) {
 			for (int y = Set::STAGE_SIZE.y - 1; y >= 0; y--) {
-				if (blockData_[z][y][x].block == NORMAL) {
+				if (blockData_[z][y][x].type == GROUND) {
 					vPos.push_back(XMFLOAT3((float)x, (float)y, (float)z));
 				}
 			}
@@ -265,7 +237,7 @@ bool Stage::GetIsOnBlock(XMINT3 _pos)
 {
 	if (_pos.x >= 0 && _pos.x < Set::STAGE_SIZE.x && _pos.y >= 0 && _pos.y < Set::STAGE_SIZE.y &&
 		_pos.z >= 0 && _pos.z < Set::STAGE_SIZE.z) {
-		if (blockData_[_pos.z][_pos.y][_pos.x].block == NORMAL)
+		if (blockData_[_pos.z][_pos.y][_pos.x].type == GROUND)
 			return true;
 	}
 	return false;
@@ -278,7 +250,7 @@ bool Stage::GetHitBlockToSphere(XMFLOAT3 _pos, float _radius, XMFLOAT3& _getpos)
 	for (int z = 0; z < Set::STAGE_SIZE.z; z++) {
 		for (int y = 0; y < Set::STAGE_SIZE.y; y++) {
 			for (int x = 0; x < Set::STAGE_SIZE.x; x++) {
-				if (blockData_[z][y][x].block == NORMAL) {
+				if (blockData_[z][y][x].type == GROUND) {
 					XMFLOAT3 pos = { (float)x,(float)y,(float)z };
 					XMFLOAT3 min;
 					min.x = GetClosestPoint(pos.x + Set::BLOCK_SIZE.x / 2, _pos.x);
@@ -312,7 +284,7 @@ bool Stage::GetHitBlockToCircle(XMFLOAT3 _pos, float _radius, XMFLOAT3& _getpos)
 
 	for (int z = 0; z < Set::STAGE_SIZE.z; z++) {
 		for (int x = 0; x < Set::STAGE_SIZE.x; x++) {
-			if (blockData_[z][y][x].block == NORMAL) {
+			if (blockData_[z][y][x].type == GROUND) {
 				XMFLOAT3 pos = { (float)x,(float)y,(float)z };
 				XMFLOAT3 min;
 				min.x = GetClosestPoint(pos.x, _pos.x);
@@ -343,5 +315,40 @@ float Stage::GetClosestPoint(float _bpos, float _pos)
 	}
 
 	return min;
+}
+
+void Stage::FallStageBlock()
+{
+	if (fallBlock_.size() <= 0)
+		return;
+
+	std::vector<int> eraseNum;
+	int count = 0;
+	//—Ž‰º
+	for (auto itr : fallBlock_) {
+		int x = itr.x;
+		int y = itr.y;
+		int z = itr.z;
+		blockData_[z][y][x].trans.position_.y -= Set::FALL_SPEED * DT::GetDeltaTime();
+		//•œ‹A‚ÖˆÚ“®
+		if (blockData_[z][y][x].trans.position_.y < Set::BLOCK_RETURN_HEIGHT) {
+			blockData_[z][y][x].state = RETURN;
+			returnBlock_.push_back(XMINT3(x, y, z));
+			eraseNum.push_back(count);
+		}
+		count++;
+	}
+
+	//íœ
+	for (auto itr : eraseNum) {
+		fallBlock_.erase(fallBlock_.begin() + itr);
+	}
+}
+
+void Stage::ReturnBlock()
+{
+	for (auto itr : returnBlock_) {
+
+	}
 }
 
