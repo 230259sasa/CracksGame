@@ -34,7 +34,7 @@ void Stage::Initialize()
 			std::vector<STAGE_BLOCK_DATA> v;
 			for (int x = 0; x < Set::STAGE_SIZE.x; x++) {
 				STAGE_BLOCK_DATA data;
-				data.isOutLineDraw = false;
+				data.trans.position_ = { (float)x,(float)y,(float)z };
 				if(y<2)
 					data.type = GROUND;
 				else
@@ -53,6 +53,7 @@ void Stage::Initialize()
 void Stage::Update()
 {
 	FallStageBlock();
+	ReturnBlock();
 }
 
 void Stage::Draw()
@@ -63,18 +64,14 @@ void Stage::Draw()
 		for (int y = 0; y < Set::STAGE_SIZE.y; y++) {
 			for (int x = 0; x < Set::STAGE_SIZE.x; x++) {
 				block = blockData_[z][y][x];
-				if (block.type == GROUND || block.state == FALL) {
-					if (block.state != FALL)
+				if (block.type == GROUND || block.state == FALL ||
+					block.state == RETURN) {
+					/*if (block.state != FALL)
 						t.position_ = { (float)x,(float)y,(float)z };
-					else
-						t = block.trans;
+					else*/
+					t = block.trans;
 					Model::SetTransform(hModel_, t);
 					Model::Draw(hModel_);
-					/*if (blockData_[z][y][x].isOutLineDraw) {
-						t.position_ = { (float)x,(float)y + 0.2f,(float)z };
-						Model::SetTransform(hModel_, t);
-						Model::OutLineDraw(hModel_);
-					}*/
 				}
 			}
 		}
@@ -333,6 +330,8 @@ void Stage::FallStageBlock()
 		//•œ‹A‚ÖˆÚ“®
 		if (blockData_[z][y][x].trans.position_.y < Set::BLOCK_RETURN_HEIGHT) {
 			blockData_[z][y][x].state = RETURN;
+			blockData_[z][y][x].trans.position_ = { (float)x,(float)y,(float)z };
+			blockData_[z][y][x].trans.scale_ = { 0,0,0 };
 			returnBlock_.push_back(XMINT3(x, y, z));
 			eraseNum.push_back(count);
 		}
@@ -348,7 +347,13 @@ void Stage::FallStageBlock()
 void Stage::ReturnBlock()
 {
 	for (auto itr : returnBlock_) {
-
+		STAGE_BLOCK_DATA block = blockData_[itr.z][itr.y][itr.x];
+		block.trans.scale_.x += 0.05f;
+		block.trans.scale_.y += 0.05f;
+		block.trans.scale_.z += 0.05f;
+		if (block.trans.scale_.x >= 1) {
+			block.type = GROUND;
+		}
 	}
 }
 

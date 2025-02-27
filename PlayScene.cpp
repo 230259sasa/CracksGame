@@ -34,8 +34,8 @@ void PlayScene::Update()
 	}
 	if (state->IsGameOver()) {
 		SceneManager* pSM = (SceneManager*)FindObject("SceneManager");
-		if (pSM != nullptr)
-			pSM->ChangeScene(SCENE_ID_GAMEOVER);
+		//if (pSM != nullptr)
+			//pSM->ChangeScene(SCENE_ID_GAMEOVER);
 	}
 }
 

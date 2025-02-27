@@ -15,7 +15,6 @@ class Stage :
         RETURN
     };
     struct STAGE_BLOCK_DATA {
-        bool isOutLineDraw;
         STAGE_BLOCK_TYPE type;
         STAGE_BLOCK_STATE state;
         Transform trans;
