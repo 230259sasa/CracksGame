@@ -9,7 +9,7 @@ namespace Camera
 	XMMATRIX projMatrix_;	//プロジェクション行列
 	Player* player_;
 	XMFLOAT3 cpos_;
-	const XMFLOAT3 CAMERA_POS(0, 7, -10);
+	const XMFLOAT3 CAMERA_POS(0, 12, -10);
 	int rotate_;
 }
 

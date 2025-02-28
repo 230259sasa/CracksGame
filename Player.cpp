@@ -296,7 +296,7 @@ void Player::BreakStageBlock()
 
 	if (Input::IsKeyDown(DIK_J)) {
 		for(int sy = stage->GetStageSize().y; sy>=0;sy--){
-			stage->SetNoneBlock(x, sy, z);
+			stage->SetFallBlock(x, sy, z);
 		}
 	}
 

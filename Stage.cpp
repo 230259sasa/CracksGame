@@ -25,6 +25,7 @@ void Stage::Initialize()
 {
 	hModel_ = Model::Load("Assets/Model/BoxGrass.fbx");
 	assert(hModel_ >= 0);
+	hKazan_ = Model::Load("Assets/Model/Kazan.fbx");
 	hFrame_ = Model::Load("Assets/Model/Frame/RedFrame.fbx");
 	assert(hFrame_ >= 0);
 	
@@ -35,8 +36,10 @@ void Stage::Initialize()
 			for (int x = 0; x < Set::STAGE_SIZE.x; x++) {
 				STAGE_BLOCK_DATA data;
 				data.trans.position_ = { (float)x,(float)y,(float)z };
-				if(y<2)
+				if (y < 2) {
 					data.type = GROUND;
+					data.state = NORMAL;
+				}
 				else
 					data.type = NONE;
 
@@ -60,6 +63,9 @@ void Stage::Draw()
 {
 	Transform t;
 	STAGE_BLOCK_DATA block;
+	t.position_ = { (float)0,(float)-15,(float)0 };
+	Model::SetTransform(hKazan_, t);
+	Model::Draw(hKazan_);
 	for (int z = 0; z < Set::STAGE_SIZE.z; z++) {
 		for (int y = 0; y < Set::STAGE_SIZE.y; y++) {
 			for (int x = 0; x < Set::STAGE_SIZE.x; x++) {
@@ -117,7 +123,7 @@ void Stage::FallRayCast(RayCastData& _rayData)
 	if (rx < 0 || rx >= Set::STAGE_SIZE.x || rz < 0 || rz >= Set::STAGE_SIZE.z)
 		return;
 	for (int y = 0; y < Set::STAGE_SIZE.y; y++) {
-		if (blockData_[rz][y][rx].type == GROUND) {
+		if (blockData_[rz][y][rx].type == GROUND && blockData_[rz][y][rx].state != FALL) {
 			t.position_ = { (float)rx,(float)y,(float)rz };
 			Model::RayCast(hModel_, data, t);
 			if (data.hit && data.dist < minDistData.dist) {
@@ -169,11 +175,12 @@ XMFLOAT3 Stage::GetPushBack(XMFLOAT3 _pos, float _radius)
 	return push;
 }
 
-void Stage::SetNoneBlock(int x, int y, int z)
+void Stage::SetFallBlock(int x, int y, int z)
 {
 	if (x >= 0 && x < Set::STAGE_SIZE.x && y >= 0 && y < Set::STAGE_SIZE.y &&
-		blockData_[z][y][x].type != NONE) {
-		blockData_[z][y][x].type = NONE;
+		z >= 0 && z < Set::STAGE_SIZE.z &&
+		blockData_[z][y][x].type != NONE && blockData_[z][y][x].state == NORMAL) {
+		//blockData_[z][y][x].type = NONE;
 		blockData_[z][y][x].state = FALL;
 		blockData_[z][y][x].trans.position_ = XMFLOAT3(x, y, z);
 		fallBlock_.push_back(XMINT3(x,y,z));
@@ -346,14 +353,22 @@ void Stage::FallStageBlock()
 
 void Stage::ReturnBlock()
 {
+	std::vector<int> eraseNum;
+	int count = 0;
 	for (auto itr : returnBlock_) {
-		STAGE_BLOCK_DATA block = blockData_[itr.z][itr.y][itr.x];
+		STAGE_BLOCK_DATA& block = blockData_[itr.z][itr.y][itr.x];
 		block.trans.scale_.x += 0.05f;
 		block.trans.scale_.y += 0.05f;
 		block.trans.scale_.z += 0.05f;
 		if (block.trans.scale_.x >= 1) {
-			block.type = GROUND;
+			block.state = NORMAL;
+			eraseNum.push_back(count);
 		}
+		count++;
+	}
+
+	for (auto itr : eraseNum) {
+		returnBlock_.erase(returnBlock_.begin() + itr);
 	}
 }
 
