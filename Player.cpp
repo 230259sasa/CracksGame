@@ -103,10 +103,29 @@ void Player::Move()
 		return;
 	
 	//ƒxƒNƒgƒ‹‚ğ‹‚ß‚é
-	float vectorZ = XMVectorGetZ(Camera::GetTarget())
+	/*float vectorZ = XMVectorGetZ(Camera::GetTarget())
 		- XMVectorGetZ(Camera::GetPosition());
 	float vectorX = XMVectorGetX(Camera::GetTarget())
-		- XMVectorGetX(Camera::GetPosition());
+		- XMVectorGetX(Camera::GetPosition());*/
+	float vectorZ=0;
+	float vectorX=0;
+	int angle = Camera::GetRotateAngle()%360;
+	if (angle <= 90) {
+		vectorX = 0;
+		vectorZ = 1;
+	}
+	else if (angle <= 180) {
+		vectorX = 0;
+		vectorZ = -1;
+	}
+	else if (angle <= 270) {
+		vectorX = 1;
+		vectorZ = 0;
+	}
+	else if (angle < 360) {
+		vectorX = 0;
+		vectorZ = 1;
+	}
 	float length = vectorX * vectorX + vectorZ * vectorZ;
 
 	//normalize
