@@ -335,8 +335,9 @@ void Stage::FallStageBlock()
 		int y = itr.y;
 		int z = itr.z;
 		blockData_[z][y][x].trans.position_.y -= Set::FALL_SPEED * DT::GetDeltaTime();
-		//•œ‹A‚ÖˆÚ“®
-		if (blockData_[z][y][x].trans.position_.y < Set::BLOCK_RETURN_HEIGHT) {
+		//return‚ÖˆÚ“®
+		float height = Set::BLOCK_RETURN_HEIGHT + y;
+		if (blockData_[z][y][x].trans.position_.y < height) {
 			blockData_[z][y][x].state = RETURN;
 			blockData_[z][y][x].trans.position_ = { (float)x,(float)y,(float)z };
 			blockData_[z][y][x].trans.scale_ = { 0,0,0 };
@@ -347,8 +348,8 @@ void Stage::FallStageBlock()
 	}
 
 	//íœ
-	for (auto itr : eraseNum) {
-		fallBlock_.erase(fallBlock_.begin() + itr);
+	for (auto itr = eraseNum.rbegin(); itr != eraseNum.rend(); ++itr) {
+		fallBlock_.erase(fallBlock_.begin() + *itr);
 	}
 }
 
@@ -368,8 +369,9 @@ void Stage::ReturnBlock()
 		count++;
 	}
 
-	for (auto itr : eraseNum) {
-		returnBlock_.erase(returnBlock_.begin() + itr);
+	//íœ
+	for (auto itr = eraseNum.rbegin(); itr != eraseNum.rend(); ++itr) {
+		returnBlock_.erase(returnBlock_.begin() + *itr);
 	}
 }
 
