@@ -288,7 +288,8 @@ bool Stage::GetHitBlockToCircle(XMFLOAT3 _pos, float _radius, XMFLOAT3& _getpos)
 
 	for (int z = 0; z < Set::STAGE_SIZE.z; z++) {
 		for (int x = 0; x < Set::STAGE_SIZE.x; x++) {
-			if (blockData_[z][y][x].type == GROUND) {
+			if (blockData_[z][y][x].type == GROUND &&
+				blockData_[z][y][x].state == NORMAL) {
 				XMFLOAT3 pos = { (float)x,(float)y,(float)z };
 				XMFLOAT3 min;
 				min.x = GetClosestPoint(pos.x, _pos.x);
