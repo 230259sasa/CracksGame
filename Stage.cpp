@@ -65,7 +65,7 @@ void Stage::Draw()
 	STAGE_BLOCK_DATA block;
 	t.position_ = { (float)0,(float)-15,(float)0 };
 	Model::SetTransform(hKazan_, t);
-	Model::Draw(hKazan_);
+	//Model::Draw(hKazan_);
 	for (int z = 0; z < Set::STAGE_SIZE.z; z++) {
 		for (int y = 0; y < Set::STAGE_SIZE.y; y++) {
 			for (int x = 0; x < Set::STAGE_SIZE.x; x++) {

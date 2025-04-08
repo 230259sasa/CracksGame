@@ -23,6 +23,7 @@ namespace Set {
 	const float MOVE_SPEED(0.05f);
 	const float JUMP_HEIGHT(1.5);//ジャンプの高さ
 	const float JUMP_LAUNCH_SPEED(sqrtf(2 * GRAVITY * JUMP_HEIGHT));//ジャンプの初速
+	const float FALL_RAY_CAST_RADIUS(PLAYER_RADIUS - 0.03);
 
 	const int CAMERA_ROTATE_SPEED(3);
 	const int CAMERA_ROTATE_ANGLE(90);
@@ -110,9 +111,14 @@ void Player::Move()
 	float vectorZ=0;
 	float vectorX=0;
 	int angle = Camera::GetRotateAngle()%360;
-	if (angle <= 90) {
+
+	if (angle == 0) {
 		vectorX = 0;
 		vectorZ = 1;
+	}
+	else if (angle <= 90) {
+		vectorX = -1;
+		vectorZ = 0;
 	}
 	else if (angle <= 180) {
 		vectorX = 0;
@@ -126,6 +132,7 @@ void Player::Move()
 		vectorX = 0;
 		vectorZ = 1;
 	}
+
 	float length = vectorX * vectorX + vectorZ * vectorZ;
 
 	//normalize
@@ -166,11 +173,11 @@ void Player::Move()
 	}
 
 
-	if (Input::IsKey(DIK_UP)) {
+	/*if (Input::IsKey(DIK_UP)) {
 		transform_.position_.y += 1.0f;
 		vectorX = 0;
 		vectorZ = 0;
-	}
+	}*/
 
 
 	XMFLOAT3 dir(0, 0, 0);
@@ -224,12 +231,13 @@ void Player::Fall()
 	Stage* stage = nullptr;
 	stage = (Stage*)FindObject("Stage");
 	if (stage != nullptr) {
+		float radius = Set::PLAYER_RADIUS - Set::FALL_RAY_CAST_RADIUS;
 		for (int i = 0; i < 8; i++) {
 			RayCastData rayData;
 			XMFLOAT3 pos = transform_.position_;
 			float r = XMConvertToRadians(45*i);
-			float x = 0 * cos(r) - Set::PLAYER_RADIUS * sin(r);
-			float z = 0 * sin(r) + Set::PLAYER_RADIUS * cos(r);
+			float x = 0 * cos(r) - radius * sin(r);
+			float z = 0 * sin(r) + radius * cos(r);
 			rayData.start = { pos.x + x,pos.y,pos.z + z,0.0f };
 			rayData.dir = { 0,-1,0,0 };
 			rayData.hit = false;
