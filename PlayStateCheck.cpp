@@ -38,7 +38,7 @@ void PlayStateCheck::Draw()
 	if (fall == nullptr)
 		return;
 
-	Transform t;
+	/*Transform t;
 	t.scale_ = { 0.05,0.1,0.1 };
 	t.position_.x = 0;
 	t.position_.y = 0.8;
@@ -46,7 +46,7 @@ void PlayStateCheck::Draw()
 	if (Set::GAME_OVER_ON_GROUND_BLOCK_NUM - num > 0)
 		number_[Set::GAME_OVER_ON_GROUND_BLOCK_NUM - num]->Draw(t);
 	else
-		number_[0]->Draw(t);
+		number_[0]->Draw(t);*/
 }
 
 void PlayStateCheck::Release()

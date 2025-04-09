@@ -335,7 +335,7 @@ void Stage::FallStageBlock()
 		int y = itr.y;
 		int z = itr.z;
 		blockData_[z][y][x].trans.position_.y -= Set::FALL_SPEED * DT::GetDeltaTime();
-		//return‚ÖˆÚ“®
+		//—‰ºI—¹‚Ì‚‚³(-)+‰Šú‚Ì‚‚³
 		float height = Set::BLOCK_RETURN_HEIGHT + y;
 		if (blockData_[z][y][x].trans.position_.y < height) {
 			blockData_[z][y][x].state = RETURN;

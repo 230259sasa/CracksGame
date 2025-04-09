@@ -179,6 +179,7 @@
     <ClCompile Include="PlayScene.cpp" />
     <ClCompile Include="PlaySceneBackground.cpp" />
     <ClCompile Include="PlayStateCheck.cpp" />
+    <ClCompile Include="PlayTimerBar.cpp" />
     <ClCompile Include="Stage.cpp" />
     <ClCompile Include="TestScene.cpp" />
     <ClCompile Include="TitleScene.cpp" />
@@ -216,6 +217,7 @@
     <ClInclude Include="PlayScene.h" />
     <ClInclude Include="PlaySceneBackground.h" />
     <ClInclude Include="PlayStateCheck.h" />
+    <ClInclude Include="PlayTimerBar.h" />
     <ClInclude Include="Stage.h" />
     <ClInclude Include="TestScene.h" />
     <ClInclude Include="TitleScene.h" />
