@@ -11,8 +11,8 @@ namespace Set {
 namespace DT = DeltaTime;
 
 PlayTimerBar::PlayTimerBar(GameObject* parent)
-	: GameObject(parent, "PlayTimerBar"), timer_(0), initialTime_(0),
-	gaugeFrame_(nullptr), gauge_(nullptr)
+	: GameObject(parent, "PlayTimerBar"), timer_(10), initialTime_(10),
+	isTimerRun_(true),gaugeFrame_(nullptr), gauge_(nullptr)
 {
 	transform_.position_ = Set::GAUGE_POSITION;
 
@@ -51,6 +51,7 @@ void PlayTimerBar::Draw()
 	if (timer_ > 0) {
 		float n = timer_ / initialTime_;
 		t.scale_ = { Set::GAUGE_SIZE.x * n,Set::GAUGE_SIZE.y,0 };
+		t.position_.x = Set::GAUGE_POSITION.x - Set::GAUGE_SIZE.x * (1-n);
 	}
 
 	gauge_->Draw(t);
