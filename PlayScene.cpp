@@ -5,8 +5,8 @@
 #include"Player.h"
 #include"FallBlockManager.h"
 #include"PlayStateCheck.h"
-#include"PlaySceneBackground.h"
 #include"PlayTimerBar.h"
+#include"FallIslandManager.h"
 
 PlayScene::PlayScene(GameObject* parent)
 	:GameObject(parent, "PlayScene")
@@ -20,7 +20,7 @@ void PlayScene::Initialize()
 	Instantiate<Player>(this);
 	Instantiate<PlayStateCheck>(this);
 	Instantiate<PlayTimerBar>(this);
-	//Instantiate<PlaySceneBackground>(this);
+	Instantiate<FallIslandManager>(this);
 }
 
 void PlayScene::Update()

@@ -126,10 +126,10 @@
     <ClCompile Include="PlayStateCheck.cpp">
       <Filter>ソース ファイル\PlaySceneCpp</Filter>
     </ClCompile>
-    <ClCompile Include="PlaySceneBackground.cpp">
-      <Filter>ソース ファイル\PlaySceneCpp</Filter>
-    </ClCompile>
     <ClCompile Include="PlayTimerBar.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="FallIslandManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -230,13 +230,13 @@
     <ClInclude Include="PlayStateCheck.h">
       <Filter>ヘッダー ファイル\PlaySceneHeader</Filter>
     </ClInclude>
-    <ClInclude Include="PlaySceneBackground.h">
-      <Filter>ヘッダー ファイル\PlaySceneHeader</Filter>
-    </ClInclude>
     <ClInclude Include="PlayTimerBar.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="TestScene.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="FallIslandManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
