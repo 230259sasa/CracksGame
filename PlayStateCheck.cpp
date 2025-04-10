@@ -64,9 +64,6 @@ bool PlayStateCheck::IsClear()
 
 bool PlayStateCheck::IsGameOver()
 {
-	if (Input::IsKey(DIK_I))
-		return true;
-
 	FallBlockManager* fall = nullptr;
 	fall = (FallBlockManager*)FindObject("FallBlockManager");
 	if (fall != nullptr)

@@ -23,7 +23,7 @@ namespace Set {
 	const float MOVE_SPEED(0.05f);
 	const float JUMP_HEIGHT(1.5);//ジャンプの高さ
 	const float JUMP_LAUNCH_SPEED(sqrtf(2 * GRAVITY * JUMP_HEIGHT));//ジャンプの初速
-	const float FALL_RAY_CAST_RADIUS(PLAYER_RADIUS - 0.03);
+	const float FALL_RAY_CAST_RADIUS(PLAYER_RADIUS - 0.06);
 
 	const int CAMERA_ROTATE_SPEED(3);
 	const int CAMERA_ROTATE_ANGLE(90);
@@ -69,13 +69,13 @@ void Player::Update()
 
 void Player::Draw()
 {
-	/*{
-		ImGui::Text("position x=%5.3li,y=%5.3li,z=%5.3li", (int)transform_.position_.x,
+	{
+		/*ImGui::Text("position x=%5.3li,y=%5.3li,z=%5.3li", (int)transform_.position_.x,
 			(int)transform_.position_.y, (int)transform_.position_.z);
 		ImGui::Text("position x=%5.3lf,y=%5.3lf,z=%5.3lf", transform_.position_.x,
-			transform_.position_.y, transform_.position_.z);
-
-	}*/
+			transform_.position_.y, transform_.position_.z);*/
+		//ImGui::Text("angle x=%5.3li", Camera::GetRotateAngle());
+	}
 	Transform trans = transform_;
 	trans.position_.x = XMVectorGetX(Camera::GetTarget());
 	trans.position_.z = XMVectorGetZ(Camera::GetTarget());
@@ -111,8 +111,10 @@ void Player::Move()
 	float vectorZ=0;
 	float vectorX=0;
 	int angle = Camera::GetRotateAngle()%360;
+	if (angle < 0)
+		angle = 360 + angle;
 
-	if (angle == 0) {
+	if (angle <= 0) {
 		vectorX = 0;
 		vectorZ = 1;
 	}
@@ -128,7 +130,7 @@ void Player::Move()
 		vectorX = 1;
 		vectorZ = 0;
 	}
-	else if (angle < 360) {
+	else if (angle <= 360) {
 		vectorX = 0;
 		vectorZ = 1;
 	}
@@ -231,7 +233,7 @@ void Player::Fall()
 	Stage* stage = nullptr;
 	stage = (Stage*)FindObject("Stage");
 	if (stage != nullptr) {
-		float radius = Set::PLAYER_RADIUS - Set::FALL_RAY_CAST_RADIUS;
+		float radius = Set::FALL_RAY_CAST_RADIUS;
 		for (int i = 0; i < 8; i++) {
 			RayCastData rayData;
 			XMFLOAT3 pos = transform_.position_;
@@ -302,7 +304,10 @@ void Player::BreakStageBlock()
 	y = (int)(transform_.position_.y) - 1;
 	z = (int)(transform_.position_.z);
 
-	int dir = ((int)transform_.rotate_.y % 360) / 45;
+	int angle = ((int)transform_.rotate_.y % 360);
+	if (angle < 0)
+		angle = 360 + angle;
+	int dir = angle / 45;
 
 	//前
 	if (dir <= 0 || dir == 7) {
