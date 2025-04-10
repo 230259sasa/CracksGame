@@ -21,5 +21,6 @@ public:
     void SetTimer(int _time) { timer_ = _time; initialTime_ = _time; }
     void TimerStop() { isTimerRun_ = false; }
     void TimerStart() { isTimerRun_ = true; }
+    bool IsTimeOver() { return timer_ <= 0; }
 };
 
