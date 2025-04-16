@@ -71,16 +71,16 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>D:\GE2A09\program\CracksGame\2020.3.7\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\GE2A09\program\CracksGame\2020.3.7\lib\x64\debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.7\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.7\lib\x64\debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>D:\GE2A09\program\CracksGame\2020.3.7\include;$(IncludePath)</IncludePath>
     <LibraryPath>D:\GE2A09\program\CracksGame\2020.3.7\lib\x64\release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>D:\GE2A09\program\CracksGame\2020.3.7\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\GE2A09\program\CracksGame\2020.3.7\lib\x64\debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.7\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.7\lib\x64\debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>D:\GE2A09\program\CracksGame\2020.3.7\include;$(IncludePath)</IncludePath>
@@ -168,6 +168,7 @@
     <ClCompile Include="FallBlockManager.cpp" />
     <ClCompile Include="FallIslandManager.cpp" />
     <ClCompile Include="GameOverScene.cpp" />
+    <ClCompile Include="GameSetting.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imgui_demo.cpp" />
     <ClCompile Include="imgui\imgui_draw.cpp" />
@@ -204,6 +205,7 @@
     <ClInclude Include="FallBlockManager.h" />
     <ClInclude Include="FallIslandManager.h" />
     <ClInclude Include="GameOverScene.h" />
+    <ClInclude Include="GameSetting.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />
     <ClInclude Include="imgui\imgui_impl_dx11.h" />

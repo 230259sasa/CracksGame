@@ -2,11 +2,10 @@
 #include "FallBlockManager.h"
 #include"Engine/Sprite.h"
 #include"Engine/Input.h"
+#include"GameSetting.h"
 #include<sstream>
 
-namespace Set {
-	const int GAME_OVER_ON_GROUND_BLOCK_NUM(5);
-}
+namespace GS = GameSetting;
 
 PlayStateCheck::PlayStateCheck(GameObject* parent)
 	:GameObject(parent, "PlayStateCheck")
@@ -67,7 +66,7 @@ bool PlayStateCheck::IsGameOver()
 	FallBlockManager* fall = nullptr;
 	fall = (FallBlockManager*)FindObject("FallBlockManager");
 	if (fall != nullptr)
-		return (fall->GetOnGroundBlockNum() >= Set::GAME_OVER_ON_GROUND_BLOCK_NUM);
+		return (fall->GetOnGroundBlockNum() >= (int)GS::GetGameOverOnGroundBlockNum);
 
 	return false;
 }

@@ -72,9 +72,6 @@
     <ClCompile Include="TestScene.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\DeltaTime.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Collider.cpp">
       <Filter>ソース ファイル\Engine</Filter>
     </ClCompile>
@@ -130,6 +127,12 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="FallIslandManager.cpp">
+      <Filter>ソース ファイル\PlaySceneCpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\DeltaTime.cpp">
+      <Filter>ソース ファイル\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="GameSetting.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -172,9 +175,6 @@
     </ClInclude>
     <ClInclude Include="Engine\Transform.h">
       <Filter>ソース ファイル\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\DeltaTime.h">
-      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Collider.h">
       <Filter>ソース ファイル\Engine</Filter>
@@ -237,6 +237,12 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="FallIslandManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\DeltaTime.h">
+      <Filter>ソース ファイル\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="GameSetting.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

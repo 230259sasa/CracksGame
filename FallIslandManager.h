@@ -2,6 +2,7 @@
 #include"Engine\GameObject.h"
 
 class Sprite;
+class FallBlockManager;
 
 class FallIslandManager :
     public GameObject
@@ -9,6 +10,7 @@ class FallIslandManager :
     Transform islandTrans_;
     Sprite* frame_;
     Sprite* island_;
+    FallBlockManager* fbManager_;
 public:
 	FallIslandManager(GameObject* parent);
 	~FallIslandManager();
