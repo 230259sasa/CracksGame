@@ -66,7 +66,7 @@ bool PlayStateCheck::IsGameOver()
 	FallBlockManager* fall = nullptr;
 	fall = (FallBlockManager*)FindObject("FallBlockManager");
 	if (fall != nullptr)
-		return (fall->GetOnGroundBlockNum() >= (int)GS::GetGameOverOnGroundBlockNum);
+		return (fall->GetOnGroundBlockNum() >= GS::GetGameOverOnGroundBlockNum());
 
 	return false;
 }

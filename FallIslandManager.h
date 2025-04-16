@@ -11,6 +11,8 @@ class FallIslandManager :
     Sprite* frame_;
     Sprite* island_;
     FallBlockManager* fbManager_;
+    float percentage_;
+    float tmpPercentage_;
 public:
 	FallIslandManager(GameObject* parent);
 	~FallIslandManager();
@@ -18,5 +20,8 @@ public:
     void Release() override;
     void Update() override;
     void Draw() override;
+    float GetPercentage() { return percentage_; }
+private:
+    void RatioCalculation();
+    void Fall();
 };
-

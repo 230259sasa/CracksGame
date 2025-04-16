@@ -82,7 +82,7 @@ void FallBlockManager::Draw()
 		Model::Draw(hModel_);
 	}
 
-	Transform t;
+	/*Transform t;
 	t.scale_ = { 0.1,0.1,0.1 };
 	t.position_.x = -0.9;
 	t.position_.y = 0.8;
@@ -91,7 +91,7 @@ void FallBlockManager::Draw()
 	t.scale_.x = 0.07;
 	number_[blockNum_ / 10]->Draw(t);
 	t.position_.x += 0.15;
-	number_[blockNum_ % 10]->Draw(t);
+	number_[blockNum_ % 10]->Draw(t);*/
 
 	/*t.position_.x = 0;
 	if (Set::GAME_OVER_ON_GROUND_BLOCK_NUM - onGroundBlockNum_ > 0)
