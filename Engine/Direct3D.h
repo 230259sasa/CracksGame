@@ -2,6 +2,7 @@
 #include <Windows.h>
 #include <d3d11.h>
 #include <assert.h>
+#include <DirectXMath.h>
 #include"../imgui/imgui.h"
 #include"../imgui/imgui_impl_dx11.h"
 #include"../imgui/imgui_impl_win32.h"
@@ -18,6 +19,8 @@ enum BLEND_TYPE {
 
 #define SAFE_DELETE(p) if(p != nullptr){ delete p; p = nullptr;}
 #define SAFE_RELEASE(p) if(p != nullptr){ p->Release(); p = nullptr;}
+
+using namespace DirectX;
 
 namespace Direct3D
 
@@ -41,4 +44,6 @@ namespace Direct3D
 	extern ID3D11Device* pDevice;
 	extern ID3D11DeviceContext* pContext;
 
+	//éOäpå`Ç∆ÉåÉCÇÃè’ìÀîªíË
+	bool Intersect(XMFLOAT4& start, XMFLOAT4& direction, XMFLOAT3& v0, XMFLOAT3& v1, XMFLOAT3& v2, float* distance);
 };

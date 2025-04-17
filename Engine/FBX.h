@@ -20,8 +20,11 @@ struct RayCastData
 	bool		hit;	//Rayが当たったか
 };
 
+class FbxParts;
+
 class FBX
 {
+	friend class FbxParts;
 	//マテリアル
 	struct MATERIAL
 	{
@@ -47,6 +50,11 @@ class FBX
 
 	std::vector<VERTEX> vertices;
 	std::vector<int>* index;
+	std::vector<FbxParts*>	parts_;
+
+	FbxManager* pFbxManager_;
+	FbxScene* pFbxScene_;
+	FbxTime::EMode	frameRate_;
 
 	ID3D11Buffer* pVertexBuffer_;//頂点バッファ用メモリ
 	ID3D11Buffer** pIndexBuffer_;//インデックスバッファ用メモリ
@@ -65,9 +73,9 @@ public:
 	FBX();
 	HRESULT Load(std::string fileName);
 	void    Draw(Transform& transform);
+	void    Draw(Transform& transform,int frame);
 	void    OutLineDraw(Transform& transform);
 	void	ThreeDimensionalDraw(Transform& transform);
 	void    Release(); 
 	void	RayCast(RayCastData& rayData, Transform& transform);
 };
-

@@ -8,12 +8,33 @@ namespace Model
 		FBX* pFbx_;
 		Transform transform_;
 		std::string filename_;
+		//アニメーションのフレーム
+		float nowFrame, animSpeed;
+		int startFrame, endFrame;
+
 		ModelData()
-			:pFbx_(nullptr), filename_(""),transform_() {};
+			:pFbx_(nullptr), filename_(""),transform_(),nowFrame(0),
+		animSpeed(0),startFrame(0),endFrame(0){};
+
+		/// <summary>
+		/// アニメーションのフレーム数をセット
+		/// </summary>
+		/// <param name="start">開始フレーム</param>
+		/// <param name="end">終了フレーム</param>
+		/// <param name="speed">アニメーション速度</param>
+		void SetAnimFrame(int start, int end, float speed)
+		{
+			nowFrame = (float)start;
+			startFrame = start;
+			endFrame = end;
+			animSpeed = speed;
+		}
 	};
-	//modelを保存する配列
+
 	int Load(std::string filename);
 	void SetTransform(int hModel, Transform transform);
+	void SetAnimFrame(int hModel, int startFrame, int endFrame, float animSpeed);
+	int GetAnimFrame(int hModel);
 	void Draw(int hModel);
 	void OutLineDraw(int hModel);
 	void Release();

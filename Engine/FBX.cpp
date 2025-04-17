@@ -2,12 +2,13 @@
 #include"Camera.h"
 #include<filesystem>
 #include<DirectXCollision.h>
+#include "FbxParts.h"
 
 namespace fs = std::filesystem;
 
 FBX::FBX()
 	:pVertexBuffer_(nullptr), pIndexBuffer_(nullptr), pConstantBuffer_(nullptr),
-	vertexCount_(-1), polygonCount_(-1)
+	vertexCount_(-1), polygonCount_(-1),pFbxManager_(nullptr),pFbxScene_(nullptr)
 {
 }
 
@@ -15,19 +16,26 @@ FBX::FBX()
 HRESULT FBX::Load(std::string fileName)
 {
 	//マネージャを生成
-	FbxManager* pFbxManager = FbxManager::Create();
+	pFbxManager_ = FbxManager::Create();
 
 	//インポーターを生成
-	FbxImporter* fbxImporter = FbxImporter::Create(pFbxManager, "imp");
-	fbxImporter->Initialize(fileName.c_str(), -1, pFbxManager->GetIOSettings());
+	FbxImporter* fbxImporter = FbxImporter::Create(pFbxManager_, "imp");
+	fbxImporter->Initialize(fileName.c_str(), -1, pFbxManager_->GetIOSettings());
 
 	//シーンオブジェクトにFBXファイルの情報を流し込む
-	FbxScene* pFbxScene = FbxScene::Create(pFbxManager, "fbxscene");
-	fbxImporter->Import(pFbxScene);
+	pFbxScene_ = FbxScene::Create(pFbxManager_, "fbxscene");
+	fbxImporter->Import(pFbxScene_);
 	fbxImporter->Destroy();
 
+	FbxGeometryConverter geometryConverter(pFbxManager_);
+	geometryConverter.Triangulate(pFbxScene_, true);
+
+
+	// アニメーションのタイムモードの取得
+	frameRate_ = pFbxScene_->GetGlobalSettings().GetTimeMode();
+
 	//メッシュ情報を取得
-	FbxNode* rootNode = pFbxScene->GetRootNode();
+	FbxNode* rootNode = pFbxScene_->GetRootNode();
 	FbxNode* pNode = rootNode->GetChild(0);
 	FbxMesh* mesh = pNode->GetMesh();
 
@@ -51,11 +59,25 @@ HRESULT FBX::Load(std::string fileName)
 	InitConstantBuffer();
 	InitMaterial(pNode);
 
+	int meshCount = pFbxScene_->GetSrcObjectCount<FbxMesh>();
+	for (int i = 0; i < meshCount; ++i)
+	{
+		// <たったこれだけで全てのメッシュデータを取得できる>
+		FbxMesh* mesh = pFbxScene_->GetSrcObject<FbxMesh>(i);
+		//パーツを用意
+		FbxParts* pParts = new FbxParts(this);
+		pParts->Init(mesh);
+
+		//パーツ情報を動的配列に追加
+		parts_.push_back(pParts);
+
+	}
+
 	//カレントパスをもとどおりにもどす
 	fs::current_path(basePath);
 
 	//マネージャ解放
-	pFbxManager->Destroy();
+	pFbxManager_->Destroy();
 	return S_OK;
 }
 
@@ -279,6 +301,31 @@ void FBX::Draw(Transform& transform)
 		}
 		//描画
 		Direct3D::pContext->DrawIndexed(indexCount_[i], 0, 0);
+	}
+}
+
+void FBX::Draw(Transform& transform, int frame)
+{
+	Direct3D::SetBlend(BLEND_INVALID);
+
+	//パーツを1個ずつ描画
+	for (int k = 0; k < parts_.size(); k++)
+	{
+		// その瞬間の自分の姿勢行列を得る
+		FbxTime     time;
+		time.SetTime(0, 0, 0, frame, 0, 0, frameRate_);
+
+		//スキンアニメーション（ボーン有り）の場合
+		if (parts_[k]->GetSkinInfo() != nullptr)
+		{
+			parts_[k]->DrawSkinAnime(transform, time);
+		}
+
+		//メッシュアニメーションの場合
+		else
+		{
+			parts_[k]->DrawMeshAnime(transform, time, pFbxScene_);
+		}
 	}
 }
 

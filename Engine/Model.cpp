@@ -2,6 +2,7 @@
 #include"Direct3D.h"
 
 namespace Model {
+	//modelを保存する配列
 	std::vector<ModelData*> modelList;
 }
 
@@ -37,8 +38,37 @@ void Model::SetTransform(int hModel, Transform transform)
 	modelList[hModel]->transform_ = transform;
 }
 
+void Model::SetAnimFrame(int hModel, int startFrame, int endFrame, float animSpeed)
+{
+	modelList[hModel]->SetAnimFrame(startFrame, endFrame, animSpeed);
+}
+
+int Model::GetAnimFrame(int hModel)
+{
+	return modelList[hModel]->nowFrame;
+}
+
 void Model::Draw(int hModel)
 {
+	if (hModel < 0 || hModel >= modelList.size() || modelList[hModel] == nullptr)
+	{
+		return;
+	}
+
+	//アニメーションを進める
+	modelList[hModel]->nowFrame += modelList[hModel]->animSpeed;
+
+	//最後までアニメーションしたら戻す
+	if (modelList[hModel]->nowFrame > (float)modelList[hModel]->endFrame)
+		modelList[hModel]->nowFrame = (float)modelList[hModel]->startFrame;
+
+
+
+	if (modelList[hModel]->pFbx_)
+	{
+		modelList[hModel]->pFbx_->Draw(modelList[hModel]->transform_, (int)modelList[hModel]->nowFrame);
+	}
+
 	modelList[hModel]->pFbx_->ThreeDimensionalDraw(modelList[hModel]->transform_);
 }
 
