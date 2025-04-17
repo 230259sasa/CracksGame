@@ -11,10 +11,12 @@
 #include "imgui/imgui_impl_win32.h"
 
 namespace Set {
-	const int MAX_FALL_BLOCK(20);
+	const int MAX_FALL_BLOCK(40);
+	const int EXPLOSION_RANGE(1);
 	const float DEFAULT_HIGHT(10);
 	const float BLOCK_DEAD_HIGHT(-10);
 	const float BLOCK_SIZE(1);
+	const float FALL_SPEED(5);
 
 	const int ACTIVE_BLOCK_NUM(1);
 	const int GAME_OVER_ON_GROUND_BLOCK_NUM(8);
@@ -24,7 +26,7 @@ namespace Set {
 namespace DT = DeltaTime;
 
 FallBlockManager::FallBlockManager(GameObject* parent):
-	GameObject(parent, "FallBlockManager"),hModel_(-1),blockNum_(0),
+	GameObject(parent, "FallBlockManager"),hBlock_(-1),hBomb_(-1),blockNum_(0),
 	time_(0),nowFallBlock_(0),isSetFallPos_(false),onGroundBlockNum_(0)
 {
 }
@@ -35,8 +37,10 @@ FallBlockManager::~FallBlockManager()
 
 void FallBlockManager::Initialize()
 {
-	hModel_ = Model::Load("Assets/Model/BoxDefault.fbx");
-	assert(hModel_ >= 0);
+	hBlock_ = Model::Load("Assets/Model/BoxDefault.fbx");
+	assert(hBlock_ >= 0);
+	hBomb_ = Model::Load("Assets/Model/BoxSand.fbx");
+	assert(hBomb_ >= 0);
 
 	for (int i = 0; i < Set::MAX_FALL_BLOCK; i++) {
 		XMFLOAT3 pos = { 0,Set::DEFAULT_HIGHT,0 };
@@ -44,10 +48,14 @@ void FallBlockManager::Initialize()
 		b.pos = pos;
 		b.isActive = false;
 		b.isDead = false;
+		if (rand() % 2 == 0)
+			b.obj = BLOCK;
+		else
+			b.obj = BOMB;
 		blocks.push_back(b);
 	}
 
-	for (int i = 0; i < 10; i++) {
+	/*for (int i = 0; i < 10; i++) {
 		number_[i] = new Sprite();
 		std::stringstream s;
 		s << i;
@@ -55,7 +63,7 @@ void FallBlockManager::Initialize()
 	}
 
 	nokori_ = new Sprite();
-	nokori_->Load("Assets/number/nokori.png");
+	nokori_->Load("Assets/number/nokori.png");*/
 
 	blockNum_ = Set::MAX_FALL_BLOCK;
 }
@@ -78,8 +86,15 @@ void FallBlockManager::Draw()
 			continue;
 		Transform t;
 		t.position_ = blocks[i].pos;
-		Model::SetTransform(hModel_,t);
-		Model::Draw(hModel_);
+		int model=0;
+		if (blocks[i].obj == BLOCK) {
+			model = hBlock_;
+		}
+		else if (blocks[i].obj == BOMB) {
+			model = hBomb_;
+		}
+		Model::SetTransform(model,t);
+		Model::Draw(model);
 	}
 
 	/*Transform t;
@@ -118,7 +133,7 @@ void FallBlockManager::Fall()
 {
 	//ステージ上のブロックとレイキャスト
 	//atode teisuu ni
-	float fallSpeed = 5 * DT::GetDeltaTime();
+	float fallSpeed = Set::FALL_SPEED * DT::GetDeltaTime();
 
 	Stage* stage = nullptr;
 	stage = (Stage*)FindObject("Stage");
@@ -164,86 +179,6 @@ void FallBlockManager::Fall()
 	}
 }
 
-//void FallBlockManager::SetFallPosition()
-//{
-//	if (isSetFallPos_)
-//		return;
-//
-//	Stage* stage = nullptr;
-//	stage = (Stage*)FindObject("Stage");
-//	if (stage == nullptr)
-//		return;
-//
-//	int stageX = stage->GetStageSize().x;
-//	int stageZ = stage->GetStageSize().z;
-//	std::vector<std::vector<bool>> map;
-//	for (int z = 0; z < stageZ; z++) {
-//		std::vector<bool> is;
-//		for (int x = 0; x < stageX; x++) {
-//			is.push_back(false);
-//		}
-//		map.push_back(is);
-//	}
-//
-//	for (int z = 0; z < stageZ; z++) {
-//		for (int x = 0; x < stageX; x++) {
-//			if (z % 2 == 0 || x % 2 == 0)
-//				continue;
-//
-//			map[z][x] = true;
-//			int n;
-//			if (z == 1)
-//				n = rand() % 4;
-//			else
-//				n = rand() % 3;
-//			//上
-//			if (n == 0) {
-//				if (!map[z + 1][x])
-//					map[z + 1][x] = true;
-//				else
-//					n++;
-//			}
-//			//右
-//			if (n == 1) {
-//				if (!map[z][x + 1])
-//					map[z][x + 1] = true;
-//				else
-//					n++;
-//			}
-//			//左
-//			if (n == 2) {
-//				if (!map[z][x - 1])
-//					map[z][x - 1] = true;
-//				else
-//					n++;
-//			}
-//			//下
-//			if (n == 3) {
-//				if (!map[z - 1][x])
-//					map[z - 1][x] = true;
-//				else
-//					continue;
-//			}
-//		}
-//	}
-//
-//	for (int z = 0; z < stageZ; z++) {
-//		for (int x = 0; x < stageX; x++) {
-//			if (map[z][x])
-//				fallPos_.push_back({ x,(int)Set::DEFAULT_HIGHT,z });
-//		}
-//	}
-//
-//	for (int i = 0; i < fallPos_.size(); i++) {
-//		XMINT3 tmp = fallPos_[i];
-//		int num = rand() % fallPos_.size();
-//		fallPos_[i] = fallPos_[num];
-//		fallPos_[num] = tmp;
-//	}
-//
-//	isSetFallPos_ = true;
-//}
-
 void FallBlockManager::FallControle()
 {
 	time_ += DT::GetDeltaTime();
@@ -276,6 +211,24 @@ void FallBlockManager::FallControle()
 	nowFallBlock_ += Set::ACTIVE_BLOCK_NUM;
 }
 
+void FallBlockManager::Explosion(int _x, int _y, int _z)
+{
+	Stage* stage = nullptr;
+	stage = (Stage*)FindObject("Stage");
+	if (stage == nullptr)
+		return;
+
+	int tmpX = _x - Set::EXPLOSION_RANGE;
+	int tmpZ = _z + Set::EXPLOSION_RANGE;
+	for (int x = tmpX; x <= _x + Set::EXPLOSION_RANGE; x++) {
+		for (int y = _y; y >= 0; y--) {
+			for (int z = tmpZ; z >= _z - Set::EXPLOSION_RANGE; z--) {
+				stage->ChangeBlockTypeNone(x, y, z);
+			}
+		}
+	}
+}
+
 void FallBlockManager::FallBlockRayCast(RayCastData& _rayData, int _number)
 {
 	Transform t;
@@ -287,7 +240,7 @@ void FallBlockManager::FallBlockRayCast(RayCastData& _rayData, int _number)
 		if (!blocks[i].isActive || blocks[i].isDead || i == _number || blocks[i].isFall)
 			continue;
 		t.position_ = blocks[i].pos;
-		Model::RayCast(hModel_, data, t);
+		Model::RayCast(hBlock_, data, t);
 		if (data.hit && data.dist < minDistData.dist) {
 			minDistData = data;
 		}

@@ -7,12 +7,19 @@ class Sprite;
 class FallBlockManager :
 	public GameObject
 {
-    int hModel_;
+    int hBlock_;
+    int hBomb_;
     int blockNum_;
     int nowFallBlock_;
     int onGroundBlockNum_;
     float time_;
+    enum FallObject {
+        BLOCK,
+        BOMB,
+        MAX
+    };
     struct FallBlock {
+        FallObject obj;
         XMFLOAT3 pos;
         bool isActive;
         bool isDead;
@@ -23,8 +30,8 @@ class FallBlockManager :
     bool isSetFallPos_;
     std::vector<XMINT3> fallPos_;
 
-    Sprite* number_[10];
-    Sprite* nokori_;
+    //Sprite* number_[10];
+    //Sprite* nokori_;
 public:
     FallBlockManager(GameObject* parent);
     ~FallBlockManager();
@@ -34,10 +41,11 @@ public:
     void Draw() override;
     int GetBlockNum();
     int GetOnGroundBlockNum();
+    //void SetFallObject(int _objNum,int _bombNum);
 private:
     void Fall();
-   // void SetFallPosition();
     void FallControle();
+    void Explosion(int _x,int _y,int _z);
     /// <summary>
     /// クラス内のブロックがクラス内のブロックとレイキャスト
     /// </summary>

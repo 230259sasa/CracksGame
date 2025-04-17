@@ -187,6 +187,15 @@ void Stage::SetFallBlock(int x, int y, int z)
 	}
 }
 
+void Stage::ChangeBlockTypeNone(int x, int y, int z)
+{
+	if (x >= 0 && x < Set::STAGE_SIZE.x && y >= 0 && y < Set::STAGE_SIZE.y &&
+		z >= 0 && z < Set::STAGE_SIZE.z &&
+		blockData_[z][y][x].type != NONE && blockData_[z][y][x].state == NORMAL) {
+		blockData_[z][y][x].type = NONE;
+	}
+}
+
 void Stage::DrawFrame(XMFLOAT3 _pos)
 {
 	Transform t;
