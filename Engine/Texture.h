@@ -13,7 +13,7 @@ class Texture
 	ID3D11ShaderResourceView* pSRV_;
 public:
 	Texture();
-	~Texture();
+	~Texture() {};
 	HRESULT Load(string fileName);
 	void Release();
 	ID3D11SamplerState* GetSampler() { return pSampler_; }

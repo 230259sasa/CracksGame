@@ -290,6 +290,8 @@ void FbxParts::InitMaterial(fbxsdk::FbxMesh* pMesh)
 //テクスチャ準備
 void FbxParts::InitTexture(fbxsdk::FbxSurfaceMaterial* pMaterial, const DWORD& i)
 {
+	if (i < materialCount_ && i >= 0)
+		return;
 	pMaterial_[i].pTexture = nullptr;
 
 	// テクスチャー情報の取得
