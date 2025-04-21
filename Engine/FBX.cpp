@@ -307,6 +307,7 @@ void FBX::Draw(Transform& transform)
 void FBX::Draw(Transform& transform, int frame)
 {
 	Direct3D::SetBlend(BLEND_INVALID);
+	Direct3D::SetShader(SHADER_3D);
 
 	//ƒp[ƒc‚ğ1ŒÂ‚¸‚Â•`‰æ
 	for (int k = 0; k < parts_.size(); k++)
@@ -326,6 +327,7 @@ void FBX::Draw(Transform& transform, int frame)
 		{
 			parts_[k]->DrawMeshAnime(transform, time, pFbxScene_);
 		}
+		Draw(transform);
 	}
 }
 

@@ -142,7 +142,7 @@ public:
 
 	//描画
 	//引数：world	ワールド行列
-	void Draw(Transform& transform);
+	//void Draw(Transform& transform);
 
 	//ボーン有りのモデルを描画
 	//引数：transform	行列情報
