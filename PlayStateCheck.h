@@ -6,7 +6,6 @@ class Sprite;
 class PlayStateCheck :
     public GameObject
 {
-    Sprite* number_[10];
 public:
     PlayStateCheck(GameObject* parent);
     ~PlayStateCheck();
@@ -14,6 +13,7 @@ public:
     void Update() override;
     void Draw() override;
     void Release() override;
+    bool IsReady();
     bool IsClear();
     bool IsGameOver();
 };

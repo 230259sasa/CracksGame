@@ -178,6 +178,7 @@
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayScene.cpp" />
+    <ClCompile Include="PlaySceneReady.cpp" />
     <ClCompile Include="PlayStateCheck.cpp" />
     <ClCompile Include="PlayTimerBar.cpp" />
     <ClCompile Include="Stage.cpp" />
@@ -216,6 +217,7 @@
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayScene.h" />
+    <ClInclude Include="PlaySceneReady.h" />
     <ClInclude Include="PlayStateCheck.h" />
     <ClInclude Include="PlayTimerBar.h" />
     <ClInclude Include="Stage.h" />
