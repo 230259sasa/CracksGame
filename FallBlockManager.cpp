@@ -39,7 +39,7 @@ void FallBlockManager::Initialize()
 {
 	hBlock_ = Model::Load("Assets/Model/BoxDefault.fbx");
 	assert(hBlock_ >= 0);
-	hBomb_ = Model::Load("Assets/Model/BoxSand.fbx");
+	hBomb_ = Model::Load("Assets/Model/Bomb.fbx");
 	assert(hBomb_ >= 0);
 
 	for (int i = 0; i < Set::MAX_FALL_BLOCK; i++) {
