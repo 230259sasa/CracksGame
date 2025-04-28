@@ -167,6 +167,7 @@
     <ClCompile Include="Engine\WinMain.cpp" />
     <ClCompile Include="FallBlockManager.cpp" />
     <ClCompile Include="FallIslandManager.cpp" />
+    <ClCompile Include="FallObject.cpp" />
     <ClCompile Include="GameOverScene.cpp" />
     <ClCompile Include="GameSetting.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
@@ -205,6 +206,7 @@
     <ClInclude Include="Engine\Transform.h" />
     <ClInclude Include="FallBlockManager.h" />
     <ClInclude Include="FallIslandManager.h" />
+    <ClInclude Include="FallObject.h" />
     <ClInclude Include="GameOverScene.h" />
     <ClInclude Include="GameSetting.h" />
     <ClInclude Include="imgui\imconfig.h" />
