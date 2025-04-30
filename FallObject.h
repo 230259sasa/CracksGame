@@ -3,12 +3,12 @@
 #include"Engine/FBX.h"
 
 class FallObject
-	:GameObject
+	:public GameObject
 {
+protected:
 	int hModel_;
-	bool isDead_;
 	bool isFall_;
-	bool isGround_;
+	bool isOnGround_;
 public:
 	FallObject(GameObject* parent);
 	~FallObject();
@@ -17,11 +17,13 @@ public:
 	virtual void Update() override;
 	void Draw() override;
 	void SetPosition(XMFLOAT3 _pos) { transform_.position_ = _pos; }
-	void DeadObject() { isDead_ = true; }
-	void StartFall() { isFall_ = true; }
-	void StopFall() { isFall_ = false; }
-private:
+	//void StartFall() { isFall_ = true; }
+	//void StopFall() { isFall_ = false; }
+	bool IsOnGround() { return isOnGround_; }
+	void RayCast(RayCastData& _rayData);
+protected:
 	void Fall();
-	bool FallObjectRayCast(RayCastData& _rayData);
+	void LandingRayCast(RayCastData& _rayData);
+	virtual void Dead();
 };
 

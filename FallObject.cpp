@@ -6,12 +6,13 @@
 namespace DT = DeltaTime;
 
 namespace Set {
-	const float FALL_SPEED(5);
+	const float FALL_OBJECT_SIZE(1.0f);
+	const float FALL_SPEED(5.0f);
+	const float KILL_ME_HEIGHT(-10.0f);
 }
 
 FallObject::FallObject(GameObject* parent)
-	:GameObject(parent, "FallObject"),isDead_(false),isFall_(false),
-	isGround_(false),hModel_(0)
+	:GameObject(parent, "FallObject"),isFall_(false),isOnGround_(false),hModel_(0)
 {
 }
 
@@ -21,6 +22,7 @@ FallObject::~FallObject()
 
 void FallObject::Initialize()
 {
+	hModel_ = Model::Load("Assets/Model/BoxSand.fbx");
 }
 
 void FallObject::Release()
@@ -29,12 +31,19 @@ void FallObject::Release()
 
 void FallObject::Update()
 {
+	Fall();
+	Dead();
 }
 
 void FallObject::Draw()
 {
 	Model::SetTransform(hModel_, transform_);
 	Model::Draw(hModel_);
+}
+
+void FallObject::RayCast(RayCastData& _rayData)
+{
+	Model::RayCast(hModel_, _rayData, transform_);
 }
 
 void FallObject::Fall()
@@ -51,12 +60,14 @@ void FallObject::Fall()
 
 	RayCastData rayData, stageRayData, tmpRayData;
 	XMFLOAT3 pos = transform_.position_;
-	rayData.start = { pos.x ,pos.y,pos.z,0.0f };
+	//////////////////////////////////////
+	rayData.start = { pos.x + Set::FALL_OBJECT_SIZE/2 ,pos.y,pos.z + Set::FALL_OBJECT_SIZE/2,0.0f };
 	rayData.dir = { 0,-1,0,0 };
 	rayData.hit = false;
+	////////////////////////////////////
 	rayData.dist = 0;
 	stageRayData = rayData;
-	FallObjectRayCast(rayData);
+	LandingRayCast(rayData);
 	stage->FallRayCast(stageRayData);
 
 	if (rayData.dist < stageRayData.dist && rayData.hit)
@@ -68,15 +79,39 @@ void FallObject::Fall()
 	if (tmpRayData.hit && tmpRayData.dist <= abs(fallSpeed)) {
 		transform_.position_.y -= tmpRayData.dist;
 		isFall_ = false;
+		isOnGround_ = true;
 	}
 	else {
 		transform_.position_.y -= fallSpeed;
 		isFall_ = true;
+		isOnGround_ = false;
 	}
 }
 
-bool FallObject::FallObjectRayCast(RayCastData& _rayData)
+void FallObject::LandingRayCast(RayCastData& _rayData)
 {
-	////////
-	Model::RayCast(hModel_, _rayData, transform_);
+	std::list<GameObject*>objs = GetRootJob()->FindChildObjectList("FallObject");
+	RayCastData data,minData;
+	data = _rayData;
+	minData = _rayData;
+	//////////////////////////////////////////////
+	minData.dist = 100;
+	for (auto obj : objs) {
+		if (obj == this)
+			continue;
+		data = _rayData;
+		FallObject* o = (FallObject*)obj;
+		o->RayCast(data);
+		if (data.hit && data.dist < minData.dist) {
+			minData = data;
+		}
+	}
+	_rayData = minData;
+}
+
+void FallObject::Dead()
+{
+	if (Set::KILL_ME_HEIGHT > transform_.position_.y) {
+		KillMe();
+	}
 }
