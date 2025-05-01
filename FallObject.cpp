@@ -23,7 +23,7 @@ FallObject::~FallObject()
 
 void FallObject::Initialize()
 {
-	hModel_ = Model::Load("Assets/Model/BoxSand.fbx");
+	hModel_ = Model::Load("Assets/Model/BoxDefault.fbx");
 }
 
 void FallObject::Release()
@@ -49,9 +49,6 @@ void FallObject::RayCast(RayCastData& _rayData)
 
 void FallObject::Fall()
 {
-	/*if (!isFall_)
-		return;*/
-
 	fallSpeed_ = Set::FALL_SPEED * DT::GetDeltaTime();
 
 	Stage* stage = nullptr;

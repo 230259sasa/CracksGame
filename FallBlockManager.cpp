@@ -54,11 +54,14 @@ int FallBlockManager::GetBlockNum()
 int FallBlockManager::GetOnGroundBlockNum()
 {
 	int num = 0;
-	for (auto itr : objects_) {
-		if (itr->IsOnGround()) {
+	std::list<GameObject*> objs = GetRootJob()->FindChildObjectList("FallObject");
+
+	for (auto obj : objs) {
+		FallObject* o = (FallObject*)obj;
+		if (o->IsOnGround())
 			num++;
-		}
 	}
+
 	return num;
 }
 
