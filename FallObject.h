@@ -5,10 +5,12 @@
 class FallObject
 	:public GameObject
 {
-protected:
-	int hModel_;
+private:
+	float fallSpeed_;
 	bool isFall_;
 	bool isOnGround_;
+protected:
+	int hModel_;
 public:
 	FallObject(GameObject* parent);
 	~FallObject();
@@ -21,9 +23,9 @@ public:
 	//void StopFall() { isFall_ = false; }
 	bool IsOnGround() { return isOnGround_; }
 	void RayCast(RayCastData& _rayData);
-protected:
+private:
 	void Fall();
-	void LandingRayCast(RayCastData& _rayData);
-	virtual void Dead();
+	void FallObjectRayCast(RayCastData& _rayData);
+	void Dead();
 };
 

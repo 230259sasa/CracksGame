@@ -7,6 +7,7 @@ namespace DT = DeltaTime;
 
 namespace Set {
 	const float FALL_OBJECT_SIZE(1.0f);
+	const float FALL_OBJECT_CENTER(FALL_OBJECT_SIZE / 2);
 	const float FALL_SPEED(5.0f);
 	const float KILL_ME_HEIGHT(-10.0f);
 }
@@ -51,7 +52,7 @@ void FallObject::Fall()
 	/*if (!isFall_)
 		return;*/
 
-	float fallSpeed = Set::FALL_SPEED * DT::GetDeltaTime();
+	fallSpeed_ = Set::FALL_SPEED * DT::GetDeltaTime();
 
 	Stage* stage = nullptr;
 	stage = (Stage*)FindObject("Stage");
@@ -60,14 +61,13 @@ void FallObject::Fall()
 
 	RayCastData rayData, stageRayData, tmpRayData;
 	XMFLOAT3 pos = transform_.position_;
-	//////////////////////////////////////
-	rayData.start = { pos.x + Set::FALL_OBJECT_SIZE/2 ,pos.y,pos.z + Set::FALL_OBJECT_SIZE/2,0.0f };
+	rayData.start = { pos.x + Set::FALL_OBJECT_CENTER ,pos.y,pos.z + Set::FALL_OBJECT_CENTER,0.0f };
+	//////////////////////////////////////////////////////////////////
 	rayData.dir = { 0,-1,0,0 };
 	rayData.hit = false;
-	////////////////////////////////////
 	rayData.dist = 0;
 	stageRayData = rayData;
-	LandingRayCast(rayData);
+	FallObjectRayCast(rayData);
 	stage->FallRayCast(stageRayData);
 
 	if (rayData.dist < stageRayData.dist && rayData.hit)
@@ -76,26 +76,26 @@ void FallObject::Fall()
 		tmpRayData = stageRayData;
 
 	//レイキャストが当たったかつ距離が現在のフレームの落下距離より小さいかつ落下中ならtrue
-	if (tmpRayData.hit && tmpRayData.dist <= abs(fallSpeed)) {
+	if (tmpRayData.hit && tmpRayData.dist <= abs(fallSpeed_)) {
 		transform_.position_.y -= tmpRayData.dist;
 		isFall_ = false;
 		isOnGround_ = true;
 	}
 	else {
-		transform_.position_.y -= fallSpeed;
+		transform_.position_.y -= fallSpeed_;
 		isFall_ = true;
 		isOnGround_ = false;
 	}
 }
 
-void FallObject::LandingRayCast(RayCastData& _rayData)
+void FallObject::FallObjectRayCast(RayCastData& _rayData)
 {
 	std::list<GameObject*>objs = GetRootJob()->FindChildObjectList("FallObject");
 	RayCastData data,minData;
 	data = _rayData;
 	minData = _rayData;
-	//////////////////////////////////////////////
-	minData.dist = 100;
+	minData.dist = fallSpeed_;
+
 	for (auto obj : objs) {
 		if (obj == this)
 			continue;
@@ -106,7 +106,9 @@ void FallObject::LandingRayCast(RayCastData& _rayData)
 			minData = data;
 		}
 	}
+
 	_rayData = minData;
+	objs.clear();
 }
 
 void FallObject::Dead()
