@@ -3,7 +3,7 @@
 
 class Sprite;
 
-class PlayTimerBar :
+class PlayTimerGauge :
     public GameObject
 {
     bool isTimerRun_;
@@ -12,8 +12,8 @@ class PlayTimerBar :
     Sprite* gaugeFrame_;
     Sprite* gauge_;
 public:
-    PlayTimerBar(GameObject* parent);
-    ~PlayTimerBar();
+    PlayTimerGauge(GameObject* parent);
+    ~PlayTimerGauge();
     void Initialize() override;
     void Release() override;
     void Update() override;

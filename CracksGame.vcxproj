@@ -181,7 +181,7 @@
     <ClCompile Include="PlayScene.cpp" />
     <ClCompile Include="PlaySceneReady.cpp" />
     <ClCompile Include="PlayStateCheck.cpp" />
-    <ClCompile Include="PlayTimerBar.cpp" />
+    <ClCompile Include="PlayTimerGauge.cpp" />
     <ClCompile Include="Stage.cpp" />
     <ClCompile Include="TestScene.cpp" />
     <ClCompile Include="TitleScene.cpp" />
@@ -221,7 +221,7 @@
     <ClInclude Include="PlayScene.h" />
     <ClInclude Include="PlaySceneReady.h" />
     <ClInclude Include="PlayStateCheck.h" />
-    <ClInclude Include="PlayTimerBar.h" />
+    <ClInclude Include="PlayTimerGauge.h" />
     <ClInclude Include="Stage.h" />
     <ClInclude Include="TestScene.h" />
     <ClInclude Include="TitleScene.h" />

@@ -45,12 +45,6 @@ void FallBlockManager::Draw()
 {
 }
 
-//•s—v
-int FallBlockManager::GetBlockNum()
-{
-	return 1;
-}
-
 int FallBlockManager::GetOnGroundBlockNum()
 {
 	int num = 0;

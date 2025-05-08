@@ -1,4 +1,4 @@
-#include "PlayTimerBar.h"
+#include "PlayTimerGauge.h"
 #include "Engine\Sprite.h"
 #include "Engine\DeltaTime.h"
 
@@ -10,17 +10,17 @@ namespace Set {
 
 namespace DT = DeltaTime;
 
-PlayTimerBar::PlayTimerBar(GameObject* parent)
-	: GameObject(parent, "PlayTimerBar"), timer_(0), initialTime_(0),
+PlayTimerGauge::PlayTimerGauge(GameObject* parent)
+	: GameObject(parent, "PlayTimerGauge"), timer_(10), initialTime_(10),
 	isTimerRun_(true),gaugeFrame_(nullptr), gauge_(nullptr)
 {
 }
 
-PlayTimerBar::~PlayTimerBar()
+PlayTimerGauge::~PlayTimerGauge()
 {
 }
 
-void PlayTimerBar::Initialize()
+void PlayTimerGauge::Initialize()
 {
 	transform_.position_ = Set::GAUGE_POSITION;
 	gaugeFrame_ = new Sprite();
@@ -29,7 +29,7 @@ void PlayTimerBar::Initialize()
 	gauge_->Load("Assets\\Image\\Gauge.png");
 }
 
-void PlayTimerBar::Release()
+void PlayTimerGauge::Release()
 {
 	gaugeFrame_->Release();
 	delete gaugeFrame_;
@@ -37,14 +37,14 @@ void PlayTimerBar::Release()
 	delete gauge_;
 }
 
-void PlayTimerBar::Update()
+void PlayTimerGauge::Update()
 {
 	if (timer_ > 0 && isTimerRun_) {
 		timer_ -= DT::GetDeltaTime();
 	}
 }
 
-void PlayTimerBar::Draw()
+void PlayTimerGauge::Draw()
 {
 	Transform t;
 	t.position_ = transform_.position_;

@@ -123,7 +123,7 @@
     <ClCompile Include="PlayStateCheck.cpp">
       <Filter>ソース ファイル\PlaySceneCpp</Filter>
     </ClCompile>
-    <ClCompile Include="PlayTimerBar.cpp">
+    <ClCompile Include="PlayTimerGauge.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="FallIslandManager.cpp">
@@ -133,6 +133,12 @@
       <Filter>ソース ファイル\Engine</Filter>
     </ClCompile>
     <ClCompile Include="GameSetting.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="FallObject.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="PlaySceneReady.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -230,7 +236,7 @@
     <ClInclude Include="PlayStateCheck.h">
       <Filter>ヘッダー ファイル\PlaySceneHeader</Filter>
     </ClInclude>
-    <ClInclude Include="PlayTimerBar.h">
+    <ClInclude Include="PlayTimerGauge.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="TestScene.h">
@@ -243,6 +249,12 @@
       <Filter>ソース ファイル\Engine</Filter>
     </ClInclude>
     <ClInclude Include="GameSetting.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="FallObject.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="PlaySceneReady.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

@@ -5,7 +5,7 @@
 #include"Player.h"
 #include"FallBlockManager.h"
 #include"PlayStateCheck.h"
-#include"PlayTimerBar.h"
+#include"PlayTimerGauge.h"
 #include"FallIslandManager.h"
 
 PlayScene::PlayScene(GameObject* parent)
@@ -19,7 +19,7 @@ void PlayScene::Initialize()
 	Instantiate<FallBlockManager>(this);
 	Instantiate<Player>(this);
 	Instantiate<PlayStateCheck>(this);
-	Instantiate<PlayTimerBar>(this);
+	Instantiate<PlayTimerGauge>(this);
 	Instantiate<FallIslandManager>(this);
 }
 
@@ -31,8 +31,8 @@ void PlayScene::Update()
 		return;
 	if (state->IsClear()) {
 		SceneManager* pSM = (SceneManager*)FindObject("SceneManager");
-		if (pSM != nullptr)
-		pSM->ChangeScene(SCENE_ID_CLEAR);
+		//if (pSM != nullptr)
+		//pSM->ChangeScene(SCENE_ID_CLEAR);
 	}
 	if (state->IsGameOver()) {
 		SceneManager* pSM = (SceneManager*)FindObject("SceneManager");

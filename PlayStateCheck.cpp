@@ -3,6 +3,7 @@
 #include"Engine/Sprite.h"
 #include"Engine/Input.h"
 #include"GameSetting.h"
+#include"PlayTimerGauge.h"
 #include<sstream>
 
 namespace GS = GameSetting;
@@ -43,10 +44,10 @@ bool PlayStateCheck::IsReady()
 
 bool PlayStateCheck::IsClear()
 {
-	FallBlockManager* fall = nullptr;
-	fall = (FallBlockManager*)FindObject("FallBlockManager");
-	if (fall != nullptr)
-		return (fall->GetBlockNum() == 0);
+	PlayTimerGauge* t = nullptr;
+	t = (PlayTimerGauge*)FindObject("PlayTimerGauge");
+	if (t != nullptr)
+		return t->IsTimeOver();
 	return false;
 }
 

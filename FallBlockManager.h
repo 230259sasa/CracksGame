@@ -22,7 +22,6 @@ public:
     void Release() override;
     void Update() override;
     void Draw() override;
-    int GetBlockNum();
     int GetOnGroundBlockNum();
 private:
     void FallControle();
