@@ -7,13 +7,20 @@ namespace DT = DeltaTime;
 
 namespace Set {
 	const float FALL_OBJECT_SIZE(1.0f);
-	const float FALL_OBJECT_CENTER(FALL_OBJECT_SIZE / 2);
+	const float FALL_OBJECT_CENTER(FALL_OBJECT_SIZE / 2);//XMFLOAT3Ç…Ç∑ÇÈÅH
 	const float FALL_SPEED(5.0f);
 	const float KILL_ME_HEIGHT(-10.0f);
+	const float RAY_CAST_MIN_DATA_INITIALIZE_DIST(100);
+	const XMFLOAT4 RAY_CAST_DIR(0, -1, 0, 0);
 }
 
-FallObject::FallObject(GameObject* parent)
-	:GameObject(parent, "FallObject"),isFall_(false),isOnGround_(false),hModel_(0)
+FallObject::FallObject(GameObject* _parent, string _name)
+	:GameObject(_parent, _name), isFall_(false), isOnGround_(false), hModel_(0)
+{
+}
+
+FallObject::FallObject(GameObject* _parent)
+	:GameObject(_parent, "FallObject"),isFall_(false),isOnGround_(false),hModel_(0)
 {
 }
 
@@ -59,8 +66,7 @@ void FallObject::Fall()
 	RayCastData rayData, stageRayData, tmpRayData;
 	XMFLOAT3 pos = transform_.position_;
 	rayData.start = { pos.x + Set::FALL_OBJECT_CENTER ,pos.y,pos.z + Set::FALL_OBJECT_CENTER,0.0f };
-	//////////////////////////////////////////////////////////////////
-	rayData.dir = { 0,-1,0,0 };
+	rayData.dir = Set::RAY_CAST_DIR;
 	rayData.hit = false;
 	rayData.dist = 0;
 	stageRayData = rayData;
@@ -91,7 +97,7 @@ void FallObject::FallObjectRayCast(RayCastData& _rayData)
 	RayCastData data,minData;
 	data = _rayData;
 	minData = _rayData;
-	minData.dist = fallSpeed_;
+	minData.dist = Set::RAY_CAST_MIN_DATA_INITIALIZE_DIST;
 
 	for (auto obj : objs) {
 		if (obj == this)

@@ -12,7 +12,8 @@ private:
 protected:
 	int hModel_;
 public:
-	FallObject(GameObject* parent);
+	FallObject(GameObject* _parent,string _name);
+	FallObject(GameObject* _parent);
 	~FallObject();
 	virtual void Initialize() override;
 	virtual void Release() override;
@@ -23,9 +24,10 @@ public:
 	//void StopFall() { isFall_ = false; }
 	bool IsOnGround() { return isOnGround_; }
 	void RayCast(RayCastData& _rayData);
-private:
+protected:
 	void Fall();
-	void FallObjectRayCast(RayCastData& _rayData);
 	void Dead();
+private:
+	void FallObjectRayCast(RayCastData& _rayData);
 };
 

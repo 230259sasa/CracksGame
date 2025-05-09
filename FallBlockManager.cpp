@@ -4,6 +4,7 @@
 #include"Engine\DeltaTime.h"
 #include"Engine\Sprite.h"
 #include"FallObject.h"
+#include"FallBomb.h"
 
 #include<sstream>
 
@@ -73,7 +74,10 @@ void FallBlockManager::FallControle()
 
 	time_ = 0;
 	FallObject* fobj;
-	fobj = Instantiate<FallObject>(this);
+	if (rand() % 2 == 0)
+		fobj = Instantiate<FallObject>(this);
+	else
+		fobj = Instantiate<FallBomb>(this);
 	XMFLOAT3 pos;
 	pos = stage->GetRandomScaffoldPos();
 	pos.y = Set::DEFAULT_HIGHT;
