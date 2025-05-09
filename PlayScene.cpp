@@ -1,6 +1,7 @@
 #include "PlayScene.h"
 #include"Engine/Input.h"
 #include"Engine\SceneManager.h"
+#include"Engine/Sound.h"
 #include"Stage.h"
 #include"Player.h"
 #include"FallBlockManager.h"
@@ -21,6 +22,10 @@ void PlayScene::Initialize()
 	Instantiate<PlayStateCheck>(this);
 	Instantiate<PlayTimerGauge>(this);
 	Instantiate<FallIslandManager>(this);
+
+	int index = Sound::Load("Assets/Sound/BackgroundMusic/ks037.wav");
+	assert(index >= 0);
+	Sound::Play(index, true);
 }
 
 void PlayScene::Update()
