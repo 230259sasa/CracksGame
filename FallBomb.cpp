@@ -2,7 +2,7 @@
 #include "Engine\Model.h"
 
 FallBomb::FallBomb(GameObject* _parent) 
-	:FallObject(_parent, "FallBomb")
+	:FallObject(_parent, "FallObject")
 {
 }
 
