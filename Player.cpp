@@ -44,8 +44,9 @@ Player::~Player()
 
 void Player::Initialize()
 {
-	hModel_ = Model::Load("Assets/Model/TestPlayer2.fbx");
+	hModel_ = Model::Load("Assets/Model/running.fbx");
 	assert(hModel_ >= 0);
+	Model::SetAnimFrame(hModel_, 1, 42, 1.0);
 	//Stageのブロックに重ならないために足している
 	transform_.position_.y += 2.0f;
 	framePos_ = { (int)transform_.position_.x, (int)transform_.position_.y-1,

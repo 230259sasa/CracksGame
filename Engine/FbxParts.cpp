@@ -589,67 +589,67 @@ void FbxParts::IntConstantBuffer()
 }
 
 //描画
-//void FbxParts::Draw(Transform& transform)
-//{
-//	//今から描画する頂点情報をシェーダに伝える
-//	UINT stride = sizeof(VERTEX);
-//	UINT offset = 0;
-//	Direct3D::pContext->IASetVertexBuffers(0, 1, &pVertexBuffer_, &stride, &offset);
-//
-//	//使用するコンスタントバッファをシェーダに伝える
-//	Direct3D::pContext->VSSetConstantBuffers(0, 1, &pConstantBuffer_);
-//	Direct3D::pContext->PSSetConstantBuffers(0, 1, &pConstantBuffer_);
-//
-//
-//	//シェーダーのコンスタントバッファーに各種データを渡す
-//	for (DWORD i = 0; i < materialCount_; i++)
-//	{
-//		// インデックスバッファーをセット
-//		UINT    stride = sizeof(int);
-//		UINT    offset = 0;
-//		Direct3D::pContext->IASetIndexBuffer(ppIndexBuffer_[i], DXGI_FORMAT_R32_UINT, 0);
-//
-//		// パラメータの受け渡し
-//		D3D11_MAPPED_SUBRESOURCE pdata;
-//		CONSTANT_BUFFER cb;
-//		//XMMATRIX MSHADOW = XMMatrixShadow({ 0 ,0.01f ,0 ,1 }, {0,1,0,0});
-//		//cb.worldVewProj =	XMMatrixTranspose(transform.GetWorldMatrix() * Camera::GetViewMatrix() * Camera::GetProjectionMatrix());
-//		cb.worldVewProj = XMMatrixTranspose(transform.GetWorldMatrix() * Camera::GetViewMatrix() * Camera::GetProjectionMatrix());// リソースへ送る値をセット
-//		cb.world = XMMatrixTranspose(transform.GetWorldMatrix());
-//
-//		cb.normalTrans = XMMatrixTranspose(transform.matRotate_ * XMMatrixInverse(nullptr, transform.matScale_));
-//		
-//		cb.ambient = pMaterial_[i].ambient;
-//		cb.diffuse = pMaterial_[i].diffuse;
-//		cb.speculer = pMaterial_[i].specular;
-//		cb.shininess = pMaterial_[i].shininess;
-//		cb.cameraPosition = XMFLOAT4(XMVectorGetX(Camera::GetPosition()),
-//			XMVectorGetY(Camera::GetPosition()), XMVectorGetZ(Camera::GetPosition()), 0);
-//		cb.lightDirection = XMFLOAT4(-1, -1, -1, 0);
-//		cb.isTexture = pMaterial_[i].pTexture != nullptr;
-//
-//
-//		Direct3D::pContext->Map(pConstantBuffer_, 0, D3D11_MAP_WRITE_DISCARD, 0, &pdata);	// GPUからのリソースアクセスを一時止める
-//		memcpy_s(pdata.pData, pdata.RowPitch, (void*)(&cb), sizeof(cb));		// リソースへ値を送る
-//
-//
-//		// テクスチャをシェーダーに設定
-//
-//		if (cb.isTexture)
-//		{
-//			ID3D11SamplerState* pSampler = pMaterial_[i].pTexture->GetSampler();
-//			Direct3D::pContext->PSSetSamplers(0, 1, &pSampler);
-//
-//			ID3D11ShaderResourceView* pSRV = pMaterial_[i].pTexture->GetSRV();
-//			Direct3D::pContext->PSSetShaderResources(0, 1, &pSRV);
-//		}
-//		Direct3D::pContext->Unmap(pConstantBuffer_, 0);									// GPUからのリソースアクセスを再開
-//
-//		//ポリゴンメッシュを描画する
-//		Direct3D::pContext->DrawIndexed(pMaterial_[i].polygonCount * 3, 0, 0);
-//	}
-//
-//}
+void FbxParts::Draw(Transform& transform)
+{
+	//今から描画する頂点情報をシェーダに伝える
+	UINT stride = sizeof(VERTEX);
+	UINT offset = 0;
+	Direct3D::pContext->IASetVertexBuffers(0, 1, &pVertexBuffer_, &stride, &offset);
+
+	//使用するコンスタントバッファをシェーダに伝える
+	Direct3D::pContext->VSSetConstantBuffers(0, 1, &pConstantBuffer_);
+	Direct3D::pContext->PSSetConstantBuffers(0, 1, &pConstantBuffer_);
+
+
+	//シェーダーのコンスタントバッファーに各種データを渡す
+	for (DWORD i = 0; i < materialCount_; i++)
+	{
+		// インデックスバッファーをセット
+		UINT    stride = sizeof(int);
+		UINT    offset = 0;
+		Direct3D::pContext->IASetIndexBuffer(ppIndexBuffer_[i], DXGI_FORMAT_R32_UINT, 0);
+
+		// パラメータの受け渡し
+		D3D11_MAPPED_SUBRESOURCE pdata;
+		CONSTANT_BUFFER cb;
+		//XMMATRIX MSHADOW = XMMatrixShadow({ 0 ,0.01f ,0 ,1 }, {0,1,0,0});
+		//cb.worldVewProj =	XMMatrixTranspose(transform.GetWorldMatrix() * Camera::GetViewMatrix() * Camera::GetProjectionMatrix());
+		cb.worldVewProj = XMMatrixTranspose(transform.GetWorldMatrix() * Camera::GetViewMatrix() * Camera::GetProjectionMatrix());// リソースへ送る値をセット
+		cb.world = XMMatrixTranspose(transform.GetWorldMatrix());
+
+		cb.normalTrans = XMMatrixTranspose(transform.matRotate_ * XMMatrixInverse(nullptr, transform.matScale_));
+		
+		cb.ambient = pMaterial_[i].ambient;
+		cb.diffuse = pMaterial_[i].diffuse;
+		cb.speculer = pMaterial_[i].specular;
+		cb.shininess = pMaterial_[i].shininess;
+		cb.cameraPosition = XMFLOAT4(XMVectorGetX(Camera::GetPosition()),
+			XMVectorGetY(Camera::GetPosition()), XMVectorGetZ(Camera::GetPosition()), 0);
+		cb.lightDirection = XMFLOAT4(-1, -1, -1, 0);
+		cb.isTexture = pMaterial_[i].pTexture != nullptr;
+
+
+		Direct3D::pContext->Map(pConstantBuffer_, 0, D3D11_MAP_WRITE_DISCARD, 0, &pdata);	// GPUからのリソースアクセスを一時止める
+		memcpy_s(pdata.pData, pdata.RowPitch, (void*)(&cb), sizeof(cb));		// リソースへ値を送る
+
+
+		// テクスチャをシェーダーに設定
+
+		if (cb.isTexture)
+		{
+			ID3D11SamplerState* pSampler = pMaterial_[i].pTexture->GetSampler();
+			Direct3D::pContext->PSSetSamplers(0, 1, &pSampler);
+
+			ID3D11ShaderResourceView* pSRV = pMaterial_[i].pTexture->GetSRV();
+			Direct3D::pContext->PSSetShaderResources(0, 1, &pSRV);
+		}
+		Direct3D::pContext->Unmap(pConstantBuffer_, 0);									// GPUからのリソースアクセスを再開
+
+		//ポリゴンメッシュを描画する
+		Direct3D::pContext->DrawIndexed(pMaterial_[i].polygonCount * 3, 0, 0);
+	}
+
+}
 
 //ボーン有りのモデルを描画
 void FbxParts::DrawSkinAnime(Transform& transform, FbxTime time)
@@ -723,7 +723,7 @@ void FbxParts::DrawSkinAnime(Transform& transform, FbxTime time)
 		Direct3D::pContext->Unmap(pVertexBuffer_, 0);
 	}
 
-	//Draw(transform);
+	Draw(transform);
 
 }
 
@@ -746,7 +746,7 @@ void FbxParts::DrawMeshAnime(Transform& transform, FbxTime time, FbxScene* scene
 	//	}
 	//}
 
-	//Draw(transform);
+	Draw(transform);
 }
 
 bool FbxParts::GetBonePosition(std::string boneName, XMFLOAT3* position)

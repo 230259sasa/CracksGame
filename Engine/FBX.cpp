@@ -29,7 +29,7 @@ HRESULT FBX::Load(std::string fileName)
 
 	FbxGeometryConverter geometryConverter(pFbxManager_);
 	geometryConverter.Triangulate(pFbxScene_, true);
-
+	geometryConverter.SplitMeshesPerMaterial(pFbxScene_, true);
 
 	// アニメーションのタイムモードの取得
 	frameRate_ = pFbxScene_->GetGlobalSettings().GetTimeMode();
@@ -77,7 +77,7 @@ HRESULT FBX::Load(std::string fileName)
 	fs::current_path(basePath);
 
 	//マネージャ解放
-	pFbxManager_->Destroy();
+	//pFbxManager_->Destroy();
 	return S_OK;
 }
 
@@ -327,7 +327,7 @@ void FBX::Draw(Transform& transform, int frame)
 		{
 			parts_[k]->DrawMeshAnime(transform, time, pFbxScene_);
 		}
-		Draw(transform);
+		//Draw(transform);
 	}
 }
 
