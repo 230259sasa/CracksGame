@@ -13,6 +13,7 @@ namespace Sound {
 		SoundData():
 		number_(0),filename_(""),buffer_(nullptr){};
 	};
+	void Initialize();
 	int Load(std::string filename);
 	void Release();
 	void Play(int index,bool isLoop);

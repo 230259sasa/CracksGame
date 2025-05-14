@@ -14,6 +14,17 @@ namespace Sound {
     LPDIRECTSOUND8 g_pDirectSound = nullptr;
 }
 
+void Sound::Initialize()
+{
+    if (!g_pDirectSound) {
+        if (FAILED(DirectSoundCreate8(NULL, &g_pDirectSound, NULL))) {
+            //error
+            return;
+        }
+        g_pDirectSound->SetCooperativeLevel(GetForegroundWindow(), DSSCL_PRIORITY);
+    }
+}
+
 int Sound::Load(std::string filename)
 {
 	SoundData* pData = new SoundData;
@@ -26,18 +37,8 @@ int Sound::Load(std::string filename)
 			return e->number_;
 		}
 	}
+
 	//同名のファイルがなかったら
-
-    
-    // DirectSound の初期化（1回のみ）
-    if (!g_pDirectSound) {
-        if (FAILED(DirectSoundCreate8(NULL, &g_pDirectSound, NULL))) {
-            delete pData;
-            return -1;
-        }
-        g_pDirectSound->SetCooperativeLevel(GetForegroundWindow(), DSSCL_PRIORITY);
-    }
-
     // WAVファイルをバイナリモードで読み込む
     std::ifstream file(filename, std::ios::binary);
     if (!file) {

@@ -8,6 +8,7 @@
 #include"Input.h"
 #include"Model.h"
 #include"DeltaTime.h"
+#include"Sound.h"
 #include "../imgui/imgui.h"
 #include "../imgui/imgui_impl_dx11.h"
 #include "../imgui/imgui_impl_win32.h"
@@ -85,6 +86,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, 
 
 	Input::Initialize(hWnd);
 	Camera::Initialize();
+	Sound::Initialize();
 	DeltaTime::Initialize();
 	RootJob* pRootJob;
 	pRootJob = new RootJob(nullptr);
