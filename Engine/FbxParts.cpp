@@ -2,6 +2,9 @@
 #include "Fbx.h"
 #include "Direct3D.h"
 #include "Camera.h"
+#include<filesystem>
+
+namespace fs = std::filesystem;
 
 #define SAFE_DELETE_ARRAY(p) {if ((p)!=nullptr) { delete[] (p); (p)=nullptr;}}
 
@@ -290,8 +293,6 @@ void FbxParts::InitMaterial(fbxsdk::FbxMesh* pMesh)
 //テクスチャ準備
 void FbxParts::InitTexture(fbxsdk::FbxSurfaceMaterial* pMaterial, const DWORD& i)
 {
-	if (i < materialCount_ && i >= 0)
-		return;
 	pMaterial_[i].pTexture = nullptr;
 
 	// テクスチャー情報の取得
@@ -300,18 +301,18 @@ void FbxParts::InitTexture(fbxsdk::FbxSurfaceMaterial* pMaterial, const DWORD& i
 	//テクスチャの数
 	int fileTextureCount = lProperty.GetSrcObjectCount<FbxFileTexture>();
 
-	if (fileTextureCount > 0)
+	if (fileTextureCount)
 	{
-		FbxFileTexture* texture = lProperty.GetSrcObject<FbxFileTexture>(0);
-
 		//ファイル名+拡張だけにする
-		char name[_MAX_FNAME];	//ファイル名
-		char ext[_MAX_EXT];		//拡張子
-		_splitpath_s(texture->GetRelativeFileName(), nullptr, 0, nullptr, 0, name, _MAX_FNAME, ext, _MAX_EXT);
-		wsprintf((LPWSTR)name, L"%s%s", name, ext);
+		FbxFileTexture* texture = lProperty.GetSrcObject<FbxFileTexture>(0);
+		const char* textureFilePath = texture->GetRelativeFileName();
+		fs::path texFile(textureFilePath);
 
-		pMaterial_[i].pTexture = new Texture;
-		pMaterial_[i].pTexture->Load(name);
+		if (fs::is_regular_file(texFile))
+		{
+			pMaterial_[i].pTexture = new Texture;
+			pMaterial_[i].pTexture->Load(texFile.string());
+		}
 	}
 }
 
@@ -600,6 +601,7 @@ void FbxParts::Draw(Transform& transform)
 	Direct3D::pContext->VSSetConstantBuffers(0, 1, &pConstantBuffer_);
 	Direct3D::pContext->PSSetConstantBuffers(0, 1, &pConstantBuffer_);
 
+	transform.Calculation();
 
 	//シェーダーのコンスタントバッファーに各種データを渡す
 	for (DWORD i = 0; i < materialCount_; i++)
@@ -615,26 +617,27 @@ void FbxParts::Draw(Transform& transform)
 		//XMMATRIX MSHADOW = XMMatrixShadow({ 0 ,0.01f ,0 ,1 }, {0,1,0,0});
 		//cb.worldVewProj =	XMMatrixTranspose(transform.GetWorldMatrix() * Camera::GetViewMatrix() * Camera::GetProjectionMatrix());
 		cb.worldVewProj = XMMatrixTranspose(transform.GetWorldMatrix() * Camera::GetViewMatrix() * Camera::GetProjectionMatrix());// リソースへ送る値をセット
-		cb.world = XMMatrixTranspose(transform.GetWorldMatrix());
+		//cb.world = XMMatrixTranspose(transform.GetWorldMatrix());
 
-		cb.normalTrans = XMMatrixTranspose(transform.matRotate_ * XMMatrixInverse(nullptr, transform.matScale_));
+		//cb.normalTrans = XMMatrixTranspose(transform.matRotate_ * XMMatrixInverse(nullptr, transform.matScale_));
+		cb.normalTrans = XMMatrixTranspose(transform.GetNormalMatrix());
 		
-		cb.ambient = pMaterial_[i].ambient;
+		/*cb.ambient = pMaterial_[i].ambient;
 		cb.diffuse = pMaterial_[i].diffuse;
 		cb.speculer = pMaterial_[i].specular;
 		cb.shininess = pMaterial_[i].shininess;
 		cb.cameraPosition = XMFLOAT4(XMVectorGetX(Camera::GetPosition()),
 			XMVectorGetY(Camera::GetPosition()), XMVectorGetZ(Camera::GetPosition()), 0);
-		cb.lightDirection = XMFLOAT4(-1, -1, -1, 0);
+		cb.lightDirection = XMFLOAT4(-1, -1, -1, 0);*/
 		cb.isTexture = pMaterial_[i].pTexture != nullptr;
 
 
 		Direct3D::pContext->Map(pConstantBuffer_, 0, D3D11_MAP_WRITE_DISCARD, 0, &pdata);	// GPUからのリソースアクセスを一時止める
 		memcpy_s(pdata.pData, pdata.RowPitch, (void*)(&cb), sizeof(cb));		// リソースへ値を送る
 
+		Direct3D::pContext->Unmap(pConstantBuffer_, 0);
 
 		// テクスチャをシェーダーに設定
-
 		if (cb.isTexture)
 		{
 			ID3D11SamplerState* pSampler = pMaterial_[i].pTexture->GetSampler();
@@ -642,8 +645,7 @@ void FbxParts::Draw(Transform& transform)
 
 			ID3D11ShaderResourceView* pSRV = pMaterial_[i].pTexture->GetSRV();
 			Direct3D::pContext->PSSetShaderResources(0, 1, &pSRV);
-		}
-		Direct3D::pContext->Unmap(pConstantBuffer_, 0);									// GPUからのリソースアクセスを再開
+		}							// GPUからのリソースアクセスを再開
 
 		//ポリゴンメッシュを描画する
 		Direct3D::pContext->DrawIndexed(pMaterial_[i].polygonCount * 3, 0, 0);

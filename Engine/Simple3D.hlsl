@@ -12,8 +12,14 @@ cbuffer global
 {
     //変換行列、視点、光源
     float4x4 matWVP; // ワールド・ビュー・プロジェクションの合成行列
-    float4x4 matW;  //法線をワールド座標に対応させる行列＝回転＊
+    float4x4 matW; //法線をワールド座標に対応させる行列＝回転＊
+    //float4x4 normal_;
+    //float4 lightDirection_;
     float4 diffuseColor; //拡散反射係数
+    //float4 ambient_;
+    //float4 speculer_;
+    //float4 cameraPosition_;
+    //float shininess_;
     bool isTextured; //texが貼られているか
 };
 
