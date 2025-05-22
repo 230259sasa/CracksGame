@@ -36,6 +36,7 @@ Player::Player(GameObject* parent)
 	framePos_({ 0,0,0 }), pastPos_(0, 0, 0),isCameraRotateStart_(false),
 	CameraRotateDir_(0)
 {
+	transform_.scale_ = { 0.3,0.3,0.3 };
 }
 
 Player::~Player()
@@ -80,7 +81,7 @@ void Player::Draw()
 	Transform trans = transform_;
 	trans.position_.x = XMVectorGetX(Camera::GetTarget());
 	trans.position_.z = XMVectorGetZ(Camera::GetTarget());
-	trans.scale_ = XMFLOAT3(0.8, 1, 0.8);
+	//trans.scale_ = XMFLOAT3(0.8, 1, 0.8);
 	Model::SetTransform(hModel_, trans);
 	Model::Draw(hModel_);
 	
