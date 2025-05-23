@@ -4,6 +4,7 @@
 #include<DirectXCollision.h>
 
 namespace fs = std::filesystem;
+using std::string;
 
 FBX::FBX()
 	:pVertexBuffer_(nullptr), pIndexBuffer_(nullptr), pConstantBuffer_(nullptr),

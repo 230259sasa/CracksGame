@@ -4,6 +4,7 @@
 #include"Stage.h"
 
 namespace DT = DeltaTime;
+using std::string;
 
 namespace Set {
 	const float FALL_OBJECT_SIZE(1.0f);

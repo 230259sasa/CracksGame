@@ -5,11 +5,6 @@
 #include <vector>
 #include "Transform.h"
 
-using std::vector;
-using namespace DirectX;
-
-
-
 class Sprite
 {
 	struct CONSTANT_BUFFER
@@ -24,9 +19,9 @@ class Sprite
 	};
 
 	uint64_t vertexNum_;
-	vector<VERTEX> vertices_;
+	std::vector<VERTEX> vertices_;
 	uint64_t indexNum_;				
-	vector<int> indices_;			
+	std::vector<int> indices_;			
 
 	ID3D11Buffer* pVertexBuffer_;
 	ID3D11Buffer* pIndexBuffer_;

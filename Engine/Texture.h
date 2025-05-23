@@ -3,8 +3,7 @@
 #include <string>
 #include <wrl.h>
 
-using namespace Microsoft::WRL;
-using std::string;
+//using namespace Microsoft::WRL;
 
 
 class Texture
@@ -14,7 +13,7 @@ class Texture
 public:
 	Texture();
 	~Texture();
-	HRESULT Load(string fileName);
+	HRESULT Load(std::string fileName);
 	void Release();
 	ID3D11SamplerState* GetSampler() { return pSampler_; }
 	ID3D11ShaderResourceView* GetSRV() { return pSRV_; }

@@ -2,7 +2,7 @@
 #include "Camera.h"
 #include <filesystem>
 
-
+using std::vector;
 
 Sprite::Sprite()
 	:pTexture_(nullptr), pVertexBuffer_(nullptr),

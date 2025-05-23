@@ -12,7 +12,7 @@ private:
 protected:
 	int hModel_;
 public:
-	FallObject(GameObject* _parent,string _name);
+	FallObject(GameObject* _parent,std::string _name);
 	FallObject(GameObject* _parent);
 	~FallObject();
 	virtual void Initialize() override;
