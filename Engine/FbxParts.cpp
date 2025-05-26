@@ -622,9 +622,9 @@ void FbxParts::Draw(Transform& transform)
 		//cb.normalTrans = XMMatrixTranspose(transform.matRotate_ * XMMatrixInverse(nullptr, transform.matScale_));
 		cb.normalTrans = XMMatrixTranspose(transform.GetNormalMatrix());
 		
-		/*cb.ambient = pMaterial_[i].ambient;
+		//cb.ambient = pMaterial_[i].ambient;
 		cb.diffuse = pMaterial_[i].diffuse;
-		cb.speculer = pMaterial_[i].specular;
+		/*cb.speculer = pMaterial_[i].specular;
 		cb.shininess = pMaterial_[i].shininess;
 		cb.cameraPosition = XMFLOAT4(XMVectorGetX(Camera::GetPosition()),
 			XMVectorGetY(Camera::GetPosition()), XMVectorGetZ(Camera::GetPosition()), 0);
