@@ -8,7 +8,7 @@ using std::string;
 
 
 Texture::Texture()
-	:pSampler_(nullptr), pSRV_(nullptr)
+	:pSampler_(nullptr), pSRV_(nullptr),size_(0,0,0)
 {
 }
 
@@ -50,6 +50,9 @@ HRESULT Texture::Load(string fileName)
 	srv.Texture2D.MipLevels = 1;
 	hr = CreateShaderResourceView(Direct3D::pDevice,
 		image.GetImages(), image.GetImageCount(), metadata, &pSRV_);
+	size_.x = image.GetMetadata().width;
+	size_.y = image.GetMetadata().height;
+	
 	if (FAILED(hr))
 	{
 		return S_FALSE;
