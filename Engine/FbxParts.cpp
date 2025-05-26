@@ -3,6 +3,7 @@
 #include "Direct3D.h"
 #include "Camera.h"
 #include<filesystem>
+#include"DirectXCollision.h"
 
 namespace fs = std::filesystem;
 
@@ -789,9 +790,22 @@ bool FbxParts::GetBonePositionAtNow(std::string boneName, XMFLOAT3* position)
 	return false;
 }
 
-void FbxParts::RayCast(RayCastData* data)
+void FbxParts::RayCast(RayCastData& data, Transform& transform)
 {
-	data->hit = FALSE;
+	transform.Calculation();
+	XMMATRIX invWorld = XMMatrixInverse(nullptr, transform.GetWorldMatrix());
+
+	XMVECTOR start = XMLoadFloat4(&data.start);
+	XMVECTOR dir = XMLoadFloat4(&data.dir);
+
+	XMVECTOR end = start + dir;
+	//オブジェクトを動かすのではなくレイを動かす
+	//逆行列をもとめる
+	start = XMVector3TransformCoord(start, invWorld);
+	end = XMVector3TransformCoord(end, invWorld);
+	//startからのベクトルを求める
+	dir = end - start;
+	dir = XMVector3Normalize(dir);
 
 	//マテリアル毎
 	for (DWORD i = 0; i < materialCount_; i++)
@@ -799,22 +813,53 @@ void FbxParts::RayCast(RayCastData* data)
 		//そのマテリアルのポリゴン毎
 		for (DWORD j = 0; j < pMaterial_[i].polygonCount; j++)
 		{
-			//3頂点
-			XMFLOAT3 ver[3];
-			ver[0] = pVertexData_[ppIndexData_[i][j * 3 + 0]].position;
-			ver[1] = pVertexData_[ppIndexData_[i][j * 3 + 1]].position;
-			ver[2] = pVertexData_[ppIndexData_[i][j * 3 + 2]].position;
 
-			BOOL  hit = FALSE;
+			//3頂点
+			XMVECTOR ver[3];
+			ver[0] = XMLoadFloat3(&pVertexData_[ppIndexData_[i][j * 3 + 0]].position);
+			ver[1] = XMLoadFloat3(&pVertexData_[ppIndexData_[i][j * 3 + 1]].position);
+			ver[2] = XMLoadFloat3(&pVertexData_[ppIndexData_[i][j * 3 + 2]].position);
+
+			bool  hit = false;
 			float dist = 0.0f;
 
-			hit = Direct3D::Intersect(data->start, data->dir, ver[0], ver[1], ver[2], &dist);
+			hit = TriangleTests::Intersects(start, dir, ver[0], ver[1], ver[2], dist);
 
-			if (hit && dist < data->dist)
+			if (hit && dist < data.dist)
 			{
-				data->hit = TRUE;
-				data->dist = dist;
+				data.hit = true;
+				data.dist = dist;
 			}
 		}
 	}
 }
+
+//void FbxParts::RayCast(RayCastData* data)
+//{
+//	data->hit = FALSE;
+//
+//	//マテリアル毎
+//	for (DWORD i = 0; i < materialCount_; i++)
+//	{
+//		//そのマテリアルのポリゴン毎
+//		for (DWORD j = 0; j < pMaterial_[i].polygonCount; j++)
+//		{
+//			//3頂点
+//			XMFLOAT3 ver[3];
+//			ver[0] = pVertexData_[ppIndexData_[i][j * 3 + 0]].position;
+//			ver[1] = pVertexData_[ppIndexData_[i][j * 3 + 1]].position;
+//			ver[2] = pVertexData_[ppIndexData_[i][j * 3 + 2]].position;
+//
+//			BOOL  hit = FALSE;
+//			float dist = 0.0f;
+//
+//			hit = Direct3D::Intersect(data->start, data->dir, ver[0], ver[1], ver[2], &dist);
+//
+//			if (hit && dist < data->dist)
+//			{
+//				data->hit = TRUE;
+//				data->dist = dist;
+//			}
+//		}
+//	}
+//}

@@ -26,56 +26,56 @@ class FBX
 {
 	friend class FbxParts;
 	//マテリアル
-	struct MATERIAL
-	{
-		Texture* pTexture;
-		XMFLOAT4 diffuse;
-	};
-	//コンスタントバッファー:　アプリ側から、シェーダーに毎フレーム渡したい情報
-	struct CONSTANT_BUFFER
-	{
-		XMMATRIX	matWVP;
-		XMMATRIX	matNormal;
-		XMFLOAT4 diffuseColor;
-		int isTextured;
-	};
+	//struct MATERIAL
+	//{
+	//	Texture* pTexture;
+	//	XMFLOAT4 diffuse;
+	//};
+	////コンスタントバッファー:　アプリ側から、シェーダーに毎フレーム渡したい情報
+	//struct CONSTANT_BUFFER
+	//{
+	//	XMMATRIX	matWVP;
+	//	XMMATRIX	matNormal;
+	//	XMFLOAT4 diffuseColor;
+	//	int isTextured;
+	//};
 
-	//頂点情報
-	struct VERTEX
-	{
-		XMVECTOR position;
-		XMVECTOR uv;
-		XMVECTOR normal; //ノーマル追加（法線ベクトル）
-	};
+	////頂点情報
+	//struct VERTEX
+	//{
+	//	XMVECTOR position;
+	//	XMVECTOR uv;
+	//	XMVECTOR normal; //ノーマル追加（法線ベクトル）
+	//};
 
-	std::vector<VERTEX> vertices;
-	std::vector<int>* index;
+	/*std::vector<VERTEX> vertices;
+	std::vector<int>* index;*/
 	std::vector<FbxParts*>	parts_;
 
 	FbxManager* pFbxManager_;
 	FbxScene* pFbxScene_;
 	FbxTime::EMode	frameRate_;
 
-	ID3D11Buffer* pVertexBuffer_;//頂点バッファ用メモリ
-	ID3D11Buffer** pIndexBuffer_;//インデックスバッファ用メモリ
-	ID3D11Buffer* pConstantBuffer_;//コンスタントバッファ用メモリ
-	std::vector<MATERIAL> pMaterialList_;
-	std::vector<int> indexCount_;
-	int vertexCount_;	//頂点数
-	int polygonCount_;	//ポリゴン数
-	//int indexNum_;
-	int materialCount_;	//マテリアルの個数
-	void InitVertex(fbxsdk::FbxMesh* mesh);
+	//ID3D11Buffer* pVertexBuffer_;//頂点バッファ用メモリ
+	//ID3D11Buffer** pIndexBuffer_;//インデックスバッファ用メモリ
+	//ID3D11Buffer* pConstantBuffer_;//コンスタントバッファ用メモリ
+	//std::vector<MATERIAL> pMaterialList_;
+	//std::vector<int> indexCount_;
+	//int vertexCount_;	//頂点数
+	//int polygonCount_;	//ポリゴン数
+	////int indexNum_;
+	//int materialCount_;	//マテリアルの個数
+	/*void InitVertex(fbxsdk::FbxMesh* mesh);
 	void InitIndex(fbxsdk::FbxMesh* mesh);
 	void InitConstantBuffer();
-	void InitMaterial(fbxsdk::FbxNode* pNode);
+	void InitMaterial(fbxsdk::FbxNode* pNode);*/
 public:
 	FBX();
 	HRESULT Load(std::string fileName);
-	void    Draw(Transform& transform);
+	//void    Draw(Transform& transform);
 	void    Draw(Transform& transform,int frame);
 	void    OutLineDraw(Transform& transform);
-	void	ThreeDimensionalDraw(Transform& transform);
+	//void	ThreeDimensionalDraw(Transform& transform);
 	void    Release(); 
 	void	RayCast(RayCastData& rayData, Transform& transform);
 };
