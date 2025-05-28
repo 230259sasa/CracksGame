@@ -816,9 +816,15 @@ void FbxParts::RayCast(RayCastData& data, Transform& transform)
 
 			//3’¸“_
 			XMVECTOR ver[3];
-			ver[0] = XMLoadFloat3(&pVertexData_[ppIndexData_[i][j * 3 + 0]].position);
-			ver[1] = XMLoadFloat3(&pVertexData_[ppIndexData_[i][j * 3 + 1]].position);
-			ver[2] = XMLoadFloat3(&pVertexData_[ppIndexData_[i][j * 3 + 2]].position);
+			XMFLOAT3 pos = pVertexData_[ppIndexData_[i][j * 3 + 0]].position;
+			pos.z *= -1;
+			ver[0] = XMLoadFloat3(&pos);
+			pos = pVertexData_[ppIndexData_[i][j * 3 + 1]].position;
+			pos.z *= -1;
+			ver[1] = XMLoadFloat3(&pos);
+			pos = pVertexData_[ppIndexData_[i][j * 3 + 2]].position;
+			pos.z *= -1;
+			ver[2] = XMLoadFloat3(&pos);
 
 			bool  hit = false;
 			float dist = 0.0f;
