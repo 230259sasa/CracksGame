@@ -154,6 +154,7 @@
     <ClCompile Include="Engine\DeltaTime.cpp" />
     <ClCompile Include="Engine\Direct3D.cpp" />
     <ClCompile Include="Engine\FBX.cpp" />
+    <ClCompile Include="Engine\FbxParts.cpp" />
     <ClCompile Include="Engine\GameObject.cpp" />
     <ClCompile Include="Engine\Input.cpp" />
     <ClCompile Include="Engine\Model.cpp" />
@@ -196,6 +197,7 @@
     <ClInclude Include="Engine\DeltaTime.h" />
     <ClInclude Include="Engine\Direct3D.h" />
     <ClInclude Include="Engine\FBX.h" />
+    <ClInclude Include="Engine\FbxParts.h" />
     <ClInclude Include="Engine\GameObject.h" />
     <ClInclude Include="Engine\Input.h" />
     <ClInclude Include="Engine\Model.h" />

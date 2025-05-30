@@ -2,13 +2,13 @@
 #include"Camera.h"
 #include<filesystem>
 #include<DirectXCollision.h>
+#include "FbxParts.h"
 
 namespace fs = std::filesystem;
-using std::string;
 
 FBX::FBX()
-	:pVertexBuffer_(nullptr), pIndexBuffer_(nullptr), pConstantBuffer_(nullptr),
-	vertexCount_(-1), polygonCount_(-1)
+	:/*pVertexBuffer_(nullptr), pIndexBuffer_(nullptr), pConstantBuffer_(nullptr),
+	vertexCount_(-1), polygonCount_(-1),*/pFbxManager_(nullptr),pFbxScene_(nullptr)
 {
 }
 
@@ -16,27 +16,35 @@ FBX::FBX()
 HRESULT FBX::Load(std::string fileName)
 {
 	//マネージャを生成
-	FbxManager* pFbxManager = FbxManager::Create();
+	pFbxManager_ = FbxManager::Create();
 
 	//インポーターを生成
-	FbxImporter* fbxImporter = FbxImporter::Create(pFbxManager, "imp");
-	fbxImporter->Initialize(fileName.c_str(), -1, pFbxManager->GetIOSettings());
+	FbxImporter* fbxImporter = FbxImporter::Create(pFbxManager_, "imp");
+	fbxImporter->Initialize(fileName.c_str(), -1, pFbxManager_->GetIOSettings());
 
 	//シーンオブジェクトにFBXファイルの情報を流し込む
-	FbxScene* pFbxScene = FbxScene::Create(pFbxManager, "fbxscene");
-	fbxImporter->Import(pFbxScene);
+	pFbxScene_ = FbxScene::Create(pFbxManager_, "fbxscene");
+	fbxImporter->Import(pFbxScene_);
 	fbxImporter->Destroy();
 
-	//メッシュ情報を取得
-	FbxNode* rootNode = pFbxScene->GetRootNode();
-	FbxNode* pNode = rootNode->GetChild(0);
-	FbxMesh* mesh = pNode->GetMesh();
+	FbxGeometryConverter geometryConverter(pFbxManager_);
+	geometryConverter.Triangulate(pFbxScene_, true);
+	geometryConverter.SplitMeshesPerMaterial(pFbxScene_, true);
 
-	//各情報の個数を取得
-	vertexCount_ = mesh->GetControlPointsCount();	//頂点の数
-	polygonCount_ = mesh->GetPolygonCount();	//ポリゴンの数
-	materialCount_ = pNode->GetMaterialCount();
+	// アニメーションのタイムモードの取得
+	frameRate_ = pFbxScene_->GetGlobalSettings().GetTimeMode();
 
+	////メッシュ情報を取得
+	//FbxNode* rootNode = pFbxScene_->GetRootNode();
+	//FbxNode* pNode = rootNode->GetChild(0);
+	//FbxMesh* mesh = pNode->GetMesh();
+
+	////各情報の個数を取得
+	//vertexCount_ = mesh->GetControlPointsCount();	//頂点の数
+	//polygonCount_ = mesh->GetPolygonCount();	//ポリゴンの数
+	//materialCount_ = pNode->GetMaterialCount();
+
+	//fbxpartsの方で記述する
 	fs::path cPath, basePath;
 	cPath = fs::current_path();
 	basePath = cPath;
@@ -47,253 +55,294 @@ HRESULT FBX::Load(std::string fileName)
 	//カレントディレクトリを移動
 	fs::current_path(subPath);
 
-	InitVertex(mesh);
+	/*InitVertex(mesh);
 	InitIndex(mesh);
 	InitConstantBuffer();
-	InitMaterial(pNode);
+	InitMaterial(pNode);*/
+
+	int meshCount = pFbxScene_->GetSrcObjectCount<FbxMesh>();
+	for (int i = 0; i < meshCount; ++i)
+	{
+		// <たったこれだけで全てのメッシュデータを取得できる>
+		FbxMesh* mesh = pFbxScene_->GetSrcObject<FbxMesh>(i);
+		//パーツを用意
+		FbxParts* pParts = new FbxParts(this);
+		pParts->Init(mesh);
+
+		//パーツ情報を動的配列に追加
+		parts_.push_back(pParts);
+
+	}
 
 	//カレントパスをもとどおりにもどす
 	fs::current_path(basePath);
 
 	//マネージャ解放
-	pFbxManager->Destroy();
+	//pFbxManager_->Destroy();
 	return S_OK;
 }
 
 
-void FBX::InitVertex(fbxsdk::FbxMesh* mesh)
+//void FBX::InitVertex(fbxsdk::FbxMesh* mesh)
+//{
+//	//頂点情報を入れる配列
+//	vertices = std::vector<VERTEX>(vertexCount_);
+//	//全ポリゴン
+//	for (DWORD poly = 0; poly < polygonCount_; poly++)
+//	{
+//		//3頂点分
+//		for (int vertex = 0; vertex < 3; vertex++)
+//		{
+//			//調べる頂点の番号
+//			int index = mesh->GetPolygonVertex(poly, vertex);
+//
+//			//頂点の位置
+//			FbxVector4 pos = mesh->GetControlPointAt(index);
+//			vertices[index].position = XMVectorSet((float)pos[0], (float)pos[1], (float)pos[2], 0.0f);
+//
+//			//頂点に割り当てられたUV
+//			FbxLayerElementUV* pUV = mesh->GetLayer(0)->GetUVs();
+//			int uvIndex = mesh->GetTextureUVIndex(poly, vertex, FbxLayerElement::eTextureDiffuse);
+//			FbxVector2  uv = pUV->GetDirectArray().GetAt(uvIndex);
+//			vertices[index].uv = XMVectorSet((float)(uv.mData[0]), (float)(1.0f - uv.mData[1]), 0.0f, 0.0f);
+//		
+//			//頂点の法線
+//			FbxVector4 Normal;
+//			mesh->GetPolygonVertexNormal(poly, vertex, Normal);	//ｉ番目のポリゴンの、ｊ番目の頂点の法線をゲット
+//			vertices[index].normal = XMVectorSet((float)Normal[0], (float)Normal[1], (float)Normal[2], 0.0f);
+//		}
+//	}
+//	// 頂点バッファ作成
+//	//（自分でやって）
+//	//頂点バッファ
+//	HRESULT hr;
+//	D3D11_BUFFER_DESC bd_vertex;
+//	bd_vertex.ByteWidth = sizeof(VERTEX) * vertexCount_;
+//	bd_vertex.Usage = D3D11_USAGE_DEFAULT;
+//	bd_vertex.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+//	bd_vertex.CPUAccessFlags = 0;
+//	bd_vertex.MiscFlags = 0;
+//	bd_vertex.StructureByteStride = 0;
+//	D3D11_SUBRESOURCE_DATA data_vertex;
+//	data_vertex.pSysMem = vertices.data();
+//	hr = Direct3D::pDevice->CreateBuffer(&bd_vertex, &data_vertex, &pVertexBuffer_);
+//	if (FAILED(hr))
+//	{
+//		MessageBox(NULL, L"頂点バッファの作成に失敗しました", L"エラー", MB_OK);
+//	}
+//}
+//
+//void FBX::InitIndex(fbxsdk::FbxMesh* mesh)
+//{
+//	pIndexBuffer_ = new ID3D11Buffer * [materialCount_];
+//	//int* index = new int[polygonCount_ * 3];
+//	indexCount_ = std::vector<int>(materialCount_);
+//	index = new std::vector<int>[materialCount_];
+//
+//	for (int i = 0; i < materialCount_; i++)
+//	{
+//		index[i] = std::vector<int>(polygonCount_ * 3);
+//		int count = 0;
+//		//全ポリゴン
+//		for (DWORD poly = 0; poly < polygonCount_; poly++)
+//		{
+//			FbxLayerElementMaterial* mtl = mesh->GetLayer(0)->GetMaterials();
+//			int mtlId = mtl->GetIndexArray().GetAt(poly);
+//			if (mtlId == i) {
+//				//3頂点分
+//				for (DWORD vertex = 0; vertex < 3; vertex++)
+//				{
+//					index[i][count] = mesh->GetPolygonVertex(poly, vertex);
+//					count++;
+//				}
+//			}
+//		}
+//		indexCount_[i] = count;
+//		//	（ここもデータサイズを指定するところだけ注意）
+//		D3D11_BUFFER_DESC   bd;
+//		bd.Usage = D3D11_USAGE_DEFAULT;
+//		bd.ByteWidth = sizeof(int) * polygonCount_ * 3;
+//		bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+//		bd.CPUAccessFlags = 0;
+//		bd.MiscFlags = 0;
+//
+//		D3D11_SUBRESOURCE_DATA InitData;
+//		InitData.pSysMem = index[i].data();
+//		InitData.SysMemPitch = 0;
+//		InitData.SysMemSlicePitch = 0;
+//
+//		HRESULT hr;
+//		hr = Direct3D::pDevice->CreateBuffer(&bd, &InitData, &pIndexBuffer_[i]);
+//		if (FAILED(hr))
+//		{
+//			MessageBox(NULL, L"インデックスバッファの作成に失敗しました", L"エラー", MB_OK);
+//		}
+//	}
+//}
+//
+//void FBX::InitConstantBuffer()
+//{
+//	//Quadと一緒
+//	D3D11_BUFFER_DESC cb;
+//	cb.ByteWidth = sizeof(CONSTANT_BUFFER);
+//	cb.Usage = D3D11_USAGE_DYNAMIC;
+//	cb.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+//	cb.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+//	cb.MiscFlags = 0;
+//	cb.StructureByteStride = 0;
+//
+//	// コンスタントバッファの作成
+//	HRESULT hr;
+//	hr = Direct3D::pDevice->CreateBuffer(&cb, nullptr, &pConstantBuffer_);
+//	if (FAILED(hr))
+//	{
+//		MessageBox(NULL, L"コンスタントバッファの作成に失敗しました", L"エラー", MB_OK);
+//	}
+//}
+//
+//void FBX::InitMaterial(fbxsdk::FbxNode* pNode)
+//{
+//	pMaterialList_ = std::vector<MATERIAL>(materialCount_);
+//	for (int i = 0; i < materialCount_; i++)
+//	{
+//		//i番目のマテリアル情報を取得
+//		FbxSurfaceMaterial* pMaterial = pNode->GetMaterial(i);
+//
+//		//テクスチャ情報
+//		FbxProperty  lProperty = pMaterial->FindProperty(FbxSurfaceMaterial::sDiffuse);
+//
+//		//テクスチャの数数
+//		int fileTextureCount = lProperty.GetSrcObjectCount<FbxFileTexture>();
+//
+//		//テクスチャあり
+//		if (fileTextureCount)
+//		{
+//			FbxFileTexture* textureInfo = lProperty.GetSrcObject<FbxFileTexture>(0);
+//			const char* textureFilePath = textureInfo->GetRelativeFileName();
+//			fs::path texFile(textureFilePath);
+//			//ここで存在チェックが必要
+//			if (fs::is_regular_file(texFile))
+//			{
+//				pMaterialList_[i].pTexture = new Texture;
+//				pMaterialList_[i].pTexture->Load(texFile.string());
+//			}
+//			else
+//			{
+//				//Error must be handled here
+//			}
+//
+//		}
+//		//テクスチャ無し
+//		else
+//		{
+//			//this part are witten after
+//			pMaterialList_[i].pTexture = nullptr;
+//			FbxSurfaceLambert* pMaterial = (FbxSurfaceLambert*)pNode->GetMaterial(i);
+//			FbxDouble3 diffuse = pMaterial->Diffuse;
+//			pMaterialList_[i].diffuse = XMFLOAT4((float)diffuse[0], (float)diffuse[1], (float)diffuse[2],
+//				1.0f);
+//		}
+//
+//
+//	}
+//}
+
+
+
+//void FBX::Draw(Transform& transform)
+//{
+//	//Quadをアレンジ
+//	//Direct3D::SetShader(SHADER_3D);
+//	transform.Calculation();
+//
+//	CONSTANT_BUFFER cb;
+//	cb.matWVP = XMMatrixTranspose(transform.GetWorldMatrix() * Camera::GetViewMatrix() * Camera::GetProjectionMatrix());
+//	cb.matNormal = XMMatrixTranspose(transform.GetNormalMatrix());
+//
+//	Direct3D::SetBlend(BLEND_INVALID);
+//	// インデックスバッファーをセット
+//	for (int i = 0; i < materialCount_; i++) {
+//		
+//		cb.diffuseColor = pMaterialList_[i].diffuse;
+//		if (pMaterialList_[i].pTexture == nullptr) {
+//			cb.isTextured = false;
+//		}
+//		else {
+//			cb.isTextured = true;
+//		}
+//
+//		D3D11_MAPPED_SUBRESOURCE pdata;
+//		Direct3D::pContext->Map(pConstantBuffer_, 0, D3D11_MAP_WRITE_DISCARD, 0, &pdata);	// GPUからのデータアクセスを止める
+//		memcpy_s(pdata.pData, pdata.RowPitch, (void*)(&cb), sizeof(cb));	// データを値を送る
+//
+//		Direct3D::pContext->Unmap(pConstantBuffer_, 0);	//再開
+//
+//		//頂点バッファ、インデックスバッファ、コンスタントバッファをパイプラインにセット
+//		//頂点バッファ
+//		UINT stride = sizeof(VERTEX);
+//		UINT offset = 0;
+//		Direct3D::pContext->IASetVertexBuffers(0, 1, &pVertexBuffer_, &stride, &offset);
+//		stride = sizeof(int);
+//		offset = 0;
+//		Direct3D::pContext->IASetIndexBuffer(pIndexBuffer_[i], DXGI_FORMAT_R32_UINT, 0);
+//
+//
+//		//コンスタントバッファ
+//		Direct3D::pContext->VSSetConstantBuffers(0, 1, &pConstantBuffer_);	//頂点シェーダー用	
+//		Direct3D::pContext->PSSetConstantBuffers(0, 1, &pConstantBuffer_);	//ピクセルシェーダー用
+//
+//		if (!(pMaterialList_[i].pTexture == nullptr)) {
+//			//サンプラーとシェーダーリソースビューをシェーダにセット
+//			ID3D11SamplerState* pSampler = pMaterialList_[i].pTexture->GetSampler();
+//			Direct3D::pContext->PSSetSamplers(0, 1, &pSampler);
+//
+//			ID3D11ShaderResourceView* pSRV = pMaterialList_[i].pTexture->GetSRV();
+//			Direct3D::pContext->PSSetShaderResources(0, 1, &pSRV);
+//
+//		}
+//		//描画
+//		Direct3D::pContext->DrawIndexed(indexCount_[i], 0, 0);
+//	}
+//}
+
+void FBX::Draw(Transform& transform, int frame)
 {
-	//頂点情報を入れる配列
-	vertices = std::vector<VERTEX>(vertexCount_);
-	//全ポリゴン
-	for (DWORD poly = 0; poly < polygonCount_; poly++)
+	Direct3D::SetBlend(BLEND_INVALID);
+	Direct3D::SetShader(SHADER_3D);
+
+	//パーツを1個ずつ描画
+	for (int k = 0; k < parts_.size(); k++)
 	{
-		//3頂点分
-		for (int vertex = 0; vertex < 3; vertex++)
+		// その瞬間の自分の姿勢行列を得る
+		FbxTime     time;
+		time.SetTime(0, 0, 0, frame, 0, 0, frameRate_);
+
+		//スキンアニメーション（ボーン有り）の場合
+		if (parts_[k]->GetSkinInfo() != nullptr)
 		{
-			//調べる頂点の番号
-			int index = mesh->GetPolygonVertex(poly, vertex);
-
-			//頂点の位置
-			FbxVector4 pos = mesh->GetControlPointAt(index);
-			vertices[index].position = XMVectorSet((float)pos[0], (float)pos[1], (float)pos[2], 0.0f);
-
-			//頂点に割り当てられたUV
-			FbxLayerElementUV* pUV = mesh->GetLayer(0)->GetUVs();
-			int uvIndex = mesh->GetTextureUVIndex(poly, vertex, FbxLayerElement::eTextureDiffuse);
-			FbxVector2  uv = pUV->GetDirectArray().GetAt(uvIndex);
-			vertices[index].uv = XMVectorSet((float)(uv.mData[0]), (float)(1.0f - uv.mData[1]), 0.0f, 0.0f);
-		
-			//頂点の法線
-			FbxVector4 Normal;
-			mesh->GetPolygonVertexNormal(poly, vertex, Normal);	//ｉ番目のポリゴンの、ｊ番目の頂点の法線をゲット
-			vertices[index].normal = XMVectorSet((float)Normal[0], (float)Normal[1], (float)Normal[2], 0.0f);
+			parts_[k]->DrawSkinAnime(transform, time);
 		}
-	}
-	// 頂点バッファ作成
-	//（自分でやって）
-	//頂点バッファ
-	HRESULT hr;
-	D3D11_BUFFER_DESC bd_vertex;
-	bd_vertex.ByteWidth = sizeof(VERTEX) * vertexCount_;
-	bd_vertex.Usage = D3D11_USAGE_DEFAULT;
-	bd_vertex.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	bd_vertex.CPUAccessFlags = 0;
-	bd_vertex.MiscFlags = 0;
-	bd_vertex.StructureByteStride = 0;
-	D3D11_SUBRESOURCE_DATA data_vertex;
-	data_vertex.pSysMem = vertices.data();
-	hr = Direct3D::pDevice->CreateBuffer(&bd_vertex, &data_vertex, &pVertexBuffer_);
-	if (FAILED(hr))
-	{
-		MessageBox(NULL, L"頂点バッファの作成に失敗しました", L"エラー", MB_OK);
-	}
-}
 
-void FBX::InitIndex(fbxsdk::FbxMesh* mesh)
-{
-	pIndexBuffer_ = new ID3D11Buffer * [materialCount_];
-	//int* index = new int[polygonCount_ * 3];
-	indexCount_ = std::vector<int>(materialCount_);
-	index = new std::vector<int>[materialCount_];
-
-	for (int i = 0; i < materialCount_; i++)
-	{
-		index[i] = std::vector<int>(polygonCount_ * 3);
-		int count = 0;
-		//全ポリゴン
-		for (DWORD poly = 0; poly < polygonCount_; poly++)
-		{
-			FbxLayerElementMaterial* mtl = mesh->GetLayer(0)->GetMaterials();
-			int mtlId = mtl->GetIndexArray().GetAt(poly);
-			if (mtlId == i) {
-				//3頂点分
-				for (DWORD vertex = 0; vertex < 3; vertex++)
-				{
-					index[i][count] = mesh->GetPolygonVertex(poly, vertex);
-					count++;
-				}
-			}
-		}
-		indexCount_[i] = count;
-		//	（ここもデータサイズを指定するところだけ注意）
-		D3D11_BUFFER_DESC   bd;
-		bd.Usage = D3D11_USAGE_DEFAULT;
-		bd.ByteWidth = sizeof(int) * polygonCount_ * 3;
-		bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-		bd.CPUAccessFlags = 0;
-		bd.MiscFlags = 0;
-
-		D3D11_SUBRESOURCE_DATA InitData;
-		InitData.pSysMem = index[i].data();
-		InitData.SysMemPitch = 0;
-		InitData.SysMemSlicePitch = 0;
-
-		HRESULT hr;
-		hr = Direct3D::pDevice->CreateBuffer(&bd, &InitData, &pIndexBuffer_[i]);
-		if (FAILED(hr))
-		{
-			MessageBox(NULL, L"インデックスバッファの作成に失敗しました", L"エラー", MB_OK);
-		}
-	}
-}
-
-void FBX::InitConstantBuffer()
-{
-	//Quadと一緒
-	D3D11_BUFFER_DESC cb;
-	cb.ByteWidth = sizeof(CONSTANT_BUFFER);
-	cb.Usage = D3D11_USAGE_DYNAMIC;
-	cb.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	cb.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	cb.MiscFlags = 0;
-	cb.StructureByteStride = 0;
-
-	// コンスタントバッファの作成
-	HRESULT hr;
-	hr = Direct3D::pDevice->CreateBuffer(&cb, nullptr, &pConstantBuffer_);
-	if (FAILED(hr))
-	{
-		MessageBox(NULL, L"コンスタントバッファの作成に失敗しました", L"エラー", MB_OK);
-	}
-}
-
-void FBX::InitMaterial(fbxsdk::FbxNode* pNode)
-{
-	pMaterialList_ = std::vector<MATERIAL>(materialCount_);
-	for (int i = 0; i < materialCount_; i++)
-	{
-		//i番目のマテリアル情報を取得
-		FbxSurfaceMaterial* pMaterial = pNode->GetMaterial(i);
-
-		//テクスチャ情報
-		FbxProperty  lProperty = pMaterial->FindProperty(FbxSurfaceMaterial::sDiffuse);
-
-		//テクスチャの数数
-		int fileTextureCount = lProperty.GetSrcObjectCount<FbxFileTexture>();
-
-		//テクスチャあり
-		if (fileTextureCount)
-		{
-			FbxFileTexture* textureInfo = lProperty.GetSrcObject<FbxFileTexture>(0);
-			const char* textureFilePath = textureInfo->GetRelativeFileName();
-			fs::path texFile(textureFilePath);
-			//ここで存在チェックが必要
-			if (fs::is_regular_file(texFile))
-			{
-				pMaterialList_[i].pTexture = new Texture;
-				pMaterialList_[i].pTexture->Load(texFile.string());
-			}
-			else
-			{
-				//Error must be handled here
-			}
-
-		}
-		//テクスチャ無し
+		//メッシュアニメーションの場合
 		else
 		{
-			//this part are witten after
-			pMaterialList_[i].pTexture = nullptr;
-			FbxSurfaceLambert* pMaterial = (FbxSurfaceLambert*)pNode->GetMaterial(i);
-			FbxDouble3 diffuse = pMaterial->Diffuse;
-			pMaterialList_[i].diffuse = XMFLOAT4((float)diffuse[0], (float)diffuse[1], (float)diffuse[2],
-				1.0f);
+			parts_[k]->DrawMeshAnime(transform, time, pFbxScene_);
 		}
-
-
-	}
-}
-
-
-
-void FBX::Draw(Transform& transform)
-{
-	//Quadをアレンジ
-	//Direct3D::SetShader(SHADER_3D);
-	transform.Calculation();
-
-	CONSTANT_BUFFER cb;
-	cb.matWVP = XMMatrixTranspose(transform.GetWorldMatrix() * Camera::GetViewMatrix() * Camera::GetProjectionMatrix());
-	cb.matNormal = XMMatrixTranspose(transform.GetNormalMatrix());
-
-	Direct3D::SetBlend(BLEND_INVALID);
-	// インデックスバッファーをセット
-	for (int i = 0; i < materialCount_; i++) {
-		
-		cb.diffuseColor = pMaterialList_[i].diffuse;
-		if (pMaterialList_[i].pTexture == nullptr) {
-			cb.isTextured = false;
-		}
-		else {
-			cb.isTextured = true;
-		}
-
-		D3D11_MAPPED_SUBRESOURCE pdata;
-		Direct3D::pContext->Map(pConstantBuffer_, 0, D3D11_MAP_WRITE_DISCARD, 0, &pdata);	// GPUからのデータアクセスを止める
-		memcpy_s(pdata.pData, pdata.RowPitch, (void*)(&cb), sizeof(cb));	// データを値を送る
-
-		Direct3D::pContext->Unmap(pConstantBuffer_, 0);	//再開
-
-		//頂点バッファ、インデックスバッファ、コンスタントバッファをパイプラインにセット
-		//頂点バッファ
-		UINT stride = sizeof(VERTEX);
-		UINT offset = 0;
-		Direct3D::pContext->IASetVertexBuffers(0, 1, &pVertexBuffer_, &stride, &offset);
-		stride = sizeof(int);
-		offset = 0;
-		Direct3D::pContext->IASetIndexBuffer(pIndexBuffer_[i], DXGI_FORMAT_R32_UINT, 0);
-
-
-		//コンスタントバッファ
-		Direct3D::pContext->VSSetConstantBuffers(0, 1, &pConstantBuffer_);	//頂点シェーダー用	
-		Direct3D::pContext->PSSetConstantBuffers(0, 1, &pConstantBuffer_);	//ピクセルシェーダー用
-
-		if (!(pMaterialList_[i].pTexture == nullptr)) {
-			//サンプラーとシェーダーリソースビューをシェーダにセット
-			ID3D11SamplerState* pSampler = pMaterialList_[i].pTexture->GetSampler();
-			Direct3D::pContext->PSSetSamplers(0, 1, &pSampler);
-
-			ID3D11ShaderResourceView* pSRV = pMaterialList_[i].pTexture->GetSRV();
-			Direct3D::pContext->PSSetShaderResources(0, 1, &pSRV);
-
-		}
-		//描画
-		Direct3D::pContext->DrawIndexed(indexCount_[i], 0, 0);
+		//Draw(transform);
 	}
 }
 
 void FBX::OutLineDraw(Transform& transform)
 {
 	Direct3D::SetShader(SHADER_OUTLINE);
-	Draw(transform);
+	Draw(transform,0);
 }
 
-void FBX::ThreeDimensionalDraw(Transform& transform)
-{
-	Direct3D::SetShader(SHADER_3D);
-	Draw(transform);
-}
+//void FBX::ThreeDimensionalDraw(Transform& transform)
+//{
+//	Direct3D::SetShader(SHADER_3D);
+//	Draw(transform);
+//}
 
 void FBX::Release()
 {
@@ -301,55 +350,9 @@ void FBX::Release()
 
 void FBX::RayCast(RayCastData& rayData, Transform& transform)
 {
-	transform.Calculation();
-	XMMATRIX invWorld = XMMatrixInverse(nullptr, transform.GetWorldMatrix());
-
-	XMVECTOR start = XMLoadFloat4(&rayData.start);
-	XMVECTOR dir = XMLoadFloat4(&rayData.dir);
-
-	XMVECTOR end = start + dir;
-	//オブジェクトを動かすのではなくレイを動かす
-	//逆行列をもとめる
-	start = XMVector3TransformCoord(start, invWorld);
-	end = XMVector3TransformCoord(end, invWorld);
-	//startからのベクトルを求める
-	dir = end - start;
-	dir = XMVector3Normalize(dir);
-
-	std::vector<float> distList;
-	float minDist = 0.0f;
-
-	for (int material = 0; material < materialCount_; material++) {
-		//3つごとにするので/3
-		for (int poly = 0; poly < indexCount_[material] / 3; poly++) {
-
-			//local座標なので
-			XMVECTOR v0 = vertices[index[material][poly * 3 + 0]].position;
-			XMVECTOR v1 = vertices[index[material][poly * 3 + 1]].position;
-			XMVECTOR v2 = vertices[index[material][poly * 3 + 2]].position;
-
-			//world座標に変換
-
-			//一か所に当たったらtrueを返している
-			rayData.hit = TriangleTests::Intersects(start, dir, v0, v1, v2, rayData.dist);
-
-			if (rayData.hit) {
-				distList.push_back(rayData.dist);
-				minDist = rayData.dist;
-			}
-		}
+	rayData.dist = 999.0f;
+	for (int i = 0; i < parts_.size(); i++)
+	{
+		parts_[i]->RayCast(rayData,transform);
 	}
-
-	if (distList.size() <= 0)
-		return;
-
-	//最小の距離を求める
-	for (auto& dist : distList) {
-		if (dist < minDist) {
-			minDist = dist;
-		}
-	}
-
-	rayData.hit = true;
-	rayData.dist = minDist;
 }
