@@ -32,14 +32,17 @@ class FbxParts
 	struct CONSTANT_BUFFER
 	{
 		XMMATRIX worldVewProj;	//ワールド、ビュー、プロジェクション行列の合成（頂点変換に使用）
+		XMMATRIX world;			//ワールド行列
 		XMMATRIX normalTrans;	//回転行列と拡大行列の逆行列を合成したもの（法線の変形に使用）
-		//XMMATRIX world;			//ワールド行列
 		//XMFLOAT4 lightDirection;//ライトの向き
 		XMFLOAT4 diffuse;		//ディフューズカラー。マテリアルの色。（テクスチャ貼ってるときは使わない）
-		//XMFLOAT4 ambient;		//アンビエント
-		//XMFLOAT4 speculer;		//スペキュラー（Lambertの場合は0）
+		XMFLOAT4 factor;
+		XMFLOAT4 ambient;		//アンビエント
+		XMFLOAT4 speculer;		//スペキュラー（Lambertの場合は0）
 		//XMFLOAT4 cameraPosition;//カメラの位置（ハイライトの計算に必要）
-		//FLOAT	 shininess;		//ハイライトの強さ（MayaのCosinePower）
+		XMFLOAT4 lightVec;
+		XMFLOAT4 eyePos;
+		FLOAT	 shininess;		//ハイライトの強さ（MayaのCosinePower）
 		int		 isTexture;		//テクスチャの有無
 	};
 
@@ -47,6 +50,7 @@ class FbxParts
 	struct  MATERIAL
 	{
 		Texture* pTexture;			//テクスチャ
+		XMFLOAT4 factor;
 		XMFLOAT4	diffuse;			//拡散反射光（ディフューズ）への反射強度
 		DWORD		polygonCount;		//マテリアルのポリゴン数
 		XMFLOAT4	ambient;			//環境光（アンビエント）への反射強度
