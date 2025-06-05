@@ -76,7 +76,7 @@ VS_OUT VS(float4 pos : POSITION, float4 uv : TEXCOORD, float4 normal: NORMAL)
 //„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ
 float4 PS(VS_OUT inData) : SV_Target
 {
-    float4 ambentSource = { 0.7, 0.7, 0.7, 1.0 };//ŠÂ‹«Œõ‚Ì‹­‚³
+    float4 ambentSource = { 0.5, 0.5, 0.5, 1.0 };//ŠÂ‹«Œõ‚Ì‹­‚³
     float4 diffuse;
     float4 ambient;
     

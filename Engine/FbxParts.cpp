@@ -264,6 +264,8 @@ void FbxParts::InitMaterial(fbxsdk::FbxMesh* pMesh)
 		}
 
 		// 環境光＆拡散反射光＆鏡面反射光の反射成分値をマテリアルバッファにコピー
+		FbxDouble factor = pPhong->DiffuseFactor;
+		pMaterial_[i].factor = XMFLOAT4((float)factor, (float)factor, (float)factor, (float)factor);
 		pMaterial_[i].ambient = XMFLOAT4((float)ambient[0], (float)ambient[1], (float)ambient[2], 1.0f);
 		pMaterial_[i].diffuse = XMFLOAT4((float)diffuse[0], (float)diffuse[1], (float)diffuse[2], 1.0f);
 		pMaterial_[i].specular = XMFLOAT4(0, 0, 0, 0);
@@ -619,20 +621,24 @@ void FbxParts::Draw(Transform& transform)
 		//XMMATRIX MSHADOW = XMMatrixShadow({ 0 ,0.01f ,0 ,1 }, {0,1,0,0});
 		//cb.worldVewProj =	XMMatrixTranspose(transform.GetWorldMatrix() * Camera::GetViewMatrix() * Camera::GetProjectionMatrix());
 		cb.worldVewProj = XMMatrixTranspose(transform.GetWorldMatrix() * Camera::GetViewMatrix() * Camera::GetProjectionMatrix());// リソースへ送る値をセット
-		//cb.world = XMMatrixTranspose(transform.GetWorldMatrix());
+		cb.world = XMMatrixTranspose(transform.GetWorldMatrix());
 
 		//cb.normalTrans = XMMatrixTranspose(transform.matRotate_ * XMMatrixInverse(nullptr, transform.matScale_));
 		cb.normalTrans = XMMatrixTranspose(transform.GetNormalMatrix());
 		
-		//cb.ambient = pMaterial_[i].ambient;
+		cb.factor = pMaterial_[i].factor;
+		cb.ambient = pMaterial_[i].ambient;
 		cb.diffuse = pMaterial_[i].diffuse;
-		/*cb.speculer = pMaterial_[i].specular;
+		cb.speculer = pMaterial_[i].specular;
 		cb.shininess = pMaterial_[i].shininess;
-		cb.cameraPosition = XMFLOAT4(XMVectorGetX(Camera::GetPosition()),
+		/*cb.cameraPosition = XMFLOAT4(XMVectorGetX(Camera::GetPosition()),
 			XMVectorGetY(Camera::GetPosition()), XMVectorGetZ(Camera::GetPosition()), 0);
 		cb.lightDirection = XMFLOAT4(-1, -1, -1, 0);*/
 		cb.isTexture = pMaterial_[i].pTexture != nullptr;
 
+		/////////////////////////////////////////////magicnumber
+		cb.lightVec = { 1,1,0,0 };
+		cb.eyePos = { 1,1,0,0 };
 
 		Direct3D::pContext->Map(pConstantBuffer_, 0, D3D11_MAP_WRITE_DISCARD, 0, &pdata);	// GPUからのリソースアクセスを一時止める
 		memcpy_s(pdata.pData, pdata.RowPitch, (void*)(&cb), sizeof(cb));		// リソースへ値を送る
