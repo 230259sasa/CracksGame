@@ -1,5 +1,6 @@
 #include "Sprite.h"
 #include "Camera.h"
+#include "Display.h"
 #include <filesystem>
 
 using std::vector;
@@ -47,7 +48,20 @@ HRESULT Sprite::Load(std::string fileName)
 void Sprite::Draw(Transform& transform)
 {
 	Direct3D::SetShader(SHADER_TYPE::SHADER_2D);
-	
+	Transform t = transform;
+	t.scale_ = { (pTexture_->GetSize().x / Display::GetWindowWidth()) * transform.scale_.x,
+		(pTexture_->GetSize().y / Display::GetWindowHeight())*transform.scale_.y,0 };
+	t.Calculation();
+
+	PassDataToCB(t.GetWorldMatrix());
+	SetBufferToPipeline();
+	Direct3D::SetBlend(BLEND_VALID);
+	Direct3D::pContext->DrawIndexed(indexNum_, 0, 0);
+}
+
+void Sprite::DrawFullScreen(Transform& transform)
+{
+	Direct3D::SetShader(SHADER_TYPE::SHADER_2D);
 	transform.Calculation();
 
 	PassDataToCB(transform.GetWorldMatrix());

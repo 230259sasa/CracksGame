@@ -81,6 +81,5 @@ void FallBlockManager::FallControle()
 	XMFLOAT3 pos;
 	pos = stage->GetRandomScaffoldPos();
 	pos.y = Set::DEFAULT_HIGHT;
-	pos.x = 0;
 	fobj->SetPosition(pos);
 }

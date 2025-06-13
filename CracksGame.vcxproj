@@ -153,6 +153,7 @@
     <ClCompile Include="Engine\Collider.cpp" />
     <ClCompile Include="Engine\DeltaTime.cpp" />
     <ClCompile Include="Engine\Direct3D.cpp" />
+    <ClCompile Include="Engine\Display.cpp" />
     <ClCompile Include="Engine\FBX.cpp" />
     <ClCompile Include="Engine\FbxParts.cpp" />
     <ClCompile Include="Engine\GameObject.cpp" />
@@ -196,6 +197,7 @@
     <ClInclude Include="Engine\Collider.h" />
     <ClInclude Include="Engine\DeltaTime.h" />
     <ClInclude Include="Engine\Direct3D.h" />
+    <ClInclude Include="Engine\Display.h" />
     <ClInclude Include="Engine\FBX.h" />
     <ClInclude Include="Engine\FbxParts.h" />
     <ClInclude Include="Engine\GameObject.h" />

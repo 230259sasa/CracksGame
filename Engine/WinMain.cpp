@@ -9,6 +9,7 @@
 #include"Model.h"
 #include"DeltaTime.h"
 #include"Sound.h"
+#include"Display.h"
 #include "../imgui/imgui.h"
 #include "../imgui/imgui_impl_dx11.h"
 #include "../imgui/imgui_impl_win32.h"
@@ -83,6 +84,8 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, 
 		ImGui_ImplDX11_Init(Direct3D::pDevice, Direct3D::pContext);
 		ImGui::StyleColorsLight();
 	}
+
+	Display::SetWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 
 	Input::Initialize(hWnd);
 	Camera::Initialize();
