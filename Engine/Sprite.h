@@ -34,7 +34,7 @@ public:
 	HRESULT Load(std::string fileName);
 	XMFLOAT3 GetSize() { return (pTexture_ != nullptr) ? pTexture_->GetSize() : XMFLOAT3(0, 0, 0); }
 	void Draw(Transform& transform);
-	void DrawFullScreen(Transform& transform);
+	void DrawImageSize(Transform& transform);
 	void Release();
 private:
 	void InitVertexData();			
