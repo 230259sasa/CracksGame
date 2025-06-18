@@ -311,7 +311,7 @@ void FbxParts::InitTexture(fbxsdk::FbxSurfaceMaterial* pMaterial, const DWORD& i
 		FbxFileTexture* texture = lProperty.GetSrcObject<FbxFileTexture>(0);
 		const char* textureFilePath = texture->GetRelativeFileName();
 		fs::path texFile(textureFilePath);
-
+		texFile = "Image\\Texture\\" + texFile.string();
 		if (fs::is_regular_file(texFile))
 		{
 			pMaterial_[i].pTexture = new Texture;
