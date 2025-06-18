@@ -53,8 +53,8 @@ void PlayTimerGauge::Draw()
 		float n = timer_ / initialTime_;
 		t.scale_ = { Set::GAUGE_SIZE.x * n,Set::GAUGE_SIZE.y,0 };
 		t.position_.x = Set::GAUGE_POSITION.x - Set::GAUGE_SIZE.x * (1 - n);
+		gauge_->Draw(t);
 	}
 
-	gauge_->Draw(t);
 	gaugeFrame_->Draw(transform_);
 }

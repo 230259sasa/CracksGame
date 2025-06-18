@@ -12,7 +12,7 @@
 #include "imgui/imgui_impl_win32.h"
 
 namespace Set {
-	const float GRAVITY(25.0f);
+	const float GRAVITY(25.0f);//別のに入れたい
 	const float MAX_FALL_VELOCITY(-10.0f);//落下の最大速度
 	//const float FALL_CORRECTION_Y(0.1f);//落下時のRayCastの開始座標Yに足す補正値
 	const XMFLOAT3 FORWARD_VECTOR(0, 0, 1);//前方へのベクトル
@@ -77,8 +77,8 @@ void Player::Draw()
 		//ImGui::Text("angle x=%5.3li", Camera::GetRotateAngle());
 	}
 	Transform trans = transform_;
-	trans.position_.x = XMVectorGetX(Camera::GetTarget());
-	trans.position_.z = XMVectorGetZ(Camera::GetTarget());
+	//trans.position_.x = XMVectorGetX(Camera::GetTarget());
+	//trans.position_.z = XMVectorGetZ(Camera::GetTarget());
 	trans.scale_ = XMFLOAT3(0.8, 1, 0.8);
 	Model::SetTransform(hModel_, trans);
 	Model::Draw(hModel_);
