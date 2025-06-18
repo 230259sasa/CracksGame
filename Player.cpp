@@ -20,7 +20,7 @@ namespace Set {
 	const int LEFT_MOVE_ANGLE(90);
 	const int RIGHT_MOVE_ANGLE(270);
 	const float PLAYER_RADIUS(0.4f);
-	const float MOVE_SPEED(0.05f);
+	const float MOVE_SPEED(3.0f);
 	const float JUMP_HEIGHT(1.5);//ジャンプの高さ
 	const float JUMP_LAUNCH_SPEED(sqrtf(2 * GRAVITY * JUMP_HEIGHT));//ジャンプの初速
 	const float FALL_RAY_CAST_RADIUS(PLAYER_RADIUS);
@@ -188,8 +188,9 @@ void Player::Move()
 	dir.z = vectorZ;
 	if (dir.x != 0 || dir.z != 0) {
 		XMFLOAT3 pos = transform_.position_;
-		move.x = Set::MOVE_SPEED * vectorX;
-		move.z = Set::MOVE_SPEED * vectorZ;
+		float speed = Set::MOVE_SPEED * DT::GetDeltaTime();
+		move.x = speed * vectorX;
+		move.z = speed * vectorZ;
 		pos.x += move.x;
 		//pos.y += 0.1f;
 		pos.z += move.z;
