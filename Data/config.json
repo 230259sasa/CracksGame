@@ -1,0 +1,10 @@
+{
+	"Player": {
+		"MOVE_SPEED": 0.05,
+		"JUMP_HEIGHT": 1.5,
+		"PLAYER_RADIUS": 0.4
+	},
+	"FallObject":{
+		"FALL_SPEED": 5.0
+	}
+}
