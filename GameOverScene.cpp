@@ -11,7 +11,7 @@ GameOverScene::GameOverScene(GameObject* parent)
 void GameOverScene::Initialize()
 {
 	tex_ = new Sprite();
-	tex_->Load("Assets/GAME_OVER.png");
+	tex_->Load("GAME_OVER.png");
 }
 
 void GameOverScene::Update()

@@ -28,9 +28,9 @@ FallIslandManager::~FallIslandManager()
 void FallIslandManager::Initialize()
 {
 	frame_ = new Sprite();
-	frame_->Load("Assets\\Image\\Frame.png");
+	frame_->Load("Frame.png");
 	island_ = new Sprite();
-	island_->Load("Assets\\Image\\Gauge.png");
+	island_->Load("Gauge.png");
 
 	transform_.scale_ = Set::FRAME_SIZE;
 	transform_.position_ = Set::FRAME_POSITION;

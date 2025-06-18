@@ -11,7 +11,7 @@ ClearScene::ClearScene(GameObject* parent)
 void ClearScene::Initialize()
 {
 	tex_ = new Sprite();
-	tex_->Load("Assets/CLEAR.png");
+	tex_->Load("CLEAR.png");
 }
 
 void ClearScene::Update()

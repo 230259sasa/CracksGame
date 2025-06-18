@@ -11,7 +11,7 @@ TitleScene::TitleScene(GameObject* parent)
 void TitleScene::Initialize()
 {
 	tex_ = new Sprite();
-	tex_->Load("Assets/TITLE.png");
+	tex_->Load("TITLE.png");
 }
 
 void TitleScene::Update()

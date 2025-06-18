@@ -19,6 +19,7 @@ Sprite::~Sprite()
 
 HRESULT Sprite::Load(std::string fileName)
 {
+	fileName = "Assets\\Image\\" + fileName;
 	InitVertexData();
 	if (FAILED(CreateVertexBuffer()))
 	{

@@ -24,9 +24,9 @@ void PlayTimerGauge::Initialize()
 {
 	transform_.position_ = Set::GAUGE_POSITION;
 	gaugeFrame_ = new Sprite();
-	gaugeFrame_->Load("Assets\\Image\\GaugeFrame.png");
+	gaugeFrame_->Load("GaugeFrame.png");
 	gauge_ = new Sprite();
-	gauge_->Load("Assets\\Image\\Gauge.png");
+	gauge_->Load("Gauge.png");
 }
 
 void PlayTimerGauge::Release()
