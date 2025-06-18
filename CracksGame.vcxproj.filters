@@ -281,6 +281,9 @@
     <ClInclude Include="Engine\Display.h">
       <Filter>ソース ファイル\Engine</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\JsonReader.h">
+      <Filter>ソース ファイル\Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Engine\Simple2D.hlsl">

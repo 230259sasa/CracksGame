@@ -23,7 +23,7 @@ namespace Set {
 	const float MOVE_SPEED(0.05f);
 	const float JUMP_HEIGHT(1.5);//ジャンプの高さ
 	const float JUMP_LAUNCH_SPEED(sqrtf(2 * GRAVITY * JUMP_HEIGHT));//ジャンプの初速
-	const float FALL_RAY_CAST_RADIUS(PLAYER_RADIUS - 0.06);
+	const float FALL_RAY_CAST_RADIUS(PLAYER_RADIUS);
 
 	const int CAMERA_ROTATE_SPEED(3);
 	const int CAMERA_ROTATE_ANGLE(90);
@@ -191,7 +191,7 @@ void Player::Move()
 		move.x = Set::MOVE_SPEED * vectorX;
 		move.z = Set::MOVE_SPEED * vectorZ;
 		pos.x += move.x;
-		pos.y += 0.1f;
+		//pos.y += 0.1f;
 		pos.z += move.z;
 		push = stage->GetPushBack(pos, Set::PLAYER_RADIUS);
 		move.x += push.x;
