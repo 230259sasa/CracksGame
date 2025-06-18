@@ -31,7 +31,7 @@ FallObject::~FallObject()
 
 void FallObject::Initialize()
 {
-	hModel_ = Model::Load("Assets/Model/BoxDefault.fbx");
+	hModel_ = Model::Load("BoxDefault.fbx");
 }
 
 void FallObject::Release()

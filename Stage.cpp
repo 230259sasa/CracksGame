@@ -23,10 +23,10 @@ Stage::~Stage()
 
 void Stage::Initialize()
 {
-	hModel_ = Model::Load("Assets/Model/BoxGrass.fbx");
+	hModel_ = Model::Load("BoxGrass.fbx");
 	assert(hModel_ >= 0);
-	hKazan_ = Model::Load("Assets/Model/Kazan.fbx");
-	hFrame_ = Model::Load("Assets/Model/Frame/RedFrame.fbx");
+	hKazan_ = Model::Load("Kazan.fbx");
+	hFrame_ = Model::Load("Frame/RedFrame.fbx");
 	assert(hFrame_ >= 0);
 	
 	for (int z = 0; z < Set::STAGE_SIZE.z; z++) {

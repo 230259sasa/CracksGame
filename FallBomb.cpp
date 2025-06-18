@@ -12,7 +12,7 @@ FallBomb::~FallBomb()
 
 void FallBomb::Initialize()
 {
-	hModel_ = Model::Load("Assets/Model/Bomb.fbx");
+	hModel_ = Model::Load("Bomb.fbx");
 }
 
 void FallBomb::Release()

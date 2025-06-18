@@ -26,7 +26,7 @@ int Model::Load(std::string filename)
 	//“¯–¼‚Ìƒtƒ@ƒCƒ‹‚ª‚È‚©‚Á‚½‚ç
 	if (pData->pFbx_ == nullptr) {
 		pData->pFbx_ = new FBX;
-		pData->pFbx_->Load(filename);
+		pData->pFbx_->Load("Assets/Model/" + filename);
 	}
 	modelList.push_back(pData);
 	
