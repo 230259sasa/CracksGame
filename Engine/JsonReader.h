@@ -5,8 +5,6 @@
 
 namespace JsonReader {
 	template<typename T>
-	T Get(std::string _key, std::string _nestedKey,T& _value);
-	template<typename T>
 	T Get(std::string _key, std::string _nestedKey, T& _value)
 	{
 		std::string fileName = "Data\\config.json";
@@ -18,5 +16,10 @@ namespace JsonReader {
 		}
 		float n = _value;
 		return _value;
+	}
+	template<typename T>
+	T Get(std::string _key, std::string _nestedKey) {
+		T v;
+		return Get(_key, _nestedKey, v);
 	}
 }
