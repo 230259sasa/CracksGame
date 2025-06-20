@@ -32,7 +32,7 @@ namespace Set {
 namespace DT = DeltaTime;
 
 Player::Player(GameObject* parent)
-	:GameObject(parent, "Player"), hModel_(-1), jumpVelocity_(0.0f), isGround_(true),
+	:GameObject(parent, "Player"), jumpVelocity_(0.0f), isGround_(true),
 	framePos_({ 0,0,0 }), pastPos_(0, 0, 0),isCameraRotateStart_(false),
 	CameraRotateDir_(0)
 {
@@ -44,8 +44,20 @@ Player::~Player()
 
 void Player::Initialize()
 {
-	hModel_ = Model::Load("TestPlayer2.fbx");
-	assert(hModel_ >= 0);
+	//hModel_ = Model::Load("Player/.fbx");
+	//assert(hModel_ >= 0);
+	animData_[STAND].hModel = Model::Load("Player/stand.fbx");
+	Model::SetAnimFrame(animData_[STAND].hModel, 0, 183, 1);
+	animData_[STAND].animFrameNum = 183;
+	animData_[PUNCH].hModel = Model::Load("Player/punch.fbx");
+	Model::SetAnimFrame(animData_[PUNCH].hModel, 0, 40, 1);
+	animData_[PUNCH].animFrameNum = 40;
+	animData_[RUN].hModel = Model::Load("Player/run.fbx");
+	Model::SetAnimFrame(animData_[RUN].hModel, 0, 15, 0.3f);
+	animData_[RUN].animFrameNum = 15;
+
+	animID_ = RUN;
+	
 	//Stageのブロックに重ならないために足している
 	transform_.position_.y += 2.0f;
 	framePos_ = { (int)transform_.position_.x, (int)transform_.position_.y-1,
@@ -59,12 +71,14 @@ void Player::Release()
 
 void Player::Update()
 {
-	Move();
+	animData_[RUN].isAnimAction	= Move();
 	Jump();
 	Fall();
 	Relocate();
 	MoveCamera();
 	BreakStageBlock();
+
+	AnimationManager();
 }
 
 void Player::Draw()
@@ -74,14 +88,14 @@ void Player::Draw()
 			(int)transform_.position_.y, (int)transform_.position_.z);
 		ImGui::Text("position x=%5.3lf,y=%5.3lf,z=%5.3lf", transform_.position_.x,
 			transform_.position_.y, transform_.position_.z);*/
-		//ImGui::Text("angle x=%5.3li", Camera::GetRotateAngle());
+		//ImGui::Text("animframe=%5.3li", Model::GetAnimFrame(animData_[animID_].hModel));
 	}
 	Transform trans = transform_;
 	//trans.position_.x = XMVectorGetX(Camera::GetTarget());
 	//trans.position_.z = XMVectorGetZ(Camera::GetTarget());
 	trans.scale_ = XMFLOAT3(0.8, 1, 0.8);
-	Model::SetTransform(hModel_, trans);
-	Model::Draw(hModel_);
+	Model::SetTransform(animData_[animID_].hModel, trans);
+	Model::Draw(animData_[animID_].hModel);
 	
 	Stage* stage = nullptr;
 	stage = (Stage*)FindObject("Stage");
@@ -90,7 +104,37 @@ void Player::Draw()
 	stage->DrawFrame({(float)framePos_.x,(float)framePos_.y,(float)framePos_.z});
 }
 
-void Player::Move()
+void Player::AnimationManager()
+{
+	PlayerAnimationID id = STAND;
+	/*if (Model::GetAnimFrame(animData_[animID_].hModel) < animData_[animID_].animFrameNum) {
+		id = animID_;
+	}*/
+	//id = (animData_[RUN].isAnimAction) ? RUN : id;
+	//id = (Move()) ? RUN : id;
+	switch (animID_) {
+	case STAND:
+	case RUN:
+		id = STAND;
+		id = (animData_[RUN].isAnimAction) ? RUN : id;
+		break;
+	case PUNCH:
+		if (Model::GetAnimFrame(animData_[animID_].hModel) >= animData_[animID_].animFrameNum) {
+			id = STAND;
+		}
+		break;
+	}
+	animID_ = id;
+}
+
+void Player::ActionManager()
+{
+	//ある状況(特定のアニメーション中、待機中）にはActionを動かさず
+	// 特定のアニメーションが終わったときはそれに呼応した関数を動かしたい
+	
+}
+
+bool Player::Move()
 {
 	//デバック用の移動
 
@@ -101,7 +145,7 @@ void Player::Move()
 	Stage* stage = nullptr;
 	stage = (Stage*)FindObject("Stage");
 	if (stage == nullptr)
-		return;
+		return false;
 	
 	//ベクトルを求める
 	/*float vectorZ = XMVectorGetZ(Camera::GetTarget())
@@ -202,12 +246,14 @@ void Player::Move()
 		transform_.rotate_.y = XMConvertToDegrees(
 			atan2(Set::FORWARD_VECTOR.z, Set::FORWARD_VECTOR.x) -
 			atan2(vectorZ, vectorX));
+		//移動
+		pastPos_ = { (int)transform_.position_.x,(int)transform_.position_.y,
+			(int)transform_.position_.z };
+		transform_.position_.x += move.x;
+		transform_.position_.z += move.z;
+		return true;
 	}
-	//移動
-	pastPos_ = { (int)transform_.position_.x,(int)transform_.position_.y,
-		(int)transform_.position_.z };
-	transform_.position_.x += move.x;
-	transform_.position_.z += move.z;
+	return false;
 }
 
 void Player::Jump()

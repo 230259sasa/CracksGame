@@ -7,7 +7,20 @@ class Player :
         LEFT = -1,
         RIGHT = 1
     };
-    int hModel_;
+    enum PlayerAnimationID {
+        STAND = 0,
+        RUN,
+        PUNCH,
+        MAX
+    };
+    struct AnimData {
+        int hModel;
+        int animFrameNum;
+        bool isAnimAction;
+    };
+    PlayerAnimationID animID_;
+    AnimData animData_[PlayerAnimationID::MAX];
+    //int hModel_[PlayerAnimationID::MAX];
     bool isGround_;
     float jumpVelocity_;
     XMINT3 framePos_;
@@ -22,7 +35,9 @@ public:
     void Update() override;
     void Draw() override;
 private:
-    void Move();
+    void AnimationManager();
+    void ActionManager();
+    bool Move();
     void Jump();
     void Fall();
     void Relocate();
