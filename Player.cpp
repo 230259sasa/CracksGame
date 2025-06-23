@@ -106,12 +106,13 @@ void Player::Draw()
 
 void Player::AnimationManager()
 {
-	PlayerAnimationID id = STAND;
 	/*if (Model::GetAnimFrame(animData_[animID_].hModel) < animData_[animID_].animFrameNum) {
 		id = animID_;
 	}*/
 	//id = (animData_[RUN].isAnimAction) ? RUN : id;
 	//id = (Move()) ? RUN : id;
+	
+	PlayerAnimationID id = STAND;
 	switch (animID_) {
 	case STAND:
 	case RUN:
@@ -125,6 +126,54 @@ void Player::AnimationManager()
 		break;
 	}
 	animID_ = id;
+
+	//stateManager  function = []()->bool{return false;}
+	/*
+	if(ps.IsFinish){
+		ps.change(stand);
+		animID = ps.getAnimID();
+		functionMove = ps.getMove();
+		functionJump = ps.getJump();
+	}
+	*/
+
+	//animationM actionID‚Æ‚©‚Ì‚ª‚¢‚¢‚©‚àH ã‚Æ“‡H
+	/*
+		is = functionMove;
+		////animM
+		for(){
+			if(!is[i])
+				continue;
+			id = i;
+		}
+		if(animID != id){
+			animID = id;
+			ps.change(?[id]);
+		}
+	]*/
+
+	/*class PlayerState{
+	*	PlayerState(Player& player){p = player;}
+	*	virtual std::function GetMove(){ return p->Move();}
+	*	virtual std::function GetMove(){ return p->Jump();}
+	*	virtual bool IsFinish() = 0; //ƒˆ‰¼‘zŠÖ”
+	*  //false•Ô‚·‚¾‚¯
+	*	bool GetFalse(){return false;}
+	* }
+	* 
+	* class PunchState public PlayerState{
+	*	std::function GetMove(){return GetFalse();} override;
+	*	std::function GetJump(){return GetFalse();} override;
+	*	bool IsFinish() { return nowframe>=finishframe;} override;
+	* }
+	* 
+	* ?
+	* class Context(){
+	*	std::list states;
+	*	void change(_id){id=_id;}
+	*	std::function GetMove(){states[id]->GetMove();}
+	* }
+	*/
 }
 
 void Player::ActionManager()
