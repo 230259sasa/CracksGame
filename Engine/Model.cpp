@@ -43,6 +43,11 @@ void Model::SetAnimFrame(int hModel, int startFrame, int endFrame, float animSpe
 	modelList[hModel]->SetAnimFrame(startFrame, endFrame, animSpeed);
 }
 
+void Model::SetAnimFrame(int hModel, int startFrame, int endFrame)
+{
+	SetAnimFrame(hModel, startFrame, endFrame, 1.0f);
+}
+
 int Model::GetAnimFrame(int hModel)
 {
 	return modelList[hModel]->nowFrame;

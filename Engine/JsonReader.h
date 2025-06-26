@@ -12,9 +12,10 @@ namespace JsonReader {
 		if (ifs.good()) {
 			nlohmann::json j;
 			ifs >> j;
-			_value = j[_key][_nestedKey];
+			if (!j.contains(_key) || !j[_key].contains(_nestedKey))
+				return _value;
+			_value = j[_key][_nestedKey].get<T>();
 		}
-		float n = _value;
 		return _value;
 	}
 	template<typename T>

@@ -3,6 +3,7 @@
 #include"Engine\Input.h"
 #include"Engine\Camera.h"
 #include"Engine\DeltaTime.h"
+#include"Engine\JsonReader.h"
 #include"Stage.h"
 #include "FallBlockManager.h"
 #include<numbers>
@@ -11,25 +12,37 @@
 #include "imgui/imgui_impl_dx11.h"
 #include "imgui/imgui_impl_win32.h"
 
-namespace Set {
+namespace DT = DeltaTime;
+namespace JR = JsonReader;
+
+namespace PlayerSet {
 	const float GRAVITY(25.0f);//別のに入れたい
-	const float MAX_FALL_VELOCITY(-10.0f);//落下の最大速度
 	//const float FALL_CORRECTION_Y(0.1f);//落下時のRayCastの開始座標Yに足す補正値
 	const XMFLOAT3 FORWARD_VECTOR(0, 0, 1);//前方へのベクトル
 
 	const int LEFT_MOVE_ANGLE(90);
 	const int RIGHT_MOVE_ANGLE(270);
-	const float PLAYER_RADIUS(0.4f);
-	const float MOVE_SPEED(3.0f);
-	const float JUMP_HEIGHT(1.5);//ジャンプの高さ
-	const float JUMP_LAUNCH_SPEED(sqrtf(2 * GRAVITY * JUMP_HEIGHT));//ジャンプの初速
-	const float FALL_RAY_CAST_RADIUS(PLAYER_RADIUS);
+	float PLAYER_RADIUS(0);
+	float MOVE_SPEED(0);
+	float JUMP_HEIGHT(0);//ジャンプの高さ
+	float JUMP_LAUNCH_SPEED(0);//ジャンプの初速
+	float FALL_RAY_CAST_RADIUS(0);
+	float MAX_FALL_VELOCITY(0);//落下の最大速度
 
 	const int CAMERA_ROTATE_SPEED(3);
 	const int CAMERA_ROTATE_ANGLE(90);
+
+	void Initialize(std::string _name) {
+		JR::Get<float>(_name, "PLAYER_RADIUS", PLAYER_RADIUS);
+		JR::Get<float>(_name, "MOVE_SPEED", MOVE_SPEED);
+		JR::Get<float>(_name, "JUMP_HEIGHT", JUMP_HEIGHT);
+		JR::Get<float>(_name, "MAX_FALL_VELOCITY", MAX_FALL_VELOCITY);
+		JUMP_LAUNCH_SPEED = sqrtf(2 * GRAVITY * JUMP_HEIGHT);
+		FALL_RAY_CAST_RADIUS = PLAYER_RADIUS;
+	}
 }
 
-namespace DT = DeltaTime;
+namespace Set = PlayerSet;
 
 Player::Player(GameObject* parent)
 	:GameObject(parent, "Player"), jumpVelocity_(0.0f), isGround_(true),
@@ -44,24 +57,29 @@ Player::~Player()
 
 void Player::Initialize()
 {
+	Set::Initialize(objectName_);
 	//hModel_ = Model::Load("Player/.fbx");
 	//assert(hModel_ >= 0);
-	animData_[STAND].hModel = Model::Load("Player/stand.fbx");
-	Model::SetAnimFrame(animData_[STAND].hModel, 0, 183, 1);
-	animData_[STAND].animFrameNum = 183;
-	animData_[PUNCH].hModel = Model::Load("Player/punch.fbx");
-	Model::SetAnimFrame(animData_[PUNCH].hModel, 0, 40, 1);
-	animData_[PUNCH].animFrameNum = 40;
-	animData_[RUN].hModel = Model::Load("Player/run.fbx");
-	Model::SetAnimFrame(animData_[RUN].hModel, 0, 15, 0.3f);
-	animData_[RUN].animFrameNum = 15;
+	animData_[STAND].hModel = Model::Load(JR::Get<std::string>(objectName_,"MODEL_PATH_STAND"));
+	int frameNum = 0;
+	JR::Get<int>(objectName_, "FRAME_NUM_STAND",frameNum);
+	Model::SetAnimFrame(animData_[STAND].hModel, 0, frameNum);
+	animData_[STAND].animFrameNum = frameNum;
+	animData_[PUNCH].hModel = Model::Load(JR::Get<std::string>(objectName_, "MODEL_PATH_PUNCH"));
+	JR::Get<int>(objectName_, "FRAME_NUM_PUNCH", frameNum);
+	Model::SetAnimFrame(animData_[PUNCH].hModel, 0, frameNum);
+	animData_[PUNCH].animFrameNum = frameNum;
+	animData_[RUN].hModel = Model::Load(JR::Get<std::string>(objectName_, "MODEL_PATH_RUN"));
+	JR::Get<int>(objectName_, "FRAME_NUM_RUN", frameNum);
+	Model::SetAnimFrame(animData_[RUN].hModel, 0, frameNum);
+	animData_[RUN].animFrameNum = frameNum;
 
-	animID_ = RUN;
-	
+	animID_ = STAND;
+
 	//Stageのブロックに重ならないために足している
 	transform_.position_.y += 2.0f;
-	framePos_ = { (int)transform_.position_.x, (int)transform_.position_.y-1,
-		(int)transform_.position_.z+1 };
+	framePos_ = { (int)transform_.position_.x, (int)transform_.position_.y - 1,
+		(int)transform_.position_.z + 1 };
 	Camera::SetPlayerPointer(this);
 }
 

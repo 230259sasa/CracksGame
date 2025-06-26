@@ -1,15 +1,30 @@
 #include "Stage.h"
 #include"Engine\Model.h"
 #include"Engine\DeltaTime.h"
+#include"Engine/JsonReader.h"
 
-namespace Set {
-	const XMFLOAT3 BLOCK_SIZE(1.0f, 1.0f,1.0f);
-	const XMINT3 STAGE_SIZE(10, 5, 10);
-	const float FALL_SPEED(5.0f);
-	const float BLOCK_RETURN_HEIGHT(-10.0f);
+namespace JR = JsonReader;
+namespace DT = DeltaTime;
+
+namespace StageSet {
+	XMFLOAT3 BLOCK_SIZE(0, 0, 0);
+	XMINT3 STAGE_SIZE(0, 0, 0);
+	float FALL_SPEED(0);
+	float FALL_LIMIT(0);
+	float RETURN_BLOCK_SPEED(0);
+	void Initialize(std::string _name) {
+		float size = JR::Get<float>(_name, "BLOCK_SIZE");
+		BLOCK_SIZE = { size,size,size };
+		JR::Get<int>(_name, "STAGE_SIZE_X", STAGE_SIZE.x);
+		JR::Get<int>(_name, "STAGE_SIZE_Y", STAGE_SIZE.y);
+		JR::Get<int>(_name, "STAGE_SIZE_Z", STAGE_SIZE.z);
+		JR::Get<float>(_name, "FALL_LIMIT", FALL_LIMIT);
+		JR::Get<float>(_name, "RETURN_BLOCK_SPEED", RETURN_BLOCK_SPEED);
+		JR::Get<float>(_name, "FALL_SPEED", FALL_SPEED);
+	}
 }
 
-namespace DT = DeltaTime;
+namespace Set = StageSet;
 
 Stage::Stage(GameObject* parent)
 	:GameObject(parent,"Stage"),hModel_(-1),hFrame_(-1)
@@ -23,12 +38,13 @@ Stage::~Stage()
 
 void Stage::Initialize()
 {
-	hModel_ = Model::Load("BoxGrass.fbx");
+	Set::Initialize(objectName_);
+	hModel_ = Model::Load(JR::Get<std::string>(objectName_,"MODEL_PATH_GRASS"));
 	assert(hModel_ >= 0);
 	hKazan_ = Model::Load("Kazan.fbx");
-	hFrame_ = Model::Load("Frame/RedFrame.fbx");
+	hFrame_ = Model::Load(JR::Get<std::string>(objectName_, "MODEL_PATH_FRAME"));
 	assert(hFrame_ >= 0);
-	
+
 	for (int z = 0; z < Set::STAGE_SIZE.z; z++) {
 		std::vector<std::vector<STAGE_BLOCK_DATA>> vec;
 		for (int y = 0; y < Set::STAGE_SIZE.y; y++) {
@@ -63,7 +79,6 @@ void Stage::Draw()
 {
 	Transform t;
 	STAGE_BLOCK_DATA block;
-	t.position_ = { (float)0,(float)-15,(float)0 };
 	Model::SetTransform(hKazan_, t);
 	//Model::Draw(hKazan_);
 	for (int z = 0; z < Set::STAGE_SIZE.z; z++) {
@@ -345,7 +360,7 @@ void Stage::FallStageBlock()
 		int z = itr.z;
 		blockData_[z][y][x].trans.position_.y -= Set::FALL_SPEED * DT::GetDeltaTime();
 		//—Ž‰ºI—¹‚Ì‚‚³(-)+‰Šú‚Ì‚‚³
-		float height = Set::BLOCK_RETURN_HEIGHT + y;
+		float height = Set::FALL_LIMIT + y;
 		if (blockData_[z][y][x].trans.position_.y < height) {
 			blockData_[z][y][x].state = RETURN;
 			blockData_[z][y][x].trans.position_ = { (float)x,(float)y,(float)z };

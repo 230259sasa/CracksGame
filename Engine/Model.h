@@ -34,6 +34,7 @@ namespace Model
 	int Load(std::string filename);
 	void SetTransform(int hModel, Transform transform);
 	void SetAnimFrame(int hModel, int startFrame, int endFrame, float animSpeed);
+	void SetAnimFrame(int hModel, int startFrame, int endFrame);
 	int GetAnimFrame(int hModel);
 	void Draw(int hModel);
 	void OutLineDraw(int hModel);

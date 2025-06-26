@@ -3,6 +3,7 @@
 #include"Stage.h"
 #include"Engine\DeltaTime.h"
 #include"Engine\Sprite.h"
+#include"Engine/JsonReader.h"
 #include"FallObject.h"
 #include"FallBomb.h"
 
@@ -12,13 +13,20 @@
 #include "imgui/imgui_impl_dx11.h"
 #include "imgui/imgui_impl_win32.h"
 
-namespace Set {
-	const float DEFAULT_HIGHT(10);
+namespace DT = DeltaTime;
+namespace JR = JsonReader;
+
+namespace FallBlockManagerSet {
+	float SPAWN_HEIGHT(0);
 	//const float BLOCK_DEAD_HIGHT(-10);
-	const float NEXT_FALL_TIME(2.5f);
+	float NEXT_SPAWN_TIME(0);
+	void Initialize(std::string _name) {
+		JR::Get<float>(_name, "SPAWN_HEIGHT", SPAWN_HEIGHT);
+		JR::Get<float>(_name, "NEXT_SPAWN_TIME", NEXT_SPAWN_TIME);
+	}
 }
 
-namespace DT = DeltaTime;
+namespace Set = FallBlockManagerSet;
 
 FallBlockManager::FallBlockManager(GameObject* parent):
 	GameObject(parent, "FallBlockManager"),time_(0)
@@ -31,6 +39,7 @@ FallBlockManager::~FallBlockManager()
 
 void FallBlockManager::Initialize()
 {
+	Set::Initialize(objectName_);
 }
 
 void FallBlockManager::Release()
@@ -64,7 +73,7 @@ void FallBlockManager::FallControle()
 {
 	time_ += DT::GetDeltaTime();
 
-	if (time_ < Set::NEXT_FALL_TIME)
+	if (time_ < Set::NEXT_SPAWN_TIME)
 		return;
 
 	Stage* stage = nullptr;
@@ -80,6 +89,6 @@ void FallBlockManager::FallControle()
 		fobj = Instantiate<FallBomb>(this);
 	XMFLOAT3 pos;
 	pos = stage->GetRandomScaffoldPos();
-	pos.y = Set::DEFAULT_HIGHT;
+	pos.y = Set::SPAWN_HEIGHT;
 	fobj->SetPosition(pos);
 }

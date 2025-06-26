@@ -1,19 +1,33 @@
 #include "FallObject.h"
 #include"Engine/Model.h"
 #include"Engine/DeltaTime.h"
+#include"Engine/JsonReader.h"
 #include"Stage.h"
 
 namespace DT = DeltaTime;
+namespace JR = JsonReader;
 using std::string;
 
-namespace Set {
-	const float FALL_OBJECT_SIZE(1.0f);
-	const float FALL_OBJECT_CENTER(FALL_OBJECT_SIZE / 2);//XMFLOAT3Ç…Ç∑ÇÈÅH
-	const float FALL_SPEED(5.0f);
-	const float KILL_ME_HEIGHT(-10.0f);
-	const float RAY_CAST_MIN_DATA_INITIALIZE_DIST(100);
-	const XMFLOAT4 RAY_CAST_DIR(0, -1, 0, 0);
+namespace FallObjectSet {
+	float FALL_OBJECT_SIZE(0);
+	float FALL_OBJECT_CENTER(0);//XMFLOAT3Ç…Ç∑ÇÈÅH
+	float FALL_SPEED(0);
+	float FALL_LIMIT_HEIGHT(0);
+	float RAY_CAST_INITIALIZE_DISTANCE(0);
+	XMFLOAT4 RAY_CAST_DIR(0, 0, 0, 0);
+	void Initialize(std::string _name) {
+		JR::Get<float>(_name, "OBJECT_SIZE", FALL_OBJECT_SIZE);
+		JR::Get<float>(_name, "FALL_SPEED", FALL_SPEED);
+		JR::Get<float>(_name, "FALL_LIMIT", FALL_LIMIT_HEIGHT);
+		JR::Get<float>(_name, "RAY_CAST_INITIALIZE_DISTANCE", RAY_CAST_INITIALIZE_DISTANCE);
+		JR::Get<float>(_name, "RAY_CAST_DIR_X", RAY_CAST_DIR.x);
+		JR::Get<float>(_name, "RAY_CAST_DIR_Y", RAY_CAST_DIR.y);
+		JR::Get<float>(_name, "RAY_CAST_DIR_Z", RAY_CAST_DIR.z);
+		FALL_OBJECT_CENTER = FALL_OBJECT_SIZE / 2;
+	}
 }
+
+namespace Set = FallObjectSet;
 
 FallObject::FallObject(GameObject* _parent, string _name)
 	:GameObject(_parent, _name), isFall_(false), isOnGround_(false), hModel_(0)
@@ -31,7 +45,8 @@ FallObject::~FallObject()
 
 void FallObject::Initialize()
 {
-	hModel_ = Model::Load("BoxDefault.fbx");
+	Set::Initialize(objectName_);
+	hModel_ = Model::Load(JR::Get<string>(objectName_,"MODEL_PATH"));
 }
 
 void FallObject::Release()
@@ -98,7 +113,7 @@ void FallObject::FallObjectRayCast(RayCastData& _rayData)
 	RayCastData data,minData;
 	data = _rayData;
 	minData = _rayData;
-	minData.dist = Set::RAY_CAST_MIN_DATA_INITIALIZE_DIST;
+	minData.dist = Set::RAY_CAST_INITIALIZE_DISTANCE;
 
 	for (auto obj : objs) {
 		if (obj == this)
@@ -117,7 +132,7 @@ void FallObject::FallObjectRayCast(RayCastData& _rayData)
 
 void FallObject::Dead()
 {
-	if (Set::KILL_ME_HEIGHT > transform_.position_.y) {
+	if (Set::FALL_LIMIT_HEIGHT > transform_.position_.y) {
 		KillMe();
 	}
 }

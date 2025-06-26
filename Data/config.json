@@ -2,9 +2,61 @@
 	"Player": {
 		"MOVE_SPEED": 3.0,
 		"JUMP_HEIGHT": 1.5,
-		"PLAYER_RADIUS": 0.4
+		"PLAYER_RADIUS": 0.4,
+		"MAX_FALL_VELOCITY": -10.0,
+		"MODEL_PATH_STAND": "Player/stand.fbx",
+		"MODEL_PATH_PUNCH": "Player/punch.fbx",
+		"MODEL_PATH_RUN": "Player/run.fbx",
+		"FRAME_NUM_STAND": 183,
+		"FRAME_NUM_PUNCH": 40,
+		"FRAME_NUM_RUN": 15
 	},
-	"FallObject":{
-		"FALL_SPEED": 5.0
+	"FallObject": {
+		"OBJECT_SIZE": 1.0,
+		"FALL_SPEED": 5.0,
+		"FALL_LIMIT": -10.0,
+		"RAY_CAST_INITIALIZE_DISTANCE": 100,
+		"RAY_CAST_DIR_X": 0,
+		"RAY_CAST_DIR_Y": -1.0,
+		"RAY_CAST_DIR_Z": 0,
+		"MODEL_PATH": "BoxDefault.fbx"
+	},
+	"Stage": {
+		"BLOCK_SIZE": 1.0,
+		"STAGE_SIZE_X": 10,
+		"STAGE_SIZE_Y": 5,
+		"STAGE_SIZE_Z": 10,
+		"FALL_SPEED": 5.0,
+		"FALL_LIMIT": -10.0,
+		"RETURN_BLOCK_SPEED": 0.05,
+		"MODEL_PATH_GRASS": "BoxGrass.fbx",
+		"MODEL_PATH_FRANE": "Frame/RedFrame.fbx"
+	},
+	"FallBlockManager": {
+		"SPAWN_HEIGHT": 10.0,
+		"NEXT_SPAWN_TIME": 2.5
+	},
+	"FallIslandManager": {
+		"FALL_SPEED": 0.1,
+		"FRAME_IMAGE_SIZE_X": 0.2,
+		"FRAME_IMAGE_SIZE_Y": 0.5,
+		"FRAME_IMAGE_POSITION_X": -0.78,
+		"FRAME_IMAGE_POSITION_Y": 0.445,
+		"ISLAND_IMAGE_SIZE_X": 0.08,
+		"ISLAND_IMAGE_SIZE_Y": 0.05,
+		"ISLAND_IMAGE_POSITION_X": -0.78,
+		"ISLAND_IMAGE_POSITION_Y": 0.85,
+		"IMAGE_PATH_FRAME": "Frame.png",
+		"IMAGE_PATH_GAUGE": "Gauge.png"
+	},
+	"PlayTimerGauge": {
+		"GAUGE_SIZE_X": 0.285,
+		"GAUGE_SIZE_Y": 0.07,
+		"GAUGE_FRAME_SIZE_X": 0.3,
+		"GAUGE_FRAME_SIZE_Y": 0.1,
+		"GAUGE_POSITION_X": 0,
+		"GAUGE_POSITION_Y": 0.85,
+		"IMAGE_PATH_FRAME": "GaugeFrame.png",
+		"IMAGE_PATH_GAUGE": "Gauge.png"
 	}
 }
