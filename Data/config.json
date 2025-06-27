@@ -30,7 +30,7 @@
 		"FALL_LIMIT": -10.0,
 		"RETURN_BLOCK_SPEED": 0.05,
 		"MODEL_PATH_GRASS": "BoxGrass.fbx",
-		"MODEL_PATH_FRANE": "Frame/RedFrame.fbx"
+		"MODEL_PATH_FRAME": "Frame/RedFrame.fbx"
 	},
 	"FallBlockManager": {
 		"SPAWN_HEIGHT": 10.0,

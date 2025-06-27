@@ -12,8 +12,18 @@ namespace JsonReader {
 		if (ifs.good()) {
 			nlohmann::json j;
 			ifs >> j;
-			if (!j.contains(_key) || !j[_key].contains(_nestedKey))
-				return _value;
+			//errorMessage
+			if (!j.contains(_key) || !j[_key].contains(_nestedKey)) {
+				std::string message;
+				if (!j.contains(_key)) {
+					message = _key;
+				}
+				else {
+					message = _nestedKey;
+				}
+				message += "キーが存在しません";
+				MessageBox(NULL, (LPCWSTR)message.c_str(), L"エラー", MB_OK);
+			}
 			_value = j[_key][_nestedKey].get<T>();
 		}
 		return _value;

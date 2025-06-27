@@ -60,21 +60,22 @@ void Model::Draw(int hModel)
 		return;
 	}
 
-	//アニメーションを進める
-	modelList[hModel]->nowFrame += modelList[hModel]->animSpeed;
+	////アニメーションを進める
+	//modelList[hModel]->nowFrame += modelList[hModel]->animSpeed;
 
-	//最後までアニメーションしたら戻す
-	if (modelList[hModel]->nowFrame > (float)modelList[hModel]->endFrame)
-		modelList[hModel]->nowFrame = (float)modelList[hModel]->startFrame;
+	////最後までアニメーションしたら戻す
+	//if (modelList[hModel]->nowFrame > (float)modelList[hModel]->endFrame)
+	//	modelList[hModel]->nowFrame = (float)modelList[hModel]->startFrame;
 
 
 
-	if (modelList[hModel]->pFbx_)
-	{
-		modelList[hModel]->pFbx_->Draw(modelList[hModel]->transform_, (int)modelList[hModel]->nowFrame);
-	}
+	//if (modelList[hModel]->pFbx_)
+	//{
+	//	//modelList[hModel]->pFbx_->Draw(modelList[hModel]->transform_, (int)modelList[hModel]->nowFrame);
+	//	modelList[hModel]->pFbx_->Draw(modelList[hModel]->transform_);
+	//}
 
-	//modelList[hModel]->pFbx_->ThreeDimensionalDraw(modelList[hModel]->transform_);
+	modelList[hModel]->pFbx_->Draw(modelList[hModel]->transform_);
 }
 
 void Model::OutLineDraw(int hModel)

@@ -60,7 +60,7 @@ void Player::Initialize()
 	Set::Initialize(objectName_);
 	//hModel_ = Model::Load("Player/.fbx");
 	//assert(hModel_ >= 0);
-	animData_[STAND].hModel = Model::Load(JR::Get<std::string>(objectName_,"MODEL_PATH_STAND"));
+	/*animData_[STAND].hModel = Model::Load(JR::Get<std::string>(objectName_,"MODEL_PATH_STAND"));
 	int frameNum = 0;
 	JR::Get<int>(objectName_, "FRAME_NUM_STAND",frameNum);
 	Model::SetAnimFrame(animData_[STAND].hModel, 0, frameNum);
@@ -72,7 +72,7 @@ void Player::Initialize()
 	animData_[RUN].hModel = Model::Load(JR::Get<std::string>(objectName_, "MODEL_PATH_RUN"));
 	JR::Get<int>(objectName_, "FRAME_NUM_RUN", frameNum);
 	Model::SetAnimFrame(animData_[RUN].hModel, 0, frameNum);
-	animData_[RUN].animFrameNum = frameNum;
+	animData_[RUN].animFrameNum = frameNum;*/
 
 	animID_ = STAND;
 
