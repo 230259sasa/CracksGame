@@ -282,7 +282,7 @@ void FBX::InitMaterial(fbxsdk::FbxNode* pNode)
 void FBX::Draw(Transform& transform)
 {
 	//Quad‚ðƒAƒŒƒ“ƒW
-	Direct3D::SetShader(SHADER_3D);
+	//Direct3D::SetShader(SHADER_3D);
 	transform.Calculation();
 
 	CONSTANT_BUFFER cb;
