@@ -6,6 +6,7 @@
 #include"Engine\JsonReader.h"
 #include"Stage.h"
 #include "FallBlockManager.h"
+#include"PlayerAnimContext.h"
 #include<numbers>
 
 #include "imgui/imgui.h"
@@ -60,21 +61,23 @@ void Player::Initialize()
 	Set::Initialize(objectName_);
 	//hModel_ = Model::Load("Player/.fbx");
 	//assert(hModel_ >= 0);
-	animData_[STAND].hModel = Model::Load(JR::Get<std::string>(objectName_,"MODEL_PATH_STAND"));
+	animData_[(int)AT::STAND].hModel = Model::Load(JR::Get<std::string>(objectName_,"MODEL_PATH_STAND"));
 	int frameNum = 0;
 	JR::Get<int>(objectName_, "FRAME_NUM_STAND",frameNum);
-	Model::SetAnimFrame(animData_[STAND].hModel, 0, frameNum);
-	animData_[STAND].animFrameNum = frameNum;
-	animData_[PUNCH].hModel = Model::Load(JR::Get<std::string>(objectName_, "MODEL_PATH_PUNCH"));
+	Model::SetAnimFrame(animData_[(int)AT::STAND].hModel, 0, frameNum);
+	animData_[(int)AT::STAND].animFrameNum = frameNum;
+	animData_[(int)AT::PUNCH].hModel = Model::Load(JR::Get<std::string>(objectName_, "MODEL_PATH_PUNCH"));
 	JR::Get<int>(objectName_, "FRAME_NUM_PUNCH", frameNum);
-	Model::SetAnimFrame(animData_[PUNCH].hModel, 0, frameNum);
-	animData_[PUNCH].animFrameNum = frameNum;
-	animData_[RUN].hModel = Model::Load(JR::Get<std::string>(objectName_, "MODEL_PATH_RUN"));
+	Model::SetAnimFrame(animData_[(int)AT::PUNCH].hModel, 0, frameNum);
+	animData_[(int)AT::PUNCH].animFrameNum = frameNum;
+	animData_[(int)AT::MOVE].hModel = Model::Load(JR::Get<std::string>(objectName_, "MODEL_PATH_RUN"));
 	JR::Get<int>(objectName_, "FRAME_NUM_RUN", frameNum);
-	Model::SetAnimFrame(animData_[RUN].hModel, 0, frameNum);
-	animData_[RUN].animFrameNum = frameNum;
+	Model::SetAnimFrame(animData_[(int)AT::MOVE].hModel, 0, frameNum);
+	animData_[(int)AT::MOVE].animFrameNum = frameNum;
 
-	animID_ = STAND;
+	animID_ = AT::STAND;
+
+	animContext_ = new PlayerAnimContext(this);
 
 	//Stageのブロックに重ならないために足している
 	transform_.position_.y += 2.0f;
@@ -89,7 +92,7 @@ void Player::Release()
 
 void Player::Update()
 {
-	animData_[RUN].isAnimAction	= Move();
+	animData_[(int)AT::MOVE].isAnimAction = Move();
 	Jump();
 	Fall();
 	Relocate();
@@ -106,20 +109,25 @@ void Player::Draw()
 			(int)transform_.position_.y, (int)transform_.position_.z);
 		ImGui::Text("position x=%5.3lf,y=%5.3lf,z=%5.3lf", transform_.position_.x,
 			transform_.position_.y, transform_.position_.z);*/
-		//ImGui::Text("animframe=%5.3li", Model::GetAnimFrame(animData_[animID_].hModel));
+			//ImGui::Text("animframe=%5.3li", Model::GetAnimFrame(animData_[animID_].hModel));
 	}
 	Transform trans = transform_;
 	//trans.position_.x = XMVectorGetX(Camera::GetTarget());
 	//trans.position_.z = XMVectorGetZ(Camera::GetTarget());
 	trans.scale_ = XMFLOAT3(0.8, 1, 0.8);
-	Model::SetTransform(animData_[animID_].hModel, trans);
-	Model::Draw(animData_[animID_].hModel);
-	
+	Model::SetTransform(animData_[(int)animID_].hModel, trans);
+	Model::Draw(animData_[(int)animID_].hModel);
+
 	Stage* stage = nullptr;
 	stage = (Stage*)FindObject("Stage");
 	if (stage == nullptr)
 		return;
-	stage->DrawFrame({(float)framePos_.x,(float)framePos_.y,(float)framePos_.z});
+	stage->DrawFrame({ (float)framePos_.x,(float)framePos_.y,(float)framePos_.z });
+}
+
+bool Player::GetIsAnimAction(AnimType _type)
+{
+	return animData_[(int)_type].isAnimAction;
 }
 
 void Player::AnimationManager()
@@ -129,13 +137,13 @@ void Player::AnimationManager()
 	}*/
 	//id = (animData_[RUN].isAnimAction) ? RUN : id;
 	//id = (Move()) ? RUN : id;
-	
-	PlayerAnimationID id = STAND;
+
+	/*AnimType id = STAND;
 	switch (animID_) {
 	case STAND:
-	case RUN:
+	case AnimType::MOVE:
 		id = STAND;
-		id = (animData_[RUN].isAnimAction) ? RUN : id;
+		id = (animData_[AnimType::MOVE].isAnimAction) ? AnimType::MOVE : id;
 		break;
 	case PUNCH:
 		if (Model::GetAnimFrame(animData_[animID_].hModel) >= animData_[animID_].animFrameNum) {
@@ -143,7 +151,16 @@ void Player::AnimationManager()
 		}
 		break;
 	}
-	animID_ = id;
+	animID_ = id;*/
+
+	AnimType id = animContext_->GetCurrentAnimType();
+	if (id != animID_) {
+		animID_ = id;
+		animContext_->Change(animID_);
+		std::array<bool, FUNCTION_INDEX_MAX> arr = animContext_->Permission();
+	}
+
+	//isfunctionenabled	に入れる
 
 	//stateManager  function = []()->bool{return false;}
 	/*
@@ -203,12 +220,6 @@ void Player::ActionManager()
 
 bool Player::Move()
 {
-	//デバック用の移動
-
-	//移動キーが押されてなければreturn
-	/*if (!Input::IsKey(DIK_W) && !Input::IsKey(DIK_S) &&
-		!Input::IsKey(DIK_A) && !Input::IsKey(DIK_D))
-		return;*/
 	Stage* stage = nullptr;
 	stage = (Stage*)FindObject("Stage");
 	if (stage == nullptr)

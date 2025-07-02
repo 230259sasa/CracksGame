@@ -25,6 +25,12 @@
     <Filter Include="ヘッダー ファイル\PlaySceneHeader">
       <UniqueIdentifier>{9d3d0cca-aacf-4f0e-b90d-c16e9f8955b6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\PlaySceneCpp\Player">
+      <UniqueIdentifier>{bb0b7d35-a906-413a-96a3-69c46ab3560a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\PlaySceneHeader\Player">
+      <UniqueIdentifier>{40ea86f1-38a1-4d8d-9655-58fd16f347c0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Camera.cpp">
@@ -105,9 +111,6 @@
     <ClCompile Include="FallBlockManager.cpp">
       <Filter>ソース ファイル\PlaySceneCpp</Filter>
     </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>ソース ファイル\PlaySceneCpp</Filter>
-    </ClCompile>
     <ClCompile Include="PlayScene.cpp">
       <Filter>ソース ファイル\PlaySceneCpp</Filter>
     </ClCompile>
@@ -152,6 +155,18 @@
     </ClCompile>
     <ClCompile Include="Engine\Display.cpp">
       <Filter>ソース ファイル\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>ソース ファイル\PlaySceneCpp\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerAnimStand.cpp">
+      <Filter>ソース ファイル\PlaySceneCpp\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerAnimMove.cpp">
+      <Filter>ソース ファイル\PlaySceneCpp\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerAnimContext.cpp">
+      <Filter>ソース ファイル\PlaySceneCpp\Player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -230,9 +245,6 @@
     <ClInclude Include="FallBlockManager.h">
       <Filter>ヘッダー ファイル\PlaySceneHeader</Filter>
     </ClInclude>
-    <ClInclude Include="Player.h">
-      <Filter>ヘッダー ファイル\PlaySceneHeader</Filter>
-    </ClInclude>
     <ClInclude Include="PlayScene.h">
       <Filter>ヘッダー ファイル\PlaySceneHeader</Filter>
     </ClInclude>
@@ -283,6 +295,21 @@
     </ClInclude>
     <ClInclude Include="Engine\JsonReader.h">
       <Filter>ソース ファイル\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>ヘッダー ファイル\PlaySceneHeader\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerAnimPermission.h">
+      <Filter>ヘッダー ファイル\PlaySceneHeader\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerAnimStand.h">
+      <Filter>ヘッダー ファイル\PlaySceneHeader\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerAnimMove.h">
+      <Filter>ヘッダー ファイル\PlaySceneHeader\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerAnimContext.h">
+      <Filter>ヘッダー ファイル\PlaySceneHeader\Player</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
