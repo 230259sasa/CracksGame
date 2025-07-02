@@ -29,7 +29,7 @@ HRESULT FBX::Load(std::string fileName)
 
 	FbxGeometryConverter geometryConverter(pFbxManager_);
 	geometryConverter.Triangulate(pFbxScene_, true);
-	geometryConverter.SplitMeshesPerMaterial(pFbxScene_, true);
+	//geometryConverter.SplitMeshesPerMaterial(pFbxScene_, true);
 
 	// アニメーションのタイムモードの取得
 	frameRate_ = pFbxScene_->GetGlobalSettings().GetTimeMode();
