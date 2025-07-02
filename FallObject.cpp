@@ -32,11 +32,13 @@ namespace Set = FallObjectSet;
 FallObject::FallObject(GameObject* _parent, string _name)
 	:GameObject(_parent, _name), isFall_(false), isOnGround_(false), hModel_(0)
 {
+	Set::Initialize(objectName_);
 }
 
 FallObject::FallObject(GameObject* _parent)
 	:GameObject(_parent, "FallObject"),isFall_(false),isOnGround_(false),hModel_(0)
 {
+	Set::Initialize(objectName_);
 }
 
 FallObject::~FallObject()
@@ -45,7 +47,6 @@ FallObject::~FallObject()
 
 void FallObject::Initialize()
 {
-	Set::Initialize(objectName_);
 	hModel_ = Model::Load(JR::Get<string>(objectName_,"MODEL_PATH"));
 }
 
