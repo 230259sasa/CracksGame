@@ -1,4 +1,5 @@
 #include<string>
+#include<corecrt_wstring.h>
 #include <nlohmann/json.hpp>
 #include<filesystem>
 #include<fstream>
@@ -16,13 +17,12 @@ namespace JsonReader {
 			if (!j.contains(_key) || !j[_key].contains(_nestedKey)) {
 				std::string message;
 				if (!j.contains(_key)) {
-					message = _key;
+					message += _key + "キーが存在しません";
 				}
 				else {
-					message = _nestedKey;
+					message += _key + "の" + _nestedKey + "キーが存在しません";
 				}
-				message += "キーが存在しません";
-				MessageBox(NULL, (LPCWSTR)message.c_str(), L"エラー", MB_OK);
+				MessageBox(NULL, message.c_str(), "エラー", MB_OK);
 			}
 			_value = j[_key][_nestedKey].get<T>();
 		}

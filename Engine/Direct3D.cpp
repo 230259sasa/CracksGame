@@ -79,7 +79,7 @@ HRESULT Direct3D::Initialize(int winW, int winH, HWND hWnd)
 		&pContext);				// 無事完成したContextのアドレスが返ってくる
 	if (FAILED(hr))
 	{
-		MessageBox(NULL, L"Device, Swapchain, DeviceContextの作成に失敗", NULL, MB_OK);
+		MessageBox(NULL, "Device, Swapchain, DeviceContextの作成に失敗", NULL, MB_OK);
 		return hr;
 	}
 
@@ -92,7 +92,7 @@ HRESULT Direct3D::Initialize(int winW, int winH, HWND hWnd)
 	hr = pDevice->CreateRenderTargetView(pBackBuffer, NULL, &pRenderTargetView);
 	if (FAILED(hr))
 	{
-		MessageBox(NULL, L"レンダーターゲットビューの作成に失敗", NULL, MB_OK);
+		MessageBox(NULL, "レンダーターゲットビューの作成に失敗", NULL, MB_OK);
 		return hr;
 	}
 
@@ -154,7 +154,7 @@ HRESULT Direct3D::Initialize(int winW, int winH, HWND hWnd)
 	hr = InitShader();
 	if (FAILED(hr))
 	{
-		MessageBox(NULL, L"シェーダの初期化に失敗", NULL, MB_OK);
+		MessageBox(NULL, "シェーダの初期化に失敗", NULL, MB_OK);
 	}
 	return hr;
 
@@ -189,7 +189,7 @@ HRESULT Direct3D::InitShader3D()
 		&shaderBundle[SHADER_TYPE::SHADER_3D].pVertexShader);
 	if (FAILED(hr))
 	{
-		MessageBox(NULL, L"頂点シェーダの作成に失敗", NULL, MB_OK);
+		MessageBox(NULL, "頂点シェーダの作成に失敗", NULL, MB_OK);
 		return hr;
 	}
 
@@ -206,7 +206,7 @@ HRESULT Direct3D::InitShader3D()
 	pCompileVS->Release();
 	if (FAILED(hr))
 	{
-		MessageBox(NULL, L"頂点インプットレイアウトの作成に失敗", NULL, MB_OK);
+		MessageBox(NULL, "頂点インプットレイアウトの作成に失敗", NULL, MB_OK);
 		return hr;
 	}
 	
@@ -219,7 +219,7 @@ HRESULT Direct3D::InitShader3D()
 	pCompilePS->Release();
 	if (FAILED(hr))
 	{
-		MessageBox(NULL, L"ピクセルシェーダの作成に失敗", NULL, MB_OK);
+		MessageBox(NULL, "ピクセルシェーダの作成に失敗", NULL, MB_OK);
 		return hr;
 	}
 
@@ -231,7 +231,7 @@ HRESULT Direct3D::InitShader3D()
 	hr = pDevice->CreateRasterizerState(&rdc, &shaderBundle[SHADER_TYPE::SHADER_3D].pRasterizerState);
 	if (FAILED(hr))
 	{
-		MessageBox(NULL, L"ラスタライザステートの作成に失敗", NULL, MB_OK);
+		MessageBox(NULL, "ラスタライザステートの作成に失敗", NULL, MB_OK);
 		return hr;
 	}
 	//ここまで3d用シェーダー
@@ -249,7 +249,7 @@ HRESULT Direct3D::InitShader2D()
 		&shaderBundle[SHADER_TYPE::SHADER_2D].pVertexShader);
 	if (FAILED(hr))
 	{
-		MessageBox(NULL, L"頂点シェーダの作成に失敗", NULL, MB_OK);
+		MessageBox(NULL, "頂点シェーダの作成に失敗", NULL, MB_OK);
 		return hr;
 	}
 
@@ -266,7 +266,7 @@ HRESULT Direct3D::InitShader2D()
 	pCompileVS->Release();
 	if (FAILED(hr))
 	{
-		MessageBox(NULL, L"頂点インプットレイアウトの作成に失敗", NULL, MB_OK);
+		MessageBox(NULL, "頂点インプットレイアウトの作成に失敗", NULL, MB_OK);
 		return hr;
 	}
 
@@ -279,7 +279,7 @@ HRESULT Direct3D::InitShader2D()
 	pCompilePS->Release();
 	if (FAILED(hr))
 	{
-		MessageBox(NULL, L"ピクセルシェーダの作成に失敗", NULL, MB_OK);
+		MessageBox(NULL, "ピクセルシェーダの作成に失敗", NULL, MB_OK);
 		return hr;
 	}
 
@@ -291,7 +291,7 @@ HRESULT Direct3D::InitShader2D()
 	hr = pDevice->CreateRasterizerState(&rdc, &shaderBundle[SHADER_TYPE::SHADER_2D].pRasterizerState);
 	if (FAILED(hr))
 	{
-		MessageBox(NULL, L"ラスタライザステートの作成に失敗", NULL, MB_OK);
+		MessageBox(NULL, "ラスタライザステートの作成に失敗", NULL, MB_OK);
 		return hr;
 	}
 
@@ -313,7 +313,7 @@ HRESULT Direct3D::InitShaderOutLine()
 		&shaderBundle[SHADER_TYPE::SHADER_OUTLINE].pVertexShader);
 	if (FAILED(hr))
 	{
-		MessageBox(NULL, L"頂点シェーダの作成に失敗", NULL, MB_OK);
+		MessageBox(NULL, "頂点シェーダの作成に失敗", NULL, MB_OK);
 		return hr;
 	}
 
@@ -330,7 +330,7 @@ HRESULT Direct3D::InitShaderOutLine()
 	pCompileVS->Release();
 	if (FAILED(hr))
 	{
-		MessageBox(NULL, L"頂点インプットレイアウトの作成に失敗", NULL, MB_OK);
+		MessageBox(NULL, "頂点インプットレイアウトの作成に失敗", NULL, MB_OK);
 		return hr;
 	}
 
@@ -343,7 +343,7 @@ HRESULT Direct3D::InitShaderOutLine()
 	pCompilePS->Release();
 	if (FAILED(hr))
 	{
-		MessageBox(NULL, L"ピクセルシェーダの作成に失敗", NULL, MB_OK);
+		MessageBox(NULL, "ピクセルシェーダの作成に失敗", NULL, MB_OK);
 		return hr;
 	}
 
@@ -356,7 +356,7 @@ HRESULT Direct3D::InitShaderOutLine()
 	hr = pDevice->CreateRasterizerState(&rdc, &shaderBundle[SHADER_TYPE::SHADER_OUTLINE].pRasterizerState);
 	if (FAILED(hr))
 	{
-		MessageBox(NULL, L"ラスタライザステートの作成に失敗", NULL, MB_OK);
+		MessageBox(NULL, "ラスタライザステートの作成に失敗", NULL, MB_OK);
 		return hr;
 	}
 	

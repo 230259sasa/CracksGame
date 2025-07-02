@@ -88,7 +88,7 @@ HRESULT Quad::CreateVertexBuffer()
 			[in, optional] LPCTSTR lpCaption,
 			[in]           UINT    uType
 		);*/
-		MessageBox(NULL, L"頂点バッファの作成に失敗", NULL, MB_OK);
+		MessageBox(NULL, "頂点バッファの作成に失敗", NULL, MB_OK);
 		return hr;
 	}
 	return S_OK;
@@ -118,7 +118,7 @@ HRESULT Quad::CreateIndexBuffer()
 	hr = Direct3D::pDevice->CreateBuffer(&bd, &InitData, &pIndexBuffer_);
 	if (FAILED(hr))
 	{
-		MessageBox(NULL, L"インデックスバッファの作成に失敗", NULL, MB_OK);
+		MessageBox(NULL, "インデックスバッファの作成に失敗", NULL, MB_OK);
 		return hr;
 	}
 
@@ -140,7 +140,7 @@ HRESULT Quad::CreateConstantBuffer()
 	hr = Direct3D::pDevice->CreateBuffer(&cb, nullptr, &pConstantBuffer_);
 	if (FAILED(hr))
 	{
-		MessageBox(NULL, L"コンスタントバッファの作成に失敗", NULL, MB_OK);
+		MessageBox(NULL, "コンスタントバッファの作成に失敗", NULL, MB_OK);
 		return hr;
 	}
 	return S_OK;
@@ -151,7 +151,7 @@ HRESULT Quad::LoadTexture(std::string fileName)
 	pTexture_ = new Texture;
 	HRESULT hr;
 	if (FAILED(hr = pTexture_->Load(fileName))){
-	 MessageBox(NULL, L"テクスチャの作成に失敗しました", L"エラー", MB_OK);
+	 MessageBox(NULL, "テクスチャの作成に失敗しました", "エラー", MB_OK);
 	 return hr;
 	}
 	return S_OK;

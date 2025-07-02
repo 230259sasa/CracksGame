@@ -18,8 +18,8 @@
 #pragma comment(lib, "winmm.lib")
 
 	//定数宣言
-	const wchar_t* WIN_CLASS_NAME = L"SampleGame";  //ウィンドウクラス名
-	const wchar_t* APP_NAME = L"サンプルゲーム"; //アプリケーション名
+	const char* WIN_CLASS_NAME = "SampleGame";  //ウィンドウクラス名
+	const char* APP_NAME = "サンプルゲーム"; //アプリケーション名
 	const int WINDOW_WIDTH = 800;
 	const int WINDOW_HEIGHT = 600;
 
@@ -73,7 +73,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, 
 	HRESULT hr = Direct3D::Initialize(winW, winH, hWnd);
 	if (FAILED(hr))
 	{
-		MessageBox(NULL, L"DirectXの初期化に失敗", NULL, MB_OK);
+		MessageBox(NULL, "DirectXの初期化に失敗", NULL, MB_OK);
 		return 0;
 	}
 	{
@@ -119,9 +119,9 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, 
 			timeEndPeriod(1);
 			if (nowTime - startTime >= 1000)
 			{
-				std::wstring str;
-				wsprintf(str.data(), L"%u", countFps);
-				SetWindowTextW(hWnd, str.c_str());
+				std::string str;
+				wsprintf(str.data(), "%u", countFps);
+				SetWindowText(hWnd, str.c_str());
 
 				countFps = 0;
 				startTime = nowTime;
