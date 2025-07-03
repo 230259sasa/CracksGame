@@ -35,6 +35,7 @@ public:
 	HRESULT Load(std::string fileName);
 	void    Draw(Transform& transform,int frame);
 	void    OutLineDraw(Transform& transform);
-	void    Release(); 
+	void    Release();
 	void	RayCast(RayCastData& rayData, Transform& transform);
+	bool	GetBonePosition(std::string boneName, XMFLOAT3* position);
 };

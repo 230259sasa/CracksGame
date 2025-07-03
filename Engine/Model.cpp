@@ -53,6 +53,11 @@ int Model::GetAnimFrame(int hModel)
 	return modelList[hModel]->nowFrame;
 }
 
+bool Model::GetBonePosition(int hModel, std::string boneName, XMFLOAT3* position)
+{
+	return modelList[hModel]->pFbx_->GetBonePosition(boneName, position);
+}
+
 void Model::Draw(int hModel)
 {
 	if (hModel < 0 || hModel >= modelList.size() || modelList[hModel] == nullptr)
