@@ -106,11 +106,11 @@ void FBX::RayCast(RayCastData& rayData, Transform& transform)
 	}
 }
 
-bool FBX::GetBonePosition(std::string boneName, XMFLOAT3* position)
+bool FBX::GetBonePositionAtNow(std::string boneName, XMFLOAT3* position)
 {
 	for (int i = 0; i < parts_.size(); i++)
 	{
-		if (parts_[i]->GetBonePosition(boneName, position)) {
+		if (parts_[i]->GetBonePositionAtNow(boneName, position)) {
 			return true;
 		}
 	}

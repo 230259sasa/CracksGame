@@ -36,7 +36,7 @@ namespace Model
 	void SetAnimFrame(int hModel, int startFrame, int endFrame, float animSpeed);
 	void SetAnimFrame(int hModel, int startFrame, int endFrame);
 	int GetAnimFrame(int hModel);
-	bool GetBonePosition(int hModel,std::string boneName, XMFLOAT3* position);
+	bool GetBonePositionAtNow(int hModel,std::string boneName, XMFLOAT3* position);
 	void Draw(int hModel);
 	void OutLineDraw(int hModel);
 	void Release();

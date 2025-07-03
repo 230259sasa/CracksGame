@@ -45,7 +45,7 @@ void Model::SetAnimFrame(int hModel, int startFrame, int endFrame, float animSpe
 
 void Model::SetAnimFrame(int hModel, int startFrame, int endFrame)
 {
-	SetAnimFrame(hModel, startFrame, endFrame, 1.0f);
+	SetAnimFrame(hModel, startFrame, endFrame, 0.1f);
 }
 
 int Model::GetAnimFrame(int hModel)
@@ -53,9 +53,9 @@ int Model::GetAnimFrame(int hModel)
 	return modelList[hModel]->nowFrame;
 }
 
-bool Model::GetBonePosition(int hModel, std::string boneName, XMFLOAT3* position)
+bool Model::GetBonePositionAtNow(int hModel, std::string boneName, XMFLOAT3* position)
 {
-	return modelList[hModel]->pFbx_->GetBonePosition(boneName, position);
+	return modelList[hModel]->pFbx_->GetBonePositionAtNow((boneName, position);
 }
 
 void Model::Draw(int hModel)

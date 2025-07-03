@@ -37,5 +37,5 @@ public:
 	void    OutLineDraw(Transform& transform);
 	void    Release();
 	void	RayCast(RayCastData& rayData, Transform& transform);
-	bool	GetBonePosition(std::string boneName, XMFLOAT3* position);
+	bool	GetBonePositionAtNow(std::string boneName, XMFLOAT3* position);
 };
