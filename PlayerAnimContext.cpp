@@ -14,7 +14,7 @@ PlayerAnimContext::~PlayerAnimContext()
 {
 }
 
-void PlayerAnimContext::Change(Player::AnimType _type)
+void PlayerAnimContext::ChangeAnimType(Player::AnimType _type)
 {
     animPermission_ = animPermissionArr_[(int)_type];
 }
@@ -24,7 +24,7 @@ Player::AnimType PlayerAnimContext::GetCurrentAnimType()
     return animPermission_->GetCurrentAnimType();
 }
 
-std::array<bool, Player::FUNCTION_INDEX_MAX> PlayerAnimContext::Permission()
+std::array<bool, Player::FUNCTION_INDEX_MAX> PlayerAnimContext::GetIsFunctionArr()
 {
-    return animPermission_->Permission();
+    return animPermission_->GetIsFunctionArr();
 }

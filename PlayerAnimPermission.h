@@ -12,6 +12,6 @@ public:
 	PlayerAnimPermission(Player* _p) { player_ = _p; }
 	~PlayerAnimPermission() {};
 	virtual Player::AnimType GetCurrentAnimType() = 0;
-	virtual std::array<bool, Player::FUNCTION_INDEX_MAX> Permission() = 0;
+	virtual std::array<bool, Player::FUNCTION_INDEX_MAX> GetIsFunctionArr() = 0;
 };
 

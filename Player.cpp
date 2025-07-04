@@ -136,26 +136,13 @@ void Player::AnimationManager()
 	AnimType id = animContext_->GetCurrentAnimType();
 	if (id != animID_) {
 		animID_ = id;
-		animContext_->Change(animID_);
-		std::array<bool, FUNCTION_INDEX_MAX> arr = animContext_->Permission();
+		animContext_->ChangeAnimType(animID_);
+		std::array<bool, FUNCTION_INDEX_MAX> arr = animContext_->GetIsFunctionArr();
 	}
-}
-
-void Player::ActionManager()
-{
-	//ある状況(特定のアニメーション中、待機中）にはActionを動かさず
-	// 特定のアニメーションが終わったときはそれに呼応した関数を動かしたい
-	
 }
 
 bool Player::Move()
 {
-	Stage* stage = nullptr;
-	stage = (Stage*)FindObject("Stage");
-	if (stage == nullptr)
-		return false;
-
-	// カメラ角度取得
 	int angle = Camera::GetRotateAngle() % 360;
 	if (angle < 0) angle += 360;
 
@@ -194,6 +181,11 @@ bool Player::Move()
 	dir.x = vectorX;
 	dir.z = vectorZ;
 	if (dir.x != 0 || dir.z != 0) {
+		Stage* stage = nullptr;
+		stage = (Stage*)FindObject("Stage");
+		if (stage == nullptr)
+			return false;
+
 		XMFLOAT3 pos = transform_.position_;
 		float speed = Set::MOVE_SPEED * DT::GetDeltaTime();
 		move.x = speed * vectorX;

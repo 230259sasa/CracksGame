@@ -15,7 +15,7 @@ Player::AnimType PlayerAnimStand::GetCurrentAnimType()
     return Player::AnimType::STAND;
 }
 
-std::array<bool, Player::FUNCTION_INDEX_MAX> PlayerAnimStand::Permission()
+std::array<bool, Player::FUNCTION_INDEX_MAX> PlayerAnimStand::GetIsFunctionArr()
 {
     for (int i = 0;i < (int)Player::FunctionIndex::MAX;i++) {
         isFunctionArr_[i] = true;

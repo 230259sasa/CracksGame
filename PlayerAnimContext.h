@@ -11,8 +11,8 @@ class PlayerAnimContext
 public:
 	PlayerAnimContext(Player* _player);
 	~PlayerAnimContext();
-	void Change(Player::AnimType _type);
+	void ChangeAnimType(Player::AnimType _type);
 	Player::AnimType GetCurrentAnimType();
-	std::array<bool, Player::FUNCTION_INDEX_MAX> Permission();
+	std::array<bool, Player::FUNCTION_INDEX_MAX> GetIsFunctionArr();
 };
 

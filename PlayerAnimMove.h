@@ -6,6 +6,6 @@ class PlayerAnimMove :
 public:
 	PlayerAnimMove(Player* _p);
 	Player::AnimType GetCurrentAnimType() override;
-	std::array<bool, Player::FUNCTION_INDEX_MAX> Permission() override;
+	std::array<bool, Player::FUNCTION_INDEX_MAX> GetIsFunctionArr() override;
 };
 
