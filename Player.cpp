@@ -22,6 +22,7 @@ namespace PlayerSet {
 	const XMFLOAT3 FORWARD_VECTOR(0, 0, 1);//前方へのベクトル
 
 	const int LEFT_MOVE_ANGLE(90);
+	const int BACK_MOVE_ANGLE(180);
 	const int RIGHT_MOVE_ANGLE(270);
 	float PLAYER_RADIUS(0);
 	float MOVE_SPEED(0);
@@ -132,83 +133,12 @@ bool Player::GetIsAnimAction(AnimType _type)
 
 void Player::AnimationManager()
 {
-	/*if (Model::GetAnimFrame(animData_[animID_].hModel) < animData_[animID_].animFrameNum) {
-		id = animID_;
-	}*/
-	//id = (animData_[RUN].isAnimAction) ? RUN : id;
-	//id = (Move()) ? RUN : id;
-
-	/*AnimType id = STAND;
-	switch (animID_) {
-	case STAND:
-	case AnimType::MOVE:
-		id = STAND;
-		id = (animData_[AnimType::MOVE].isAnimAction) ? AnimType::MOVE : id;
-		break;
-	case PUNCH:
-		if (Model::GetAnimFrame(animData_[animID_].hModel) >= animData_[animID_].animFrameNum) {
-			id = STAND;
-		}
-		break;
-	}
-	animID_ = id;*/
-
 	AnimType id = animContext_->GetCurrentAnimType();
 	if (id != animID_) {
 		animID_ = id;
 		animContext_->Change(animID_);
 		std::array<bool, FUNCTION_INDEX_MAX> arr = animContext_->Permission();
 	}
-
-	//isfunctionenabled	に入れる
-
-	//stateManager  function = []()->bool{return false;}
-	/*
-	if(ps.IsFinish){
-		ps.change(stand);
-		animID = ps.getAnimID();
-		functionMove = ps.getMove();
-		functionJump = ps.getJump();
-	}
-	*/
-
-	//animationM actionIDとかのがいいかも？ 上と統合？
-	/*
-		is = functionMove;
-		////animM
-		for(){
-			if(!is[i])
-				continue;
-			id = i;
-		}
-		if(animID != id){
-			animID = id;
-			ps.change(?[id]);
-		}
-	]*/
-
-	/*class PlayerState{
-	*	PlayerState(Player& player){p = player;}
-	*	virtual std::function GetMove(){ return p->Move();}
-	*	virtual std::function GetMove(){ return p->Jump();}
-	*	virtual bool IsFinish() = 0; //純粋仮想関数
-	*  //false返すだけ
-	*	bool GetFalse(){return false;}
-	* }
-	* 
-	* class PunchState public PlayerState{
-	*	std::function GetMove(){return GetFalse();} override;
-	*	std::function GetJump(){return GetFalse();} override;
-	*	bool IsFinish() { return nowframe>=finishframe;} override;
-	* }
-	* 
-	* ?
-	* class Context(){
-	*	std::list states;
-	*	void change(_id){id=_id;}
-	*	std::function GetMove(){states[id]->GetMove();}
-	* }
-	*/
 }
 
 void Player::ActionManager()
@@ -224,85 +154,40 @@ bool Player::Move()
 	stage = (Stage*)FindObject("Stage");
 	if (stage == nullptr)
 		return false;
-	
-	//ベクトルを求める
-	/*float vectorZ = XMVectorGetZ(Camera::GetTarget())
-		- XMVectorGetZ(Camera::GetPosition());
-	float vectorX = XMVectorGetX(Camera::GetTarget())
-		- XMVectorGetX(Camera::GetPosition());*/
-	float vectorZ=0;
-	float vectorX=0;
-	int angle = Camera::GetRotateAngle()%360;
-	if (angle < 0)
-		angle = 360 + angle;
 
-	if (angle <= 0) {
-		vectorX = 0;
-		vectorZ = 1;
-	}
-	else if (angle <= 90) {
-		vectorX = -1;
-		vectorZ = 0;
-	}
-	else if (angle <= 180) {
-		vectorX = 0;
-		vectorZ = -1;
-	}
-	else if (angle <= 270) {
-		vectorX = 1;
-		vectorZ = 0;
-	}
-	else if (angle <= 360) {
-		vectorX = 0;
-		vectorZ = 1;
-	}
+	// カメラ角度取得
+	int angle = Camera::GetRotateAngle() % 360;
+	if (angle < 0) angle += 360;
 
-	float length = vectorX * vectorX + vectorZ * vectorZ;
+	//ラジアンに変換
+	float rad = XMConvertToRadians(angle);
 
-	//normalize
-	if(vectorX<0)
-		vectorX = -(vectorX * vectorX) / length;
-	else
-		vectorX = (vectorX * vectorX) / length;
+	// 正規化された方向ベクトル
+	float vectorX = -std::sin(rad);
+	float vectorZ = std::cos(rad);
 
-	if(vectorZ<0)
-		vectorZ = -(vectorZ * vectorZ) / length;
-	else
-		vectorZ = (vectorZ * vectorZ) / length;
-
+	float r = XMConvertToRadians(0);
 	//移動する方向を入力
 	if (Input::IsKey(DIK_W)) {
 	}
 	else if (Input::IsKey(DIK_S)) {
-		vectorX = -vectorX;
-		vectorZ = -vectorZ;
+		r = XMConvertToRadians(Set::BACK_MOVE_ANGLE);
 	}
 	else if (Input::IsKey(DIK_A)) {
-		constexpr float r = XMConvertToRadians(Set::LEFT_MOVE_ANGLE);
-		float x = vectorX * cos(r) - vectorZ * sin(r);
-		float z = vectorX * sin(r) + vectorZ * cos(r);
-		vectorX = x;
-		vectorZ = z; 
+		r = XMConvertToRadians(Set::LEFT_MOVE_ANGLE);
 	}
 	else if (Input::IsKey(DIK_D)) {
-		constexpr float r = XMConvertToRadians(Set::RIGHT_MOVE_ANGLE);
-		float x = vectorX * cos(r) - vectorZ * sin(r);
-		float z = vectorX * sin(r) + vectorZ * cos(r);
-		vectorX = x;
-		vectorZ = z;
+		r = XMConvertToRadians(Set::RIGHT_MOVE_ANGLE);
 	}
 	else {
 		vectorX = 0;
 		vectorZ = 0;
 	}
 
-
-	/*if (Input::IsKey(DIK_UP)) {
-		transform_.position_.y += 1.0f;
-		vectorX = 0;
-		vectorZ = 0;
-	}*/
-
+	float x = vectorX * cos(r) - vectorZ * sin(r);
+	float z = vectorX * sin(r) + vectorZ * cos(r);
+	vectorX = x;
+	vectorZ = z;
 
 	XMFLOAT3 dir(0, 0, 0);
 	XMFLOAT3 move(0, 0, 0), push(0, 0, 0);
@@ -433,23 +318,12 @@ void Player::BreakStageBlock()
 	if (angle < 0)
 		angle = 360 + angle;
 	int dir = angle / 45;
+	
+	int arrX[8] = { 0,1,1,0,0,-1,-1,0 };
+	int arrZ[8] = { 1,0,0,-1,-1,0,0,1 };
 
-	//前
-	if (dir <= 0 || dir == 7) {
-		z = (int)(transform_.position_.z) + 1;
-	}
-	//右
-	else if (dir <= 2) {
-		x = (int)(transform_.position_.x) + 1;
-	}
-	//後ろ
-	else if (dir <= 4) {
-		z = (int)(transform_.position_.z) - 1;
-	}
-	//左
-	else if (dir <= 6) {
-		x = (int)(transform_.position_.x) - 1;
-	}
+	x = (int)(transform_.position_.x) + arrX[dir];
+	z = (int)(transform_.position_.z) + arrZ[dir];
 
 	if (Input::IsKeyDown(DIK_J)) {
 		for(int sy = stage->GetStageSize().y; sy>=0;sy--){
