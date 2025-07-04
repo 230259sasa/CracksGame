@@ -127,12 +127,6 @@ void FbxParts::InitVertex(fbxsdk::FbxMesh* mesh)
 			FbxVector4 Normal;
 			mesh->GetPolygonVertexNormal(poly, vertex, Normal);	//ｉ番目のポリゴンの、ｊ番目の頂点の法線をゲット
 			pVertexData_[index].normal = XMFLOAT3((float)Normal[0], (float)Normal[1], (float)Normal[2]);
-
-			/////////////////////////////頂点のＵＶ/////////////////////////////////////
-			//FbxLayerElementUV* pUV = mesh->GetLayer(0)->GetUVs();
-			//int uvIndex = mesh->GetTextureUVIndex(poly, vertex, FbxLayerElement::eTextureDiffuse);
-			//FbxVector2  uv = pUV->GetDirectArray().GetAt(uvIndex);
-			//pVertexData_[index].uv = XMFLOAT3((float)uv.mData[0], (float)(1.0f - uv.mData[1]), 0.0f);
 		}
 	}
 
@@ -346,7 +340,6 @@ void FbxParts::InitIndex(fbxsdk::FbxMesh* mesh)
 			{
 				for (DWORD k = 0; k < 3; k++)
 				{
-					//pIndex[count +  k] = mesh->GetPolygonVertex(j, 2-k);
 					pIndex[count + k] = mesh->GetPolygonVertex(j, k);
 				}
 				count += 3;
@@ -399,34 +392,6 @@ void FbxParts::InitSkelton(FbxMesh* pMesh)
 		int* vertexIndex;    // 頂点の番号
 		int     numRef;         // 頂点を共有するポリゴンの数
 	};
-
-#pragma region MeshInfo
-	//POLY_INDEX* polyTable = new POLY_INDEX[vertexCount_];
-	//for (DWORD i = 0; i < vertexCount_; i++)
-	//{
-	//	// 三角形ポリゴンに合わせて、頂点とポリゴンの関連情報を構築する
-	//	// 総頂点数＝ポリゴン数×３頂点
-	//	polyTable[i].polyIndex = new int[polygonCount_ * 3];
-	//	polyTable[i].vertexIndex = new int[polygonCount_ * 3];
-	//	polyTable[i].numRef = 0;
-	//	ZeroMemory(polyTable[i].polyIndex, sizeof(int) * polygonCount_ * 3);
-	//	ZeroMemory(polyTable[i].vertexIndex, sizeof(int) * polygonCount_ * 3);
-
-	//	// ポリゴン間で共有する頂点を列挙する
-	//	for (DWORD k = 0; k < polygonCount_; k++)
-	//	{
-	//		for (int m = 0; m < 3; m++)
-	//		{
-	//			if (pMesh->GetPolygonVertex(k, m) == i)
-	//			{
-	//				polyTable[i].polyIndex[polyTable[i].numRef] = k;
-	//				polyTable[i].vertexIndex[polyTable[i].numRef] = m;
-	//				polyTable[i].numRef++;
-	//			}
-	//		}
-	//	}
-	//}
-#pragma endregion MeshInfo
 
 	// ボーン情報を取得する
 	numBone_ = pSkinInfo_->GetClusterCount();
@@ -506,13 +471,6 @@ void FbxParts::InitSkelton(FbxMesh* pMesh)
 		bonePair[ppCluster_[i]->GetLink()->GetName()] = pBoneArray_ + i;
 	}
 
-	// 一時的なメモリ領域を解放する
-	//for (DWORD i = 0; i < vertexCount_; i++)
-	//{
-	//	SAFE_DELETE_ARRAY(polyTable[i].polyIndex);
-	//	SAFE_DELETE_ARRAY(polyTable[i].vertexIndex);
-	//}
-	//SAFE_DELETE_ARRAY(polyTable);
 	{
 		//////////////////////////
 			// ボーンごとの現在の行列を取得する
@@ -542,11 +500,6 @@ void FbxParts::InitSkelton(FbxMesh* pMesh)
 			pBoneArray_[i].newPose = XMLoadFloat4x4(&pose) * mMirror;
 			pBoneArray_[i].diffPose = XMMatrixInverse(nullptr, pBoneArray_[i].bindPose * mMirror);
 			pBoneArray_[i].diffPose = pBoneArray_[i].diffPose * pBoneArray_[i].newPose;
-
-			//反転無し
-			//pBoneArray_[i].newPose = XMLoadFloat4x4(&pose);
-			//pBoneArray_[i].diffPose = XMMatrixInverse(nullptr, pBoneArray_[i].bindPose);
-			//pBoneArray_[i].diffPose = pBoneArray_[i].diffPose * pBoneArray_[i].newPose;
 		}
 
 		// 各ボーンに対応した頂点の変形制御
@@ -574,7 +527,6 @@ void FbxParts::InitSkelton(FbxMesh* pMesh)
 			XMMATRIX matrix33 = XMLoadFloat3x3(&mat33);
 			XMStoreFloat3(&pVertexData_[i].normal, XMVector3TransformCoord(Normal, matrix33));
 		}
-		//////////////////////////
 	}
 
 }
@@ -653,7 +605,7 @@ void FbxParts::Draw(Transform& transform)
 
 			ID3D11ShaderResourceView* pSRV = pMaterial_[i].pTexture->GetSRV();
 			Direct3D::pContext->PSSetShaderResources(0, 1, &pSRV);
-		}							// GPUからのリソースアクセスを再開
+		}
 
 		//ポリゴンメッシュを描画する
 		Direct3D::pContext->DrawIndexed(pMaterial_[i].polygonCount * 3, 0, 0);
@@ -684,18 +636,12 @@ void FbxParts::DrawSkinAnime(Transform& transform, FbxTime time)
 		XMMATRIX mMirror;
 		mMirror = XMMatrixIdentity();
 		XMStoreFloat4x4(&mmat, mMirror);
-		//mmat.m[2][2] = -1.0f;
 		mMirror = XMLoadFloat4x4(&mmat);
 
 		// オフセット時のポーズの差分を計算する
 		pBoneArray_[i].newPose = XMLoadFloat4x4(&pose) * mMirror;
 		pBoneArray_[i].diffPose = XMMatrixInverse(nullptr, pBoneArray_[i].bindPose*mMirror);
 		pBoneArray_[i].diffPose = pBoneArray_[i].diffPose * pBoneArray_[i].newPose;
-
-		//反転無し
-		//pBoneArray_[i].newPose = XMLoadFloat4x4(&pose);
-		//pBoneArray_[i].diffPose = XMMatrixInverse(nullptr, pBoneArray_[i].bindPose);
-		//pBoneArray_[i].diffPose = pBoneArray_[i].diffPose * pBoneArray_[i].newPose;
 	}
 
 	// 各ボーンに対応した頂点の変形制御
@@ -743,19 +689,6 @@ void FbxParts::DrawSkinAnime(std::string takeName, Transform& transform, FbxTime
 
 void FbxParts::DrawMeshAnime(Transform& transform, FbxTime time, FbxScene* scene)
 {
-	//// その瞬間の自分の姿勢行列を得る
-	//FbxAnimEvaluator *evaluator = scene->GetAnimationEvaluator();
-	//FbxMatrix mCurrentOrentation = evaluator->GetNodeGlobalTransform(_pNode, time);
-
-	//// Fbx形式の行列からDirectX形式の行列へのコピー（4×4の行列）
-	//for (DWORD x = 0; x < 4; x++)
-	//{
-	//	for (DWORD y = 0; y < 4; y++)
-	//	{
-	//		_localMatrix(x, y) = (float)mCurrentOrentation.Get(x, y);
-	//	}
-	//}
-
 	Draw(transform);
 }
 
@@ -824,13 +757,10 @@ void FbxParts::RayCast(RayCastData& data, Transform& transform)
 			//3頂点
 			XMVECTOR ver[3];
 			XMFLOAT3 pos = pVertexData_[ppIndexData_[i][j * 3 + 0]].position;
-			//pos.z *= -1;
 			ver[0] = XMLoadFloat3(&pos);
 			pos = pVertexData_[ppIndexData_[i][j * 3 + 1]].position;
-			//pos.z *= -1;
 			ver[1] = XMLoadFloat3(&pos);
 			pos = pVertexData_[ppIndexData_[i][j * 3 + 2]].position;
-			//pos.z *= -1;
 			ver[2] = XMLoadFloat3(&pos);
 
 			bool  hit = false;
@@ -846,33 +776,3 @@ void FbxParts::RayCast(RayCastData& data, Transform& transform)
 		}
 	}
 }
-
-//void FbxParts::RayCast(RayCastData* data)
-//{
-//	data->hit = FALSE;
-//
-//	//マテリアル毎
-//	for (DWORD i = 0; i < materialCount_; i++)
-//	{
-//		//そのマテリアルのポリゴン毎
-//		for (DWORD j = 0; j < pMaterial_[i].polygonCount; j++)
-//		{
-//			//3頂点
-//			XMFLOAT3 ver[3];
-//			ver[0] = pVertexData_[ppIndexData_[i][j * 3 + 0]].position;
-//			ver[1] = pVertexData_[ppIndexData_[i][j * 3 + 1]].position;
-//			ver[2] = pVertexData_[ppIndexData_[i][j * 3 + 2]].position;
-//
-//			BOOL  hit = FALSE;
-//			float dist = 0.0f;
-//
-//			hit = Direct3D::Intersect(data->start, data->dir, ver[0], ver[1], ver[2], &dist);
-//
-//			if (hit && dist < data->dist)
-//			{
-//				data->hit = TRUE;
-//				data->dist = dist;
-//			}
-//		}
-//	}
-//}
