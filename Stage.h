@@ -19,6 +19,11 @@ class Stage :
         STAGE_BLOCK_STATE state;
         Transform trans;
     };
+    struct CONSTBUFFER_STAGE {
+        XMFLOAT4 casterPos;     // プレイヤーのXZ
+        XMFLOAT4 shadowParams;  // (softness, alphaScale, unused, playerHeightY)
+    };
+    ID3D11Buffer* pConstantBuffer_;
     int hModel_;
     int hKazan_;//クラスを作る
     int hFrame_;
@@ -50,7 +55,7 @@ public:
     XMFLOAT3 GetRandomScaffoldPos();
     bool GetIsOnBlock(XMINT3 _pos);
 private:
-    //関数名を変える
+    float GetTerrainHeight(int _x, int _z);
     //当たったブロックとの距離を返す
     bool GetHitBlockToSphere(XMFLOAT3 _pos, float _radius, XMFLOAT3& _getpos);
     bool GetHitBlockToCircle(XMFLOAT3 _pos, float _radius, XMFLOAT3& _getpos);

@@ -2,6 +2,7 @@
 #include"Engine\Model.h"
 #include"Engine\DeltaTime.h"
 #include"Engine/JsonReader.h"
+#include"Player.h"
 
 namespace JR = JsonReader;
 namespace DT = DeltaTime;
@@ -41,6 +42,8 @@ void Stage::Initialize()
 	Set::Initialize(objectName_);
 	hModel_ = Model::Load(JR::Get<std::string>(objectName_,"MODEL_PATH_GRASS"));
 	assert(hModel_ >= 0);
+	Model::SetShaderType(hModel_, SHADER_STAGE);
+
 	hKazan_ = Model::Load("Kazan.fbx");
 	hFrame_ = Model::Load(JR::Get<std::string>(objectName_, "MODEL_PATH_FRAME"));
 	assert(hFrame_ >= 0);
@@ -67,6 +70,23 @@ void Stage::Initialize()
 	}
 
 	initialBlockData_ = blockData_;
+
+	//////
+	D3D11_BUFFER_DESC cb;
+	cb.ByteWidth = sizeof(CONSTBUFFER_STAGE);
+	cb.Usage = D3D11_USAGE_DYNAMIC;
+	cb.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	cb.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	cb.MiscFlags = 0;
+	cb.StructureByteStride = 0;
+
+	// コンスタントバッファの作成
+	HRESULT hr;
+	hr = Direct3D::pDevice->CreateBuffer(&cb, nullptr, &pConstantBuffer_);
+	if (FAILED(hr))
+	{
+		MessageBox(NULL, "コンスタントバッファの作成に失敗しました", "エラー", MB_OK);
+	}
 }
 
 void Stage::Update()
@@ -79,8 +99,22 @@ void Stage::Draw()
 {
 	Transform t;
 	STAGE_BLOCK_DATA block;
-	Model::SetTransform(hKazan_, t);
-	//Model::Draw(hKazan_);
+
+	CONSTBUFFER_STAGE cb;
+	Player* player = (Player*)FindObject("Player");
+	if(player == nullptr)
+		return;
+	XMFLOAT3 pPos = player->GetPosition();
+	cb.casterPos = { pPos.x,pPos.y,pPos.z,0 };
+	cb.shadowParams = { 3.0f,1.0f,0,pPos.y - GetTerrainHeight(pPos.x,pPos.z)};
+	D3D11_MAPPED_SUBRESOURCE pdata;
+	Direct3D::pContext->Map(pConstantBuffer_, 0, D3D11_MAP_WRITE_DISCARD, 0, &pdata);	// GPUからのデータアクセスを止める
+	memcpy_s(pdata.pData, pdata.RowPitch, (void*)(&cb), sizeof(cb));	// データを値を送る
+	Direct3D::pContext->Unmap(pConstantBuffer_, 0);	//再開
+	//コンスタントバッファ
+	Direct3D::pContext->VSSetConstantBuffers(1, 1, &pConstantBuffer_);	//頂点シェーダー用	
+	Direct3D::pContext->PSSetConstantBuffers(1, 1, &pConstantBuffer_);	//ピクセルシェーダー
+
 	for (int z = 0; z < Set::STAGE_SIZE.z; z++) {
 		for (int y = 0; y < Set::STAGE_SIZE.y; y++) {
 			for (int x = 0; x < Set::STAGE_SIZE.x; x++) {
@@ -269,6 +303,17 @@ bool Stage::GetIsOnBlock(XMINT3 _pos)
 			return true;
 	}
 	return false;
+}
+
+float Stage::GetTerrainHeight(int _x, int _z)
+{
+	if (_x >= 0 && _x < Set::STAGE_SIZE.x &&_z >= 0 && _z < Set::STAGE_SIZE.z) {
+		for (int y = Set::STAGE_SIZE.y - 1;y >= 0;y--) {
+			if (blockData_[_x][y][_z].type == STAGE_BLOCK_TYPE::GROUND)
+				return y + Set::BLOCK_SIZE.y;
+		}
+	}
+	return 0.0f;
 }
 
 bool Stage::GetHitBlockToSphere(XMFLOAT3 _pos, float _radius, XMFLOAT3& _getpos)

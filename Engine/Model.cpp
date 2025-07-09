@@ -48,6 +48,11 @@ void Model::SetAnimFrame(int hModel, int startFrame, int endFrame)
 	SetAnimFrame(hModel, startFrame, endFrame, 1.0f);
 }
 
+void Model::SetShaderType(int hModel, SHADER_TYPE type)
+{
+	modelList[hModel]->pFbx_->SetShaderType(type);
+}
+
 int Model::GetAnimFrame(int hModel)
 {
 	return modelList[hModel]->nowFrame;

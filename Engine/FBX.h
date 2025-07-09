@@ -30,6 +30,7 @@ class FBX
 	FbxManager* pFbxManager_;
 	FbxScene* pFbxScene_;
 	FbxTime::EMode	frameRate_;
+	SHADER_TYPE shaderType_;
 public:
 	FBX();
 	HRESULT Load(std::string fileName);
@@ -38,4 +39,5 @@ public:
 	void    Release();
 	void	RayCast(RayCastData& rayData, Transform& transform);
 	bool	GetBonePositionAtNow(std::string boneName, XMFLOAT3* position);
+	void	SetShaderType(SHADER_TYPE type);
 };

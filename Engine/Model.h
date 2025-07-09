@@ -35,6 +35,7 @@ namespace Model
 	void SetTransform(int hModel, Transform transform);
 	void SetAnimFrame(int hModel, int startFrame, int endFrame, float animSpeed);
 	void SetAnimFrame(int hModel, int startFrame, int endFrame);
+	void SetShaderType(int hModel, SHADER_TYPE type);
 	int GetAnimFrame(int hModel);
 	bool GetBonePositionAtNow(int hModel,std::string boneName, XMFLOAT3* position);
 	void Draw(int hModel);

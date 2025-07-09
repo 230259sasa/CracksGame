@@ -8,7 +8,7 @@ SamplerState g_sampler : register(s0); //サンプラー
  // コンスタントバッファ
 // DirectX 側から送信されてくる、ポリゴン頂点以外の諸情報の定義
 //───────────────────────────────────────
-cbuffer global
+cbuffer global : register(b0)
 {
     //変換行列、視点、光源
     float4x4 matWVP; // ワールド・ビュー・プロジェクションの合成行列
@@ -23,6 +23,12 @@ cbuffer global
     float shininess;
     bool isTextured; //texが貼られているか
 };
+
+cbuffer stage : register(b1)
+{
+    float4 casterPos; // プレイヤーのXZ座標
+    float4 shadowParams; // (softness, alphaScale, unused, playerHeightY)
+}
 
 //───────────────────────────────────────
 // 頂点シェーダー出力＆ピクセルシェーダー入力データ構造体
@@ -87,5 +93,26 @@ float4 PS(VS_OUT inData) : SV_Target
         diffuse = g_texture.Sample(g_sampler, inData.uv) * inData.cos_alpha * factor.x;
         ambient = g_texture.Sample(g_sampler, inData.uv) * ambentSource * factor.x;;
     }
-    return diffuse + ambient + specular;
+    
+    float2 casterXZ = casterPos.xz;
+    float2 pixelXZ = inData.wpos.xz;
+
+    float2 diff = pixelXZ - casterXZ;
+    float distSq = dot(diff, diff);
+
+    float softness = shadowParams.x;
+    float alphaScale = shadowParams.y;
+    float heightY = shadowParams.w;
+
+    float heightRatio = saturate(heightY / 2.0f); // 最大ジャンプ2.0f想定
+    float radius = lerp(0.4f, 0.8f, heightRatio);
+    float alpha = lerp(0.6f, 0.1f, heightRatio);
+
+    float shadowAlpha = saturate((radius * radius - distSq) * softness) * alpha;
+
+    // 丸影を黒で合成（必要に応じて色も乗せられる）
+    float4 shadowColor = float4(0, 0, 0, shadowAlpha);
+    return lerp(diffuse + ambient + specular, shadowColor, shadowAlpha);
+
+    //return diffuse + ambient + specular;
 }

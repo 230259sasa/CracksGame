@@ -7,7 +7,7 @@
 namespace fs = std::filesystem;
 
 FBX::FBX()
-	:pFbxManager_(nullptr),pFbxScene_(nullptr)
+	:pFbxManager_(nullptr),pFbxScene_(nullptr),shaderType_(SHADER_3D)
 {
 }
 
@@ -64,7 +64,7 @@ HRESULT FBX::Load(std::string fileName)
 void FBX::Draw(Transform& transform, int frame)
 {
 	Direct3D::SetBlend(BLEND_INVALID);
-	Direct3D::SetShader(SHADER_3D);
+	Direct3D::SetShader(shaderType_);
 
 	//ƒp[ƒc‚ğ1ŒÂ‚¸‚Â•`‰æ
 	for (int k = 0; k < parts_.size(); k++)
@@ -115,4 +115,9 @@ bool FBX::GetBonePositionAtNow(std::string boneName, XMFLOAT3* position)
 		}
 	}
 	return false;
+}
+
+void FBX::SetShaderType(SHADER_TYPE type)
+{
+	shaderType_ = type;
 }
