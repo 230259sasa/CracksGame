@@ -23,7 +23,7 @@ public:
     void Update() override;
     void Draw() override;
     int GetOnGroundBlockNum();
-    std::vector<XMFLOAT4> GetFallingObjectPosition();
+    std::vector<XMFLOAT4> GetFallingObjectCenterPosition();
 private:
     void FallControle();
 };

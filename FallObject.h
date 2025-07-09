@@ -20,6 +20,7 @@ public:
 	virtual void Update() override;
 	void Draw() override;
 	void SetPosition(XMFLOAT3 _pos) { transform_.position_ = _pos; }
+	XMFLOAT3 GetCenterPosition();
 	//void StartFall() { isFall_ = true; }
 	//void StopFall() { isFall_ = false; }
 	bool IsOnGround() { return isOnGround_; }

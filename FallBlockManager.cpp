@@ -40,6 +40,7 @@ FallBlockManager::~FallBlockManager()
 void FallBlockManager::Initialize()
 {
 	Set::Initialize(objectName_);
+	time_ = Set::NEXT_SPAWN_TIME;
 }
 
 void FallBlockManager::Release()
@@ -69,14 +70,14 @@ int FallBlockManager::GetOnGroundBlockNum()
 	return num;
 }
 
-std::vector<XMFLOAT4> FallBlockManager::GetFallingObjectPosition()
+std::vector<XMFLOAT4> FallBlockManager::GetFallingObjectCenterPosition()
 {
 	std::vector<XMFLOAT4> vec;
 	std::list<GameObject*> objs = GetRootJob()->FindChildObjectList("FallObject");
 	for (auto obj : objs) {
 		FallObject* o = (FallObject*)obj;
 		if (!o->IsOnGround()) {
-			XMFLOAT3 p = o->GetPosition();
+			XMFLOAT3 p = o->GetCenterPosition();
 			XMFLOAT4 pos = { p.x,p.y,p.z,0 };
 			vec.push_back(pos);
 		}

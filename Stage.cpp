@@ -101,9 +101,6 @@ void Stage::Update()
 
 void Stage::Draw()
 {
-	Transform t;
-	STAGE_BLOCK_DATA block;
-
 	CONSTBUFFER_STAGE cb;
 	Player* player = (Player*)FindObject("Player");
 	if(player == nullptr)
@@ -111,22 +108,20 @@ void Stage::Draw()
 	FallBlockManager* fManager = (FallBlockManager*)FindObject("FallBlockManager");
 	if (fManager == nullptr)
 		return;
-	std::vector<XMFLOAT4> objsPos = fManager->GetFallingObjectPosition();
 
 	XMFLOAT3 pPos = player->GetPosition();
 	cb.casterPos = { pPos.x,pPos.y,pPos.z,0 };
 	cb.shadowParams = { Set::SOFTNESS,0,0,pPos.y - GetTerrainHeight(pPos.x,pPos.z)};
+
 	for (int i = 0; i < Set::MAX_SHADOW_OBJECTS; i++) {
 		cb.objPos[i] = { 0,0,0,0 };
 		cb.shadowObjParams[i] = { 0, 0, 0, 0};
 	}
+
+	std::vector<XMFLOAT4> objsPos = fManager->GetFallingObjectCenterPosition();
 	for (int i = 0; i < std::min<int>(Set::MAX_SHADOW_OBJECTS, (int)objsPos.size()); i++) {
 		XMFLOAT4 pos = objsPos[i];
-		if (pos.y < 0)
-			break;
-		float sizeY = JR::Get<float>("FallObject", "OBJECT_SIZE");
-		pos.x += sizeY / 2;
-		pos.z += sizeY / 2;
+		if (pos.y < 0) break;
 		cb.objPos[i] = pos;
 		cb.shadowObjParams[i] = { Set::SOFTNESS, 0, 0, pos.y - GetTerrainHeight(pos.x, pos.z) };
 	}
@@ -139,6 +134,9 @@ void Stage::Draw()
 	//コンスタントバッファ
 	Direct3D::pContext->VSSetConstantBuffers(1, 1, &pConstantBuffer_);	//頂点シェーダー用	
 	Direct3D::pContext->PSSetConstantBuffers(1, 1, &pConstantBuffer_);	//ピクセルシェーダー
+
+	Transform t;
+	STAGE_BLOCK_DATA block;
 
 	for (int z = 0; z < Set::STAGE_SIZE.z; z++) {
 		for (int y = 0; y < Set::STAGE_SIZE.y; y++) {

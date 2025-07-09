@@ -66,6 +66,13 @@ void FallObject::Draw()
 	Model::Draw(hModel_);
 }
 
+XMFLOAT3 FallObject::GetCenterPosition()
+{
+	return { transform_.position_.x + Set::FALL_OBJECT_CENTER,
+		transform_.position_.y + Set::FALL_OBJECT_CENTER,
+		transform_.position_.z + Set::FALL_OBJECT_CENTER };
+}
+
 void FallObject::RayCast(RayCastData& _rayData)
 {
 	Model::RayCast(hModel_, _rayData, transform_);
