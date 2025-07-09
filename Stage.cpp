@@ -15,6 +15,8 @@ namespace StageSet {
 	float FALL_SPEED(0);
 	float FALL_LIMIT(0);
 	float RETURN_BLOCK_SPEED(0);
+	const int  MAX_SHADOW_OBJECTS(2);
+	const float SOFTNESS(3.0f);
 	void Initialize(std::string _name) {
 		float size = JR::Get<float>(_name, "BLOCK_SIZE");
 		BLOCK_SIZE = { size,size,size };
@@ -113,19 +115,20 @@ void Stage::Draw()
 
 	XMFLOAT3 pPos = player->GetPosition();
 	cb.casterPos = { pPos.x,pPos.y,pPos.z,0 };
-	cb.shadowParams = { 3.0f,1.0f,0,pPos.y - GetTerrainHeight(pPos.x,pPos.z)};
-	for (int i = 0; i < 2; i++) {
+	cb.shadowParams = { Set::SOFTNESS,0,0,pPos.y - GetTerrainHeight(pPos.x,pPos.z)};
+	for (int i = 0; i < Set::MAX_SHADOW_OBJECTS; i++) {
 		cb.objPos[i] = { 0,0,0,0 };
 		cb.shadowObjParams[i] = { 0, 0, 0, 0};
 	}
-	for (int i = 0; i < std::min<int>(2, (int)objsPos.size()); i++) {
+	for (int i = 0; i < std::min<int>(Set::MAX_SHADOW_OBJECTS, (int)objsPos.size()); i++) {
 		XMFLOAT4 pos = objsPos[i];
 		if (pos.y < 0)
 			break;
-		pos.x += 0.5f;
-		pos.z += 0.5f;
+		float sizeY = JR::Get<float>("FallObject", "OBJECT_SIZE");
+		pos.x += sizeY / 2;
+		pos.z += sizeY / 2;
 		cb.objPos[i] = pos;
-		cb.shadowObjParams[i] = { 3.0f, 1.0f, 0, pos.y - GetTerrainHeight(pos.x, pos.z) };
+		cb.shadowObjParams[i] = { Set::SOFTNESS, 0, 0, pos.y - GetTerrainHeight(pos.x, pos.z) };
 	}
 
 	//
