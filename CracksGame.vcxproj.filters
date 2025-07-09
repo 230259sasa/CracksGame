@@ -322,6 +322,9 @@
     <FxCompile Include="Engine\OutLineShader.hlsl">
       <Filter>ソース ファイル\Engine</Filter>
     </FxCompile>
+    <FxCompile Include="Engine\StageShader.hlsl">
+      <Filter>ソース ファイル\Engine</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

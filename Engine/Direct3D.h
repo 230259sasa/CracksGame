@@ -8,7 +8,7 @@
 #include"../imgui/imgui_impl_win32.h"
 
 enum SHADER_TYPE {
-	SHADER_2D,SHADER_3D,SHADER_OUTLINE,SHADER_MAX
+	SHADER_2D,SHADER_3D,SHADER_OUTLINE,SHADER_STAGE,SHADER_MAX
 };
 enum BLEND_TYPE {
 	BLEND_INVALID,BLEND_VALID,BLEND_MAX
@@ -32,6 +32,7 @@ namespace Direct3D
 	HRESULT InitShader3D();
 	HRESULT InitShader2D();
 	HRESULT InitShaderOutLine();
+	HRESULT InitShaderStage();
 	void SetShader(SHADER_TYPE type);
 	void SetBlend(BLEND_TYPE type);
 	//•`‰æŠJŽn
