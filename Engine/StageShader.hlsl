@@ -3,7 +3,7 @@
 //───────────────────────────────────────
 Texture2D g_texture : register(t0); //テクスチャー
 SamplerState g_sampler : register(s0); //サンプラー
-
+static const int MAX_SHADOW_OBJECTS = 2;
 //───────────────────────────────────────
  // コンスタントバッファ
 // DirectX 側から送信されてくる、ポリゴン頂点以外の諸情報の定義
@@ -28,6 +28,8 @@ cbuffer stage : register(b1)
 {
     float4 casterPos; // プレイヤーのXZ座標
     float4 shadowParams; // (softness, alphaScale, unused, playerHeightY)
+    float4 objPos[MAX_SHADOW_OBJECTS];
+    float4 shadowObjParams[MAX_SHADOW_OBJECTS];
 }
 
 //───────────────────────────────────────
@@ -107,9 +109,32 @@ float4 PS(VS_OUT inData) : SV_Target
     float heightRatio = saturate(heightY / 2.0f); // 最大ジャンプ2.0f想定
     float radius = lerp(0.4f, 0.8f, heightRatio);
     float alpha = lerp(0.6f, 0.1f, heightRatio);
-
+    
     float shadowAlpha = saturate((radius * radius - distSq) * softness) * alpha;
+    
+    for (int i = 0; i < MAX_SHADOW_OBJECTS; i++)
+    {
+        float2 casterXZ = objPos[i].xz;
+        float2 pixelXZ = inData.wpos.xz;
 
+        float2 diff = pixelXZ - casterXZ;
+        float distSq = dot(diff, diff);
+
+        float softness = shadowObjParams[i].x;
+        float alphaScale = shadowObjParams[i].y;
+        float heightY = shadowObjParams[i].w;
+
+        float heightRatio = saturate(heightY / 5.0f);
+        float radius = lerp(0.4f, 0.8f, heightRatio);
+        float alpha = lerp(0.6f, 0.1f, heightRatio);
+    
+        float sAlpha = saturate((radius * radius - distSq) * softness) * alpha;
+        if (shadowAlpha < sAlpha)
+        {
+            shadowAlpha = sAlpha;
+        }
+    }
+    
     // 丸影を黒で合成（必要に応じて色も乗せられる）
     float4 shadowColor = float4(0, 0, 0, shadowAlpha);
     return lerp(diffuse + ambient + specular, shadowColor, shadowAlpha);

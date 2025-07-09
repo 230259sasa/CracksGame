@@ -13,7 +13,7 @@
 	},
 	"FallObject": {
 		"OBJECT_SIZE": 1.0,
-		"FALL_SPEED": 5.0,
+		"FALL_SPEED": 3.0,
 		"FALL_LIMIT": -10.0,
 		"RAY_CAST_INITIALIZE_DISTANCE": 100,
 		"RAY_CAST_DIR_X": 0,
@@ -34,7 +34,7 @@
 	},
 	"FallBlockManager": {
 		"SPAWN_HEIGHT": 10.0,
-		"NEXT_SPAWN_TIME": 2.5
+		"NEXT_SPAWN_TIME": 6.0
 	},
 	"FallIslandManager": {
 		"FALL_SPEED": 0.1,

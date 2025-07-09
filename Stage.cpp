@@ -3,6 +3,8 @@
 #include"Engine\DeltaTime.h"
 #include"Engine/JsonReader.h"
 #include"Player.h"
+#include"FallBlockManager.h"
+#include"FallObject.h"
 
 namespace JR = JsonReader;
 namespace DT = DeltaTime;
@@ -104,9 +106,29 @@ void Stage::Draw()
 	Player* player = (Player*)FindObject("Player");
 	if(player == nullptr)
 		return;
+	FallBlockManager* fManager = (FallBlockManager*)FindObject("FallBlockManager");
+	if (fManager == nullptr)
+		return;
+	std::vector<XMFLOAT4> objsPos = fManager->GetFallingObjectPosition();
+
 	XMFLOAT3 pPos = player->GetPosition();
 	cb.casterPos = { pPos.x,pPos.y,pPos.z,0 };
 	cb.shadowParams = { 3.0f,1.0f,0,pPos.y - GetTerrainHeight(pPos.x,pPos.z)};
+	for (int i = 0; i < 2; i++) {
+		cb.objPos[i] = { 0,0,0,0 };
+		cb.shadowObjParams[i] = { 0, 0, 0, 0};
+	}
+	for (int i = 0; i < std::min<int>(2, (int)objsPos.size()); i++) {
+		XMFLOAT4 pos = objsPos[i];
+		if (pos.y < 0)
+			break;
+		pos.x += 0.5f;
+		pos.z += 0.5f;
+		cb.objPos[i] = pos;
+		cb.shadowObjParams[i] = { 3.0f, 1.0f, 0, pos.y - GetTerrainHeight(pos.x, pos.z) };
+	}
+
+	//
 	D3D11_MAPPED_SUBRESOURCE pdata;
 	Direct3D::pContext->Map(pConstantBuffer_, 0, D3D11_MAP_WRITE_DISCARD, 0, &pdata);	// GPUからのデータアクセスを止める
 	memcpy_s(pdata.pData, pdata.RowPitch, (void*)(&cb), sizeof(cb));	// データを値を送る

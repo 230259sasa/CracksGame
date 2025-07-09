@@ -22,6 +22,8 @@ class Stage :
     struct CONSTBUFFER_STAGE {
         XMFLOAT4 casterPos;     // ÉvÉåÉCÉÑÅ[ÇÃXZ
         XMFLOAT4 shadowParams;  // (softness, alphaScale, unused, playerHeightY)
+        XMFLOAT4 objPos[2];
+        XMFLOAT4 shadowObjParams[2];
     };
     ID3D11Buffer* pConstantBuffer_;
     int hModel_;

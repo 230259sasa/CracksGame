@@ -69,6 +69,21 @@ int FallBlockManager::GetOnGroundBlockNum()
 	return num;
 }
 
+std::vector<XMFLOAT4> FallBlockManager::GetFallingObjectPosition()
+{
+	std::vector<XMFLOAT4> vec;
+	std::list<GameObject*> objs = GetRootJob()->FindChildObjectList("FallObject");
+	for (auto obj : objs) {
+		FallObject* o = (FallObject*)obj;
+		if (!o->IsOnGround()) {
+			XMFLOAT3 p = o->GetPosition();
+			XMFLOAT4 pos = { p.x,p.y,p.z,0 };
+			vec.push_back(pos);
+		}
+	}
+	return vec;
+}
+
 void FallBlockManager::FallControle()
 {
 	time_ += DT::GetDeltaTime();

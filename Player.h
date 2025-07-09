@@ -51,7 +51,6 @@ public:
     void Draw() override;
 
     bool GetIsAnimAction(AnimType _type);
-    XMFLOAT3 GetPosition() { return transform_.position_; }
 private:
     void AnimationManager();
     bool Move();
