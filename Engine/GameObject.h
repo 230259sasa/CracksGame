@@ -43,8 +43,8 @@ public:
 		transform_.scale_ = { x,y,z };
 	}
 	void SetRotateX(float x) { transform_.rotate_.x = x; }
-	void SetRotateY(float y) { transform_.rotate_.x = y; }
-	void SetRotateZ(float z) { transform_.rotate_.x = z; }
+	void SetRotateY(float y) { transform_.rotate_.y = y; }
+	void SetRotateZ(float z) { transform_.rotate_.z = z; }
 
 	XMFLOAT3 GetPosition() { return transform_.position_; }
 
