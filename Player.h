@@ -16,11 +16,14 @@ public:
         STAND = 0,
         MOVE,
         PUNCH,
+        ARMS_RAISED,
         MAX
     };
     static constexpr int ANIM_TYPE_MAX = static_cast<int>(AnimType::MAX);
     static constexpr int FUNCTION_INDEX_MAX = static_cast<int>(FunctionIndex::MAX);
 private:
+    class FallObject;
+    FallObject* heldObject_;
     using AT = AnimType;
     using FI = FunctionIndex;
     enum CaneraDir {

@@ -49,7 +49,7 @@ namespace Set = PlayerSet;
 Player::Player(GameObject* parent)
 	:GameObject(parent, "Player"), jumpVelocity_(0.0f), isGround_(true),
 	framePos_({ 0,0,0 }), pastPos_(0, 0, 0),isCameraRotateStart_(false),
-	CameraRotateDir_(0)
+	CameraRotateDir_(0),heldObject_(nullptr)
 {
 }
 
