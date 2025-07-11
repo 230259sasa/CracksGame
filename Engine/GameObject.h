@@ -56,6 +56,7 @@ public:
 	void Collision(GameObject* pTarget);
 	void Collision(std::string objName);
 	std::list<GameObject*> FindChildObjectList(std::string objName);
+	std::list<GameObject*> FindAllChildObjectList();
 	void RoundRobin(GameObject* pTarget);
 	virtual void OnCollision(GameObject* pTarget) {};
 

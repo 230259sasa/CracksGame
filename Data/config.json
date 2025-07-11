@@ -21,6 +21,10 @@
 		"RAY_CAST_DIR_Z": 0,
 		"MODEL_PATH": "BoxDefault.fbx"
 	},
+	"FallBomb": {
+		"MODEL_PATH": "Bomb.fbx",
+		"EXPLOSION_TIME": 10.0
+	},
 	"Stage": {
 		"BLOCK_SIZE": 1.0,
 		"STAGE_SIZE_X": 10,

@@ -142,6 +142,24 @@ std::list<GameObject*> GameObject::FindChildObjectList(std::string objName)
 	return q;
 }
 
+std::list<GameObject*> GameObject::FindAllChildObjectList()
+{
+	std::list<GameObject*> q;
+	if (childList_.size()<=0) {
+		q.push_back(this);
+	}
+	else {
+		for (auto itr : childList_) {
+			std::list<GameObject*> obj =
+				itr->FindAllChildObjectList();
+			for (auto i : obj) {
+				q.push_back(i);
+			}
+		}
+	}
+	return q;
+}
+
 void GameObject::RoundRobin(GameObject* pTarget)
 {
 	if (this->pCollider_ == nullptr)

@@ -3,16 +3,11 @@
 
 namespace DT = DeltaTime;
 
-Timer::Timer(GameObject* parent,float _time)
-	:GameObject(parent,"Timer"),time_(_time),isRun_(false)
+Timer::Timer(float _time):time_(_time),isRun_(false)
 {
 }
 
-void Timer::Initialize()
-{
-}
-
-void Timer::Release()
+Timer::Timer():time_(0), isRun_(false)
 {
 }
 

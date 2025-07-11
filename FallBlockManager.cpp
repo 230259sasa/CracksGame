@@ -59,7 +59,7 @@ void FallBlockManager::Draw()
 int FallBlockManager::GetOnGroundBlockNum()
 {
 	int num = 0;
-	std::list<GameObject*> objs = GetRootJob()->FindChildObjectList("FallObject");
+	std::list<GameObject*> objs = FindAllChildObjectList();
 
 	for (auto obj : objs) {
 		FallObject* o = (FallObject*)obj;
@@ -73,7 +73,7 @@ int FallBlockManager::GetOnGroundBlockNum()
 std::vector<XMFLOAT4> FallBlockManager::GetFallingObjectCenterPosition()
 {
 	std::vector<XMFLOAT4> vec;
-	std::list<GameObject*> objs = GetRootJob()->FindChildObjectList("FallObject");
+	std::list<GameObject*> objs = FindAllChildObjectList();
 	for (auto obj : objs) {
 		FallObject* o = (FallObject*)obj;
 		if (!o->IsOnGround()) {
