@@ -18,7 +18,7 @@ void FallBomb::Initialize()
 {
 	hModel_ = Model::Load(JR::Get<std::string>(objectName_, "MODEL_PATH"));
 
-	explosionTimer_ = new Timer(JR::Get<float>(objectName_,"EXPLOSION_TIME"));
+	explosionTimer_ = new Timer();
 }
 
 void FallBomb::Release()

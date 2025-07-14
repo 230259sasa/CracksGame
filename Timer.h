@@ -1,17 +1,14 @@
 #pragma once
 #include "Engine\GameObject.h"
+#include <chrono>
 
 class Timer
 {
-	float time_;
-	bool isRun_;
+	std::chrono::steady_clock::time_point startTime_;
 public:
-	Timer(float _time);
 	Timer();
-	void Update();
-	bool IsTimeOver(){ return (time_ < 0) ? true : false; }
-	void SetTimer(float _time) { time_ = _time; }
-	void Start() { isRun_ = true; }
-	void Stop() { isRun_ = false; }
+	bool IsTimeOver(float seconds);
+	void ResetTimer();
+	void Start();
 };
 

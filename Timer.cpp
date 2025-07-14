@@ -3,18 +3,20 @@
 
 namespace DT = DeltaTime;
 
-Timer::Timer(float _time):time_(_time),isRun_(false)
+using namespace std::chrono;
+
+Timer::Timer():startTime_(steady_clock::now())
 {
 }
 
-Timer::Timer():time_(0), isRun_(false)
+bool Timer::IsTimeOver(float seconds)
 {
+	if (duration <float>(steady_clock::now() - startTime_).count() > seconds)
+		return true;
+	return false;
 }
 
-void Timer::Update()
+void Timer::ResetTimer()
 {
-	if (!isRun_ || time_ < 0.0f)
-		return;
-
-	time_ -= DT::GetDeltaTime();
+	startTime_ = steady_clock::now();
 }
