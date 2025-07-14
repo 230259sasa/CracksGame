@@ -2,13 +2,14 @@
 #include "Engine\GameObject.h"
 #include "Engine\FBX.h"
 
+class Timer;
 class Sprite;
 class FallObject;
 
 class FallBlockManager :
 	public GameObject
 {
-    float time_;
+    Timer* timer_;
     enum FallObjectType {
         BLOCK,
         BOMB,

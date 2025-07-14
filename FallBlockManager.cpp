@@ -6,6 +6,7 @@
 #include"Engine/JsonReader.h"
 #include"FallObject.h"
 #include"FallBomb.h"
+#include"Timer.h"
 
 #include<sstream>
 
@@ -29,7 +30,7 @@ namespace FallBlockManagerSet {
 namespace Set = FallBlockManagerSet;
 
 FallBlockManager::FallBlockManager(GameObject* parent):
-	GameObject(parent, "FallBlockManager"),time_(0)
+	GameObject(parent, "FallBlockManager"),timer_(nullptr)
 {
 }
 
@@ -40,7 +41,7 @@ FallBlockManager::~FallBlockManager()
 void FallBlockManager::Initialize()
 {
 	Set::Initialize(objectName_);
-	time_ = Set::NEXT_SPAWN_TIME;
+	timer_ = new Timer();
 }
 
 void FallBlockManager::Release()
@@ -87,17 +88,15 @@ std::vector<XMFLOAT4> FallBlockManager::GetFallingObjectCenterPosition()
 
 void FallBlockManager::FallControle()
 {
-	time_ += DT::GetDeltaTime();
-
-	if (time_ < Set::NEXT_SPAWN_TIME)
+	if (!timer_->IsTimeOver(Set::NEXT_SPAWN_TIME))
 		return;
 
+	timer_->ResetTimer();
 	Stage* stage = nullptr;
 	stage = (Stage*)FindObject("Stage");
 	if (stage == nullptr)
 		return;
 
-	time_ = 0;
 	FallObject* fobj;
 	if (rand() % 2 == 0)
 		fobj = Instantiate<FallObject>(this);
