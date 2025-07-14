@@ -9,6 +9,5 @@ public:
 	Timer();
 	bool IsTimeOver(float seconds);
 	void ResetTimer();
-	void Start();
 };
 

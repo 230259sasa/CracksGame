@@ -30,3 +30,13 @@ void FallBomb::Update()
 	Fall();
 	Dead();
 }
+
+void FallBomb::Explosion()
+{
+	if (!IsOnGround())
+		return;
+	
+	if (explosionTimer_->IsTimeOver(JR::Get<float>(objectName_, "EXPLOSION_TIME"))) {
+		explosionTimer_->ResetTimer();
+	}
+}
