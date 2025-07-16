@@ -29,8 +29,8 @@ namespace FallBlockManagerSet {
 
 namespace Set = FallBlockManagerSet;
 
-FallBlockManager::FallBlockManager(GameObject* parent):
-	GameObject(parent, "FallBlockManager"),timer_(nullptr)
+FallBlockManager::FallBlockManager(GameObject* parent) :
+	GameObject(parent, "FallBlockManager"), timer_(nullptr), isFirstBlock_(true)
 {
 }
 
@@ -55,6 +55,16 @@ void FallBlockManager::Update()
 
 void FallBlockManager::Draw()
 {
+}
+
+void FallBlockManager::StopSpawnBlock()
+{
+	timer_->StopTimer();
+}
+
+void FallBlockManager::StartSpawnBlock()
+{
+	timer_->StartTimer();
 }
 
 int FallBlockManager::GetOnGroundBlockNum()
@@ -88,9 +98,9 @@ std::vector<XMFLOAT4> FallBlockManager::GetFallingObjectCenterPosition()
 
 void FallBlockManager::FallControle()
 {
-	if (!timer_->IsTimeOver(Set::NEXT_SPAWN_TIME))
+	if (!timer_->IsTimeOver(Set::NEXT_SPAWN_TIME) && !isFirstBlock_)
 		return;
-
+	isFirstBlock_ = false;
 	timer_->ResetTimer();
 	Stage* stage = nullptr;
 	stage = (Stage*)FindObject("Stage");

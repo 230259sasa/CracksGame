@@ -52,7 +52,7 @@ namespace Set = PlayerSet;
 Player::Player(GameObject* parent)
 	:GameObject(parent, "Player"), jumpVelocity_(0.0f), isGround_(true),
 	framePos_({ 0,0,0 }), pastPos_(0, 0, 0),isCameraRotateStart_(false),
-	CameraRotateDir_(0),heldObject_(nullptr)
+	CameraRotateDir_(0),heldObject_(nullptr),animContext_(new PlayerAnimContext(this))
 {
 }
 
@@ -81,10 +81,8 @@ void Player::Initialize()
 
 	animID_ = AT::STAND;
 
-	animContext_ = new PlayerAnimContext(this);
-
 	//Stageのブロックに重ならないために足している
-	transform_.position_.y += 2.0f;
+	transform_.position_.y = 2.0f;
 	framePos_ = { (int)transform_.position_.x, (int)transform_.position_.y - 1,
 		(int)transform_.position_.z + 1 };
 	Camera::SetPlayerPointer(this);
@@ -127,6 +125,11 @@ void Player::Draw()
 	if (stage == nullptr)
 		return;
 	stage->DrawFrame({ (float)framePos_.x,(float)framePos_.y,(float)framePos_.z });
+}
+
+void Player::StopAnimation()
+{
+	//Model::SetAnimFrame(animData_[(int)AnimType::STAND].hModel, 0, 0);
 }
 
 bool Player::GetIsAnimAction(AnimType _type)

@@ -1,12 +1,13 @@
 #pragma once
 #include "Engine/GameObject.h"
 
-class Texture;
+class Sprite;
+class Timer;
 
 class PlaySceneReady :
     public GameObject
 {
-    bool isReadyFinish_;
+    Timer* timer_;
 public:
     PlaySceneReady(GameObject* parent);
     ~PlaySceneReady();
@@ -14,6 +15,8 @@ public:
     void Release() override;
     void Update() override;
     void Draw() override;
-    bool IsReadyFinish();
+private:
+    void Stop();
+    void Start();
 };
 

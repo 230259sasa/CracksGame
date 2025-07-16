@@ -52,7 +52,7 @@ public:
     void Release() override;
     void Update() override;
     void Draw() override;
-
+    void StopAnimation();
     bool GetIsAnimAction(AnimType _type);
 private:
     void AnimationManager();

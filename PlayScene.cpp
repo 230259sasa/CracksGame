@@ -8,6 +8,7 @@
 #include"PlayStateCheck.h"
 #include"PlayTimerGauge.h"
 #include"FallIslandManager.h"
+#include"PlaySceneReady.h"
 
 PlayScene::PlayScene(GameObject* parent)
 	:GameObject(parent, "PlayScene")
@@ -22,6 +23,8 @@ void PlayScene::Initialize()
 	Instantiate<PlayStateCheck>(this);
 	Instantiate<PlayTimerGauge>(this);
 	Instantiate<FallIslandManager>(this);
+
+	Instantiate<PlaySceneReady>(this);
 
 	int index = Sound::Load("Assets/Sound/BackgroundMusic/n001.wav");
 	assert(index >= 0);

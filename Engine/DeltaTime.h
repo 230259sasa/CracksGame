@@ -9,5 +9,7 @@ namespace DeltaTime
 	/// ƒtƒŒ[ƒ€ŠÔ‚ÌŠÔ‚ğ•b’PˆÊ‚Å•Ô‚·
 	/// <returns></returns>
 	double GetDeltaTime();
+	void Stop();
+	void Run();
 };
 

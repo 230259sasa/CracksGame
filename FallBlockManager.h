@@ -16,6 +16,7 @@ class FallBlockManager :
         MAX
     };
     std::vector<XMINT3> fallPos_;
+    bool isFirstBlock_;
 public:
     FallBlockManager(GameObject* parent);
     ~FallBlockManager();
@@ -23,6 +24,8 @@ public:
     void Release() override;
     void Update() override;
     void Draw() override;
+    void StopSpawnBlock();
+    void StartSpawnBlock();
     int GetOnGroundBlockNum();
     std::vector<XMFLOAT4> GetFallingObjectCenterPosition();
 private:
