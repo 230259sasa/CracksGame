@@ -39,3 +39,11 @@ void Timer::StartTimer()
 		isRun_ = true;
 	}
 }
+
+float Timer::GetSeconds()
+{
+	if(isRun_)
+		return elapsed_ + duration <float>(steady_clock::now() - startTime_).count();
+
+	return elapsed_;
+}

@@ -13,5 +13,6 @@ public:
 	void ResetTimer();
 	void StopTimer();
 	void StartTimer();
+	float GetSeconds();
 };
 
