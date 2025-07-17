@@ -7,7 +7,16 @@ class Timer;
 class PlaySceneReady :
     public GameObject
 {
+    enum COUNT {
+        START,
+        ONE,
+        TWO,
+        TREE,
+        MAX
+    };
+    int count_;
     Timer* timer_;
+    Sprite* tex_;
 public:
     PlaySceneReady(GameObject* parent);
     ~PlaySceneReady();
@@ -18,5 +27,6 @@ public:
 private:
     void Stop();
     void Start();
+    void UpDownImage(Transform& _trans);
 };
 
