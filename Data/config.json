@@ -7,7 +7,7 @@
 		"MODEL_PATH_STAND": "Player/stand.fbx",
 		"MODEL_PATH_PUNCH": "Player/punch.fbx",
 		"MODEL_PATH_RUN": "Player/run.fbx",
-		"FRAME_NUM_STAND": 183,
+		"FRAME_NUM_STAND": 123,
 		"FRAME_NUM_PUNCH": 40,
 		"FRAME_NUM_RUN": 15
 	},
