@@ -127,11 +127,6 @@ void Player::Draw()
 	stage->DrawFrame({ (float)framePos_.x,(float)framePos_.y,(float)framePos_.z });
 }
 
-void Player::StopAnimation()
-{
-	//Model::SetAnimFrame(animData_[(int)AnimType::STAND].hModel, 0, 0);
-}
-
 bool Player::GetIsAnimAction(AnimType _type)
 {
 	return animData_[(int)_type].isAnimAction;

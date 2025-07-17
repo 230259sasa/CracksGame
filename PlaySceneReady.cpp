@@ -48,7 +48,6 @@ void PlaySceneReady::Stop()
 	}
 	Player* player = (Player*)FindObject("Player");
 	if (player != nullptr) {
-		//player->StopAnimation();
 	}
 
 	DT::Stop();
