@@ -31,7 +31,7 @@ void PlaySceneReady::Initialize()
 	//
 	std::stringstream str;
 	str << count_;
-	tex_->Load(objectName_ + str.str() + ".png");
+	tex_->Load(objectName_ + "/" + str.str() + ".png");
 
 	Stop();
 
@@ -86,7 +86,7 @@ void PlaySceneReady::UpDownImage(Transform& _trans)
 		count_--;
 		std::stringstream str;
 		str << count_;
-		tex_->Load(objectName_ + str.str() + ".png");
+		tex_->Load(objectName_ + "/" + str.str() + ".png");
 	}
 	else {
 		float seconds = timer_->GetSeconds();
