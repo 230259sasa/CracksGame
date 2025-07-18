@@ -3,6 +3,7 @@
 #include"Engine/Sprite.h"
 #include"Timer.h"
 #include"FallBlockManager.h"
+#include<sstream>
 
 namespace DT = DeltaTime;
 
@@ -14,7 +15,7 @@ namespace Set {
 }
 
 PlaySceneReady::PlaySceneReady(GameObject* parent)
-	:GameObject(parent, "PlaySceneReady"),count_(MAX)
+	:GameObject(parent, "PlaySceneReady"),count_(MAX-1)
 {
 }
 
@@ -27,7 +28,12 @@ void PlaySceneReady::Initialize()
 	timer_ = new Timer();
 
 	tex_ = new Sprite();
-	tex_->Load("TITLE.png");
+	//
+	std::stringstream str;
+	str << count_;
+	tex_->Load(objectName_ + str.str() + ".png");
+
+	Stop();
 
 	////debug
 	transform_.scale_ = { Set::IMAGE_SIZE_X,Set::IMAGE_SIZE_Y,0 };
@@ -39,13 +45,13 @@ void PlaySceneReady::Release()
 
 void PlaySceneReady::Update()
 {
-	Stop();
 	UpDownImage(transform_);
 }
 
 void PlaySceneReady::Draw()
 {
-	tex_->Draw(transform_);
+	if (tex_ != nullptr)
+		tex_->Draw(transform_);
 }
 
 void PlaySceneReady::Stop()
@@ -70,9 +76,17 @@ void PlaySceneReady::Start()
 
 void PlaySceneReady::UpDownImage(Transform& _trans)
 {
-	if (timer_->IsTimeOver(Set::PLAY_SCENE_READY_TIME / COUNT::MAX)) {
+	if (timer_->IsTimeOver(Set::PLAY_SCENE_READY_TIME / COUNT::MAX) && count_ <= 0) {
+		timer_->StopTimer();
+		Start();
+		tex_ = nullptr;
+	}
+	else if (timer_->IsTimeOver(Set::PLAY_SCENE_READY_TIME / COUNT::MAX)) {
 		timer_->ResetTimer();
 		count_--;
+		std::stringstream str;
+		str << count_;
+		tex_->Load(objectName_ + str.str() + ".png");
 	}
 	else {
 		float seconds = timer_->GetSeconds();
