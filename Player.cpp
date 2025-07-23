@@ -36,13 +36,22 @@ namespace Set = PlayerSet;
 
 Player::Player(GameObject* parent)
 	:GameObject(parent, "Player"), jumpVelocity_(0.0f), isGround_(true),
-	framePos_({ 0,0,0 }), pastPos_(0, 0, 0),isCameraRotateStart_(false),
-	CameraRotateDir_(0),heldObject_(nullptr),animContext_(new PlayerAnimContext(this)),
+	framePos_({ 0,0,0 }), pastPos_(0, 0, 0), isCameraRotateStart_(false),
+	CameraRotateDir_(0), heldObject_(nullptr), animContext_(new PlayerAnimContext(this)),
+	animID_(AT::STAND),
 	move_speed_(JR::Get<float>(objectName_, "move_speed")),
 	player_radius_(JR::Get<float>(objectName_, "player_radius")),
 	initial_jump_velocity_(sqrtf(JR::Get<float>(objectName_, "jump_height")*Set::GRAVITY*2)),
 	max_fall_velocity_(JR::Get<float>(objectName_, "max_fall_velocity"))
 {
+	for (int i = 0;i < FUNCTION_INDEX_MAX;i++) {
+		isFunctionEnabled_[0] = true;
+	}
+	for (int i = 0;i < ANIM_TYPE_MAX;i++) {
+		animData_[i].animFrameNum = 0;
+		animData_[i].hModel = 0;
+		animData_[i].isAnimAction = false;
+	}
 }
 
 Player::~Player()
@@ -66,8 +75,6 @@ void Player::Initialize()
 	JR::Get<int>(objectName_, "frame_num_run", frameNum);
 	Model::SetAnimFrame(animData_[(int)AT::MOVE].hModel, 0, frameNum);
 	animData_[(int)AT::MOVE].animFrameNum = frameNum;
-
-	animID_ = AT::STAND;
 
 	//Stageのブロックに重ならないために足している
 	transform_.position_.y = 2.0f;
