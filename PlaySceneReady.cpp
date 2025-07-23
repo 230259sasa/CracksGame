@@ -1,21 +1,25 @@
 #include "PlaySceneReady.h"
 #include"Engine/DeltaTime.h"
 #include"Engine/Sprite.h"
+#include"Engine\JsonReader.h"
 #include"Timer.h"
 #include"FallBlockManager.h"
 #include<sstream>
 
 namespace DT = DeltaTime;
+namespace JR = JsonReader;
 
-namespace Set {
-	const float PLAY_SCENE_READY_TIME(5.0f);
-	const float START_IMAGE_POSITION_Y(0.5f);
-	const float IMAGE_SIZE_X(0.1f);
-	const float IMAGE_SIZE_Y(0.1f);
-}
+//namespace Set {
+//	const float PLAY_SCENE_READY_TIME(5.0f);
+//	const float START_IMAGE_POSITION_Y(0.5f);
+//	const float IMAGE_SIZE_X(0.1f);
+//	const float IMAGE_SIZE_Y(0.1f);
+//}
 
 PlaySceneReady::PlaySceneReady(GameObject* parent)
-	:GameObject(parent, "PlaySceneReady"),count_(MAX-1)
+	:GameObject(parent, "PlaySceneReady"),count_(MAX-1),
+	play_scene_ready_time_(JR::Get<float>(objectName_,"ready_time")),
+	start_image_position_y_(JR::Get<float>(objectName_, "start_image_position_y"))
 {
 }
 
@@ -36,7 +40,7 @@ void PlaySceneReady::Initialize()
 	Stop();
 
 	////debug
-	transform_.scale_ = { Set::IMAGE_SIZE_X,Set::IMAGE_SIZE_Y,0 };
+	transform_.scale_ = { JR::Get<float>(objectName_,"image_size_x"), JR::Get<float>(objectName_,"image_size_y"),0};
 }
 
 void PlaySceneReady::Release()
@@ -76,12 +80,12 @@ void PlaySceneReady::Start()
 
 void PlaySceneReady::UpDownImage(Transform& _trans)
 {
-	if (timer_->IsTimeOver(Set::PLAY_SCENE_READY_TIME / COUNT::MAX) && count_ <= 0) {
+	if (timer_->IsTimeOver(play_scene_ready_time_ / COUNT::MAX) && count_ <= 0) {
 		timer_->StopTimer();
 		Start();
 		tex_ = nullptr;
 	}
-	else if (timer_->IsTimeOver(Set::PLAY_SCENE_READY_TIME / COUNT::MAX)) {
+	else if (timer_->IsTimeOver(play_scene_ready_time_ / COUNT::MAX)) {
 		timer_->ResetTimer();
 		count_--;
 		std::stringstream str;
@@ -90,8 +94,8 @@ void PlaySceneReady::UpDownImage(Transform& _trans)
 	}
 	else {
 		float seconds = timer_->GetSeconds();
-		float d = seconds / ((Set::PLAY_SCENE_READY_TIME / COUNT::MAX));
-		float y = Set::START_IMAGE_POSITION_Y * d;
-		_trans.position_.y = Set::START_IMAGE_POSITION_Y - y;
+		float d = seconds / ((play_scene_ready_time_ / COUNT::MAX));
+		float y = start_image_position_y_ * d;
+		_trans.position_.y = start_image_position_y_ - y;
 	}
 }

@@ -14,6 +14,8 @@ class PlaySceneReady :
         TREE,
         MAX
     };
+    const float play_scene_ready_time_;
+    const float start_image_position_y_;
     int count_;
     Timer* timer_;
     Sprite* tex_;
