@@ -9,13 +9,13 @@ namespace JR = JsonReader;
 using std::string;
 
 namespace FallObjectSet {
-	float FALL_OBJECT_SIZE(0);
-	float FALL_OBJECT_CENTER(0);//XMFLOAT3Ç…Ç∑ÇÈÅH
-	float FALL_SPEED(0);
-	float FALL_LIMIT_HEIGHT(0);
-	float RAY_CAST_INITIALIZE_DISTANCE(0);
-	XMFLOAT4 RAY_CAST_DIR(0, 0, 0, 0);
-	void Initialize(std::string _name) {
+	//float FALL_OBJECT_SIZE(0);
+	//float FALL_OBJECT_CENTER(0);//XMFLOAT3Ç…Ç∑ÇÈÅH
+	//float FALL_SPEED(0);
+	//float FALL_LIMIT_HEIGHT(0);
+	//float RAY_CAST_INITIALIZE_DISTANCE(0);
+	//XMFLOAT4 RAY_CAST_DIR(0, 0, 0, 0);
+	/*void Initialize(std::string _name) {
 		JR::Get<float>(_name, "object_size", FALL_OBJECT_SIZE);
 		JR::Get<float>(_name, "fall_speed", FALL_SPEED);
 		JR::Get<float>(_name, "fall_limit", FALL_LIMIT_HEIGHT);
@@ -24,21 +24,24 @@ namespace FallObjectSet {
 		JR::Get<float>(_name, "ray_cast_dir_y", RAY_CAST_DIR.y);
 		JR::Get<float>(_name, "ray_cast_dir_z", RAY_CAST_DIR.z);
 		FALL_OBJECT_CENTER = FALL_OBJECT_SIZE / 2;
-	}
+	}*/
 }
 
 namespace Set = FallObjectSet;
 
 FallObject::FallObject(GameObject* _parent, string _name)
-	:GameObject(_parent, _name), isFall_(false), isOnGround_(false), hModel_(0)
+	:GameObject(_parent, _name), isFall_(false), isOnGround_(false), hModel_(0),
+	fall_object_center_(JR::Get<float>("FallObject", "object_size")/2),
+	fall_speed_(JR::Get<float>("FallObject", "fall_speed")),
+	fall_limit_height_(JR::Get<float>("FallObject", "fall_limit")),
+	initial_ray_cast_distance_(1),
+	ray_cast_dir_({0,-1.0f,0,0})
 {
-	Set::Initialize("FallObject");
 }
 
 FallObject::FallObject(GameObject* _parent)
-	:GameObject(_parent, "FallObject"),isFall_(false),isOnGround_(false),hModel_(0)
+	:FallObject(_parent, "FallObject")
 {
-	Set::Initialize("FallObject");
 }
 
 FallObject::~FallObject()
@@ -68,9 +71,9 @@ void FallObject::Draw()
 
 XMFLOAT3 FallObject::GetCenterPosition()
 {
-	return { transform_.position_.x + Set::FALL_OBJECT_CENTER,
-		transform_.position_.y + Set::FALL_OBJECT_CENTER,
-		transform_.position_.z + Set::FALL_OBJECT_CENTER };
+	return { transform_.position_.x + fall_object_center_,
+		transform_.position_.y + fall_object_center_,
+		transform_.position_.z + fall_object_center_ };
 }
 
 void FallObject::RayCast(RayCastData& _rayData)
@@ -80,7 +83,7 @@ void FallObject::RayCast(RayCastData& _rayData)
 
 void FallObject::Fall()
 {
-	fallSpeed_ = Set::FALL_SPEED * DT::GetDeltaTime();
+	fallSpeed_ = fall_speed_ * DT::GetDeltaTime();
 
 	Stage* stage = nullptr;
 	stage = (Stage*)FindObject("Stage");
@@ -89,8 +92,8 @@ void FallObject::Fall()
 
 	RayCastData rayData, stageRayData, tmpRayData;
 	XMFLOAT3 pos = transform_.position_;
-	rayData.start = { pos.x + Set::FALL_OBJECT_CENTER ,pos.y,pos.z + Set::FALL_OBJECT_CENTER,0.0f };
-	rayData.dir = Set::RAY_CAST_DIR;
+	rayData.start = { pos.x + fall_object_center_ ,pos.y,pos.z + fall_object_center_,0.0f };
+	rayData.dir = ray_cast_dir_;
 	rayData.hit = false;
 	rayData.dist = 0;
 	stageRayData = rayData;
@@ -121,7 +124,7 @@ void FallObject::FallObjectRayCast(RayCastData& _rayData)
 	RayCastData data,minData;
 	data = _rayData;
 	minData = _rayData;
-	minData.dist = Set::RAY_CAST_INITIALIZE_DISTANCE;
+	minData.dist = initial_ray_cast_distance_;
 
 	for (auto obj : objs) {
 		if (obj == this)
@@ -140,7 +143,7 @@ void FallObject::FallObjectRayCast(RayCastData& _rayData)
 
 void FallObject::Dead()
 {
-	if (Set::FALL_LIMIT_HEIGHT > transform_.position_.y) {
+	if (fall_limit_height_ > transform_.position_.y) {
 		KillMe();
 	}
 }

@@ -7,7 +7,8 @@
 namespace JR = JsonReader;
 
 FallBomb::FallBomb(GameObject* _parent) 
-	:FallObject(_parent, "FallBomb"),explosionTimer_(nullptr)
+	:FallObject(_parent, "FallBomb"),explosionTimer_(nullptr),
+	explosion_time_(JR::Get<float>(objectName_, "explosion_time"))
 {
 }
 
@@ -43,7 +44,7 @@ void FallBomb::Explosion()
 		explosionTimer_->StartTimer();
 	}
 	
-	if (explosionTimer_->IsTimeOver(JR::Get<float>(objectName_, "explosion_time"))) {
+	if (explosionTimer_->IsTimeOver(explosion_time_)) {
 		Stage* stage = (Stage*)FindObject("Stage");
 		if (stage == nullptr)
 			return;

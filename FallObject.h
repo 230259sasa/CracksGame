@@ -6,6 +6,11 @@ class FallObject
 	:public GameObject
 {
 private:
+	const float fall_object_center_;
+	const float fall_speed_;
+	const float fall_limit_height_;
+	const float initial_ray_cast_distance_;
+	const XMFLOAT4 ray_cast_dir_;
 	float fallSpeed_;
 	bool isFall_;
 	bool isOnGround_;

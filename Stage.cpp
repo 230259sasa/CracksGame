@@ -9,30 +9,36 @@
 namespace JR = JsonReader;
 namespace DT = DeltaTime;
 
-namespace StageSet {
-	XMFLOAT3 BLOCK_SIZE(0, 0, 0);
-	XMINT3 STAGE_SIZE(0, 0, 0);
-	float FALL_SPEED(0);
-	float FALL_LIMIT(0);
-	float RETURN_BLOCK_SPEED(0);
-	const int  MAX_SHADOW_OBJECTS(2);
-	const float SOFTNESS(3.0f);
-	void Initialize(std::string _name) {
-		float size = JR::Get<float>(_name, "block_size");
-		BLOCK_SIZE = { size,size,size };
-		JR::Get<int>(_name, "stage_size_x", STAGE_SIZE.x);
-		JR::Get<int>(_name, "stage_size_y", STAGE_SIZE.y);
-		JR::Get<int>(_name, "stage_size_z", STAGE_SIZE.z);
-		JR::Get<float>(_name, "fall_limit", FALL_LIMIT);
-		JR::Get<float>(_name, "return_block_speed", RETURN_BLOCK_SPEED);
-		JR::Get<float>(_name, "fall_speed", FALL_SPEED);
-	}
-}
-
-namespace Set = StageSet;
+//namespace StageSet {
+//	XMFLOAT3 BLOCK_SIZE(0, 0, 0);
+//	XMINT3 STAGE_SIZE(0, 0, 0);
+//	float FALL_SPEED(0);
+//	float FALL_LIMIT(0);
+//	float RETURN_BLOCK_SPEED(0);
+//	const int  MAX_SHADOW_OBJECTS(2);
+//	const float SOFTNESS(3.0f);
+//	void Initialize(std::string _name) {
+//		float size = JR::Get<float>(_name, "block_size");
+//		BLOCK_SIZE = { size,size,size };
+//		JR::Get<int>(_name, "stage_size_x", STAGE_SIZE.x);
+//		JR::Get<int>(_name, "stage_size_y", STAGE_SIZE.y);
+//		JR::Get<int>(_name, "stage_size_z", STAGE_SIZE.z);
+//		JR::Get<float>(_name, "fall_limit", FALL_LIMIT);
+//		JR::Get<float>(_name, "return_block_speed", RETURN_BLOCK_SPEED);
+//		JR::Get<float>(_name, "fall_speed", FALL_SPEED);
+//	}
+//}
+//
+//namespace Set = StageSet;
 
 Stage::Stage(GameObject* parent)
-	:GameObject(parent,"Stage"),hModel_(-1),hFrame_(-1)
+	:GameObject(parent,"Stage"),hModel_(-1),hFrame_(-1),
+	stage_size_({ JR::Get<int>(objectName_, "stage_size_x") ,JR::Get<int>(objectName_, "stage_size_y") ,JR::Get<int>(objectName_, "stage_size_z") }),
+	block_size_(JR::Get<float>(objectName_, "block_size")),
+	fall_speed_(JR::Get<float>(objectName_, "fall_speed")),
+	fall_limit_(JR::Get<float>(objectName_, "fall_limit")),
+	shadow_softness_(3.0f),
+	max_shadow_objects_(2)
 {
 }
 
@@ -43,7 +49,6 @@ Stage::~Stage()
 
 void Stage::Initialize()
 {
-	Set::Initialize(objectName_);
 	hModel_ = Model::Load(JR::Get<std::string>(objectName_,"model_path_grass"));
 	assert(hModel_ >= 0);
 	Model::SetShaderType(hModel_, SHADER_STAGE);
@@ -52,11 +57,11 @@ void Stage::Initialize()
 	hFrame_ = Model::Load(JR::Get<std::string>(objectName_, "model_path_frame"));
 	assert(hFrame_ >= 0);
 
-	for (int z = 0; z < Set::STAGE_SIZE.z; z++) {
+	for (int z = 0; z < stage_size_.z; z++) {
 		std::vector<std::vector<STAGE_BLOCK_DATA>> vec;
-		for (int y = 0; y < Set::STAGE_SIZE.y; y++) {
+		for (int y = 0; y < stage_size_.y; y++) {
 			std::vector<STAGE_BLOCK_DATA> v;
-			for (int x = 0; x < Set::STAGE_SIZE.x; x++) {
+			for (int x = 0; x < stage_size_.x; x++) {
 				STAGE_BLOCK_DATA data;
 				data.trans.position_ = { (float)x,(float)y,(float)z };
 				if (y < 2) {
@@ -111,19 +116,19 @@ void Stage::Draw()
 
 	XMFLOAT3 pPos = player->GetPosition();
 	cb.casterPos = { pPos.x,pPos.y,pPos.z,0 };
-	cb.shadowParams = { Set::SOFTNESS,0,0,pPos.y - GetTerrainHeight(pPos.x,pPos.z)};
+	cb.shadowParams = { shadow_softness_,0,0,pPos.y - GetTerrainHeight(pPos.x,pPos.z)};
 
-	for (int i = 0; i < Set::MAX_SHADOW_OBJECTS; i++) {
+	for (int i = 0; i < max_shadow_objects_; i++) {
 		cb.objPos[i] = { 0,0,0,0 };
 		cb.shadowObjParams[i] = { 0, 0, 0, 0};
 	}
 
 	std::vector<XMFLOAT4> objsPos = fManager->GetFallingObjectCenterPosition();
-	for (int i = 0; i < std::min<int>(Set::MAX_SHADOW_OBJECTS, (int)objsPos.size()); i++) {
+	for (int i = 0; i < std::min<int>(max_shadow_objects_, (int)objsPos.size()); i++) {
 		XMFLOAT4 pos = objsPos[i];
 		if (pos.y < 0) break;
 		cb.objPos[i] = pos;
-		cb.shadowObjParams[i] = { Set::SOFTNESS, 0, 0, pos.y - GetTerrainHeight(pos.x, pos.z) };
+		cb.shadowObjParams[i] = { shadow_softness_, 0, 0, pos.y - GetTerrainHeight(pos.x, pos.z) };
 	}
 
 	//
@@ -138,9 +143,9 @@ void Stage::Draw()
 	Transform t;
 	STAGE_BLOCK_DATA block;
 
-	for (int z = 0; z < Set::STAGE_SIZE.z; z++) {
-		for (int y = 0; y < Set::STAGE_SIZE.y; y++) {
-			for (int x = 0; x < Set::STAGE_SIZE.x; x++) {
+	for (int z = 0; z < stage_size_.z; z++) {
+		for (int y = 0; y < stage_size_.y; y++) {
+			for (int x = 0; x < stage_size_.x; x++) {
 				block = blockData_[z][y][x];
 				if (block.type == GROUND || block.state == FALL ||
 					block.state == RETURN) {
@@ -165,11 +170,11 @@ void Stage::StageBlockRayCast(RayCastData& _rayData)
 	Transform t;
 	RayCastData data = _rayData;
 	RayCastData minDistData = data;
-	minDistData.dist = Set::BLOCK_SIZE.x;
+	minDistData.dist = block_size_;
 
-	for (int z = 0; z < Set::STAGE_SIZE.z; z++) {
-		for (int y = 0; y < Set::STAGE_SIZE.y; y++) {
-			for (int x = 0; x < Set::STAGE_SIZE.x; x++) {
+	for (int z = 0; z < stage_size_.z; z++) {
+		for (int y = 0; y < stage_size_.y; y++) {
+			for (int x = 0; x < stage_size_.x; x++) {
 				if (blockData_[z][y][x].type == GROUND) {
 					t.position_ = { (float)x,(float)y,(float)z };
 					Model::RayCast(hModel_, data, t);
@@ -188,13 +193,13 @@ void Stage::FallRayCast(RayCastData& _rayData)
 	Transform t;
 	RayCastData data = _rayData;
 	RayCastData minDistData = data;
-	minDistData.dist = Set::BLOCK_SIZE.x;
+	minDistData.dist = block_size_;
 
 	int rx = (int)_rayData.start.x;
 	int rz = (int)_rayData.start.z;
-	if (rx < 0 || rx >= Set::STAGE_SIZE.x || rz < 0 || rz >= Set::STAGE_SIZE.z)
+	if (rx < 0 || rx >= stage_size_.x || rz < 0 || rz >= stage_size_.z)
 		return;
-	for (int y = 0; y < Set::STAGE_SIZE.y; y++) {
+	for (int y = 0; y < stage_size_.y; y++) {
 		if (blockData_[rz][y][rx].type == GROUND && blockData_[rz][y][rx].state != FALL) {
 			t.position_ = { (float)rx,(float)y,(float)rz };
 			Model::RayCast(hModel_, data, t);
@@ -210,7 +215,7 @@ void Stage::FallRayCast(RayCastData& _rayData)
 
 XMFLOAT3 Stage::GetBlockSize()
 {
-	return Set::BLOCK_SIZE;
+	return { block_size_,block_size_,block_size_ };
 }
 
 XMFLOAT3 Stage::GetPushBack(XMFLOAT3 _pos, float _radius)
@@ -249,8 +254,8 @@ XMFLOAT3 Stage::GetPushBack(XMFLOAT3 _pos, float _radius)
 
 void Stage::SetFallBlock(int x, int y, int z)
 {
-	if (x >= 0 && x < Set::STAGE_SIZE.x && y >= 0 && y < Set::STAGE_SIZE.y &&
-		z >= 0 && z < Set::STAGE_SIZE.z &&
+	if (x >= 0 && x < stage_size_.x && y >= 0 && y < stage_size_.y &&
+		z >= 0 && z < stage_size_.z &&
 		blockData_[z][y][x].type != NONE && blockData_[z][y][x].state == NORMAL) {
 		//blockData_[z][y][x].type = NONE;
 		blockData_[z][y][x].state = FALL;
@@ -261,8 +266,8 @@ void Stage::SetFallBlock(int x, int y, int z)
 
 void Stage::ChangeBlockTypeNone(int x, int y, int z)
 {
-	if (x >= 0 && x < Set::STAGE_SIZE.x && y >= 0 && y < Set::STAGE_SIZE.y &&
-		z >= 0 && z < Set::STAGE_SIZE.z &&
+	if (x >= 0 && x < stage_size_.x && y >= 0 && y < stage_size_.y &&
+		z >= 0 && z < stage_size_.z &&
 		blockData_[z][y][x].type != NONE && blockData_[z][y][x].state == NORMAL) {
 		blockData_[z][y][x].type = NONE;
 	}
@@ -281,14 +286,14 @@ void Stage::DrawFrame(XMFLOAT3 _pos)
 
 XMINT3 Stage::GetStageSize()
 {
-	return Set::STAGE_SIZE;
+	return stage_size_;
 }
 
 XMFLOAT3 Stage::GetScaffoldPos()
 {
-	for (int z = 0; z < Set::STAGE_SIZE.z; z++) {
-		for (int x = 0; x < Set::STAGE_SIZE.x; x++) {
-			for (int y = Set::STAGE_SIZE.y - 1; y >= 0; y--) {
+	for (int z = 0; z < stage_size_.z; z++) {
+		for (int x = 0; x < stage_size_.x; x++) {
+			for (int y = stage_size_.y - 1; y >= 0; y--) {
 				if (blockData_[z][y][x].type == GROUND) {
 					return XMFLOAT3((float)x, (float)y, (float)z);
 				}
@@ -302,9 +307,9 @@ XMFLOAT3 Stage::GetRandomScaffoldPos()
 {
 	XMFLOAT3 pos(0,0,0);
 	std::vector<XMFLOAT3> vPos;
-	for (int z = 0; z < Set::STAGE_SIZE.z; z++) {
-		for (int x = 0; x < Set::STAGE_SIZE.x; x++) {
-			for (int y = Set::STAGE_SIZE.y - 1; y >= 0; y--) {
+	for (int z = 0; z < stage_size_.z; z++) {
+		for (int x = 0; x < stage_size_.x; x++) {
+			for (int y = stage_size_.y - 1; y >= 0; y--) {
 				if (blockData_[z][y][x].type == GROUND) {
 					vPos.push_back(XMFLOAT3((float)x, (float)y, (float)z));
 				}
@@ -320,8 +325,8 @@ XMFLOAT3 Stage::GetRandomScaffoldPos()
 
 bool Stage::GetIsOnBlock(XMINT3 _pos)
 {
-	if (_pos.x >= 0 && _pos.x < Set::STAGE_SIZE.x && _pos.y >= 0 && _pos.y < Set::STAGE_SIZE.y &&
-		_pos.z >= 0 && _pos.z < Set::STAGE_SIZE.z) {
+	if (_pos.x >= 0 && _pos.x < stage_size_.x && _pos.y >= 0 && _pos.y < stage_size_.y &&
+		_pos.z >= 0 && _pos.z < stage_size_.z) {
 		if (blockData_[_pos.z][_pos.y][_pos.x].type == GROUND)
 			return true;
 	}
@@ -330,10 +335,10 @@ bool Stage::GetIsOnBlock(XMINT3 _pos)
 
 float Stage::GetTerrainHeight(int _x, int _z)
 {
-	if (_x >= 0 && _x < Set::STAGE_SIZE.x &&_z >= 0 && _z < Set::STAGE_SIZE.z) {
-		for (int y = Set::STAGE_SIZE.y - 1;y >= 0;y--) {
+	if (_x >= 0 && _x < stage_size_.x &&_z >= 0 && _z < stage_size_.z) {
+		for (int y = stage_size_.y - 1;y >= 0;y--) {
 			if (blockData_[_x][y][_z].type == STAGE_BLOCK_TYPE::GROUND)
-				return y + Set::BLOCK_SIZE.y;
+				return y + block_size_;
 		}
 	}
 	return 0.0f;
@@ -343,15 +348,15 @@ bool Stage::GetHitBlockToSphere(XMFLOAT3 _pos, float _radius, XMFLOAT3& _getpos)
 {
 	float minLength = _radius * _radius;
 	bool is = false;
-	for (int z = 0; z < Set::STAGE_SIZE.z; z++) {
-		for (int y = 0; y < Set::STAGE_SIZE.y; y++) {
-			for (int x = 0; x < Set::STAGE_SIZE.x; x++) {
+	for (int z = 0; z < stage_size_.z; z++) {
+		for (int y = 0; y < stage_size_.y; y++) {
+			for (int x = 0; x < stage_size_.x; x++) {
 				if (blockData_[z][y][x].type == GROUND) {
 					XMFLOAT3 pos = { (float)x,(float)y,(float)z };
 					XMFLOAT3 min;
-					min.x = GetClosestPoint(pos.x + Set::BLOCK_SIZE.x / 2, _pos.x);
-					min.y = GetClosestPoint(pos.y + Set::BLOCK_SIZE.y / 2, _pos.y);
-					min.z = GetClosestPoint(pos.z - Set::BLOCK_SIZE.z / 2, _pos.z);
+					min.x = GetClosestPoint(pos.x + block_size_ / 2, _pos.x);
+					min.y = GetClosestPoint(pos.y + block_size_ / 2, _pos.y);
+					min.z = GetClosestPoint(pos.z - block_size_ / 2, _pos.z);
 					XMFLOAT3 len;
 					len.x = _pos.x - min.x;
 					len.y = _pos.y - min.y;
@@ -375,11 +380,11 @@ bool Stage::GetHitBlockToCircle(XMFLOAT3 _pos, float _radius, XMFLOAT3& _getpos)
 	bool is = false;
 	int y = _pos.y;
 
-	if (y < 0 || y >= Set::STAGE_SIZE.y)
+	if (y < 0 || y >= stage_size_.y)
 		return false;
 
-	for (int z = 0; z < Set::STAGE_SIZE.z; z++) {
-		for (int x = 0; x < Set::STAGE_SIZE.x; x++) {
+	for (int z = 0; z < stage_size_.z; z++) {
+		for (int x = 0; x < stage_size_.x; x++) {
 			if (blockData_[z][y][x].type == GROUND &&
 				blockData_[z][y][x].state == NORMAL) {
 				XMFLOAT3 pos = { (float)x,(float)y,(float)z };
@@ -407,8 +412,8 @@ float Stage::GetClosestPoint(float _bpos, float _pos)
 	if (_pos < _bpos) {
 		min = _bpos;
 	}
-	else if (_pos > _bpos + Set::BLOCK_SIZE.x) {
-		min = _bpos + Set::BLOCK_SIZE.x;
+	else if (_pos > _bpos + block_size_) {
+		min = _bpos + block_size_;
 	}
 
 	return min;
@@ -426,9 +431,9 @@ void Stage::FallStageBlock()
 		int x = itr.x;
 		int y = itr.y;
 		int z = itr.z;
-		blockData_[z][y][x].trans.position_.y -= Set::FALL_SPEED * DT::GetDeltaTime();
+		blockData_[z][y][x].trans.position_.y -= fall_speed_ * DT::GetDeltaTime();
 		//óéâ∫èIóπÇÃçÇÇ≥(-)+èâä˙ÇÃçÇÇ≥
-		float height = Set::FALL_LIMIT + y;
+		float height = fall_limit_ + y;
 		if (blockData_[z][y][x].trans.position_.y < height) {
 			blockData_[z][y][x].state = RETURN;
 			blockData_[z][y][x].trans.position_ = { (float)x,(float)y,(float)z };

@@ -6,6 +6,9 @@ class Sprite;
 class PlayTimerGauge :
     public GameObject
 {
+    const XMFLOAT3 gauge_size_;
+    const XMFLOAT3 gauge_frame_size_;
+    const XMFLOAT3 gauge_position_;
     bool isTimerRun_;
     float timer_;
     float initialTime_;

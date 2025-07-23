@@ -17,20 +17,10 @@
 namespace DT = DeltaTime;
 namespace JR = JsonReader;
 
-namespace FallBlockManagerSet {
-	float SPAWN_HEIGHT(0);
-	//const float BLOCK_DEAD_HIGHT(-10);
-	float NEXT_SPAWN_TIME(0);
-	void Initialize(std::string _name) {
-		JR::Get<float>(_name, "spawn_height", SPAWN_HEIGHT);
-		JR::Get<float>(_name, "next_spawn_time", NEXT_SPAWN_TIME);
-	}
-}
-
-namespace Set = FallBlockManagerSet;
-
 FallBlockManager::FallBlockManager(GameObject* parent) :
-	GameObject(parent, "FallBlockManager"), timer_(nullptr), isFirstBlock_(true)
+	GameObject(parent, "FallBlockManager"), timer_(nullptr), isFirstBlock_(true),
+	spawn_height_(JR::Get<float>(objectName_, "spawn_height")),
+	next_spawn_time_(JR::Get<float>(objectName_, "next_spawn_time"))
 {
 }
 
@@ -40,7 +30,6 @@ FallBlockManager::~FallBlockManager()
 
 void FallBlockManager::Initialize()
 {
-	Set::Initialize(objectName_);
 	timer_ = new Timer();
 }
 
@@ -98,7 +87,7 @@ std::vector<XMFLOAT4> FallBlockManager::GetFallingObjectCenterPosition()
 
 void FallBlockManager::FallControle()
 {
-	if (!timer_->IsTimeOver(Set::NEXT_SPAWN_TIME) && !isFirstBlock_)
+	if (!timer_->IsTimeOver(next_spawn_time_) && !isFirstBlock_)
 		return;
 	isFirstBlock_ = false;
 	timer_->ResetTimer();
@@ -114,6 +103,6 @@ void FallBlockManager::FallControle()
 		fobj = Instantiate<FallBomb>(this);
 	XMFLOAT3 pos;
 	pos = stage->GetRandomScaffoldPos();
-	pos.y = Set::SPAWN_HEIGHT;
+	pos.y = spawn_height_;
 	fobj->SetPosition(pos);
 }

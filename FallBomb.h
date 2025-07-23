@@ -6,6 +6,7 @@ class Timer;
 class FallBomb :
     public FallObject
 {
+    const float explosion_time_;
     Timer* explosionTimer_;
 public:
     FallBomb(GameObject* _parent);

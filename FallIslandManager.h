@@ -7,6 +7,11 @@ class FallBlockManager;
 class FallIslandManager :
     public GameObject
 {
+    const float fall_speed_;
+    const XMFLOAT3 frame_size_;
+    const XMFLOAT3 frame_positoin_;
+    const XMFLOAT3 island_size_;
+    const XMFLOAT3 island_position_;
     Transform islandTrans_;
     Sprite* frame_;
     Sprite* island_;

@@ -25,6 +25,14 @@ class Stage :
         XMFLOAT4 objPos[2];
         XMFLOAT4 shadowObjParams[2];
     };
+    const XMINT3 stage_size_;
+    const float block_size_;
+    //
+    const float fall_speed_;
+    const float fall_limit_;
+    //
+    const float shadow_softness_;
+    const int max_shadow_objects_;
     ID3D11Buffer* pConstantBuffer_;
     int hModel_;
     int hKazan_;//ÉNÉâÉXÇçÏÇÈ

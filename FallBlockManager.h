@@ -15,6 +15,8 @@ class FallBlockManager :
         BOMB,
         MAX
     };
+    const float spawn_height_;
+    const float next_spawn_time_;
     std::vector<XMINT3> fallPos_;
     bool isFirstBlock_;
 public:
