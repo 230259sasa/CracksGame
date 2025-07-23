@@ -27,24 +27,9 @@ namespace PlayerSet {
 	const int RIGHT_MOVE_ANGLE(270);
 	const int NUM_SECTORS(8);
 	const int SECTOR_ANGLE(DEGREES_360 / NUM_SECTORS);
-	float PLAYER_RADIUS(0);
-	float MOVE_SPEED(0);
-	float JUMP_HEIGHT(0);//ジャンプの高さ
-	float JUMP_LAUNCH_SPEED(0);//ジャンプの初速
-	float FALL_RAY_CAST_RADIUS(0);
-	float MAX_FALL_VELOCITY(0);//落下の最大速度
 
 	const int CAMERA_ROTATE_SPEED(3);
 	const int CAMERA_ROTATE_ANGLE(90);
-
-	void Initialize(std::string _name) {
-		JR::Get<float>(_name, "PLAYER_RADIUS", PLAYER_RADIUS);
-		JR::Get<float>(_name, "MOVE_SPEED", MOVE_SPEED);
-		JR::Get<float>(_name, "JUMP_HEIGHT", JUMP_HEIGHT);
-		JR::Get<float>(_name, "MAX_FALL_VELOCITY", MAX_FALL_VELOCITY);
-		JUMP_LAUNCH_SPEED = sqrtf(2 * GRAVITY * JUMP_HEIGHT);
-		FALL_RAY_CAST_RADIUS = PLAYER_RADIUS;
-	}
 }
 
 namespace Set = PlayerSet;
@@ -52,7 +37,11 @@ namespace Set = PlayerSet;
 Player::Player(GameObject* parent)
 	:GameObject(parent, "Player"), jumpVelocity_(0.0f), isGround_(true),
 	framePos_({ 0,0,0 }), pastPos_(0, 0, 0),isCameraRotateStart_(false),
-	CameraRotateDir_(0),heldObject_(nullptr),animContext_(new PlayerAnimContext(this))
+	CameraRotateDir_(0),heldObject_(nullptr),animContext_(new PlayerAnimContext(this)),
+	move_speed_(JR::Get<float>(objectName_, "MOVE_SPEED")),
+	player_radius_(JR::Get<float>(objectName_, "PLAYER_RADIUS")),
+	initial_jump_velocity_(sqrtf(JR::Get<float>(objectName_, "JUMP_HEIGHT")*Set::GRAVITY*2)),
+	max_fall_velocity_(JR::Get<float>(objectName_, "MAX_FALL_VELOCITY"))
 {
 }
 
@@ -62,7 +51,6 @@ Player::~Player()
 
 void Player::Initialize()
 {
-	Set::Initialize(objectName_);
 	//hModel_ = Model::Load("Player/.fbx");
 	//assert(hModel_ >= 0);
 	animData_[(int)AT::STAND].hModel = Model::Load(JR::Get<std::string>(objectName_,"MODEL_PATH_STAND"));
@@ -187,13 +175,13 @@ bool Player::Move()
 			return false;
 
 		XMFLOAT3 pos = transform_.position_;
-		float speed = Set::MOVE_SPEED * DT::GetDeltaTime();
+		float speed = move_speed_ * DT::GetDeltaTime();
 		move.x = speed * vectorX;
 		move.z = speed * vectorZ;
 		pos.x += move.x;
 		//pos.y += 0.1f;
 		pos.z += move.z;
-		push = stage->GetPushBack(pos, Set::PLAYER_RADIUS);
+		push = stage->GetPushBack(pos, player_radius_);
 		move.x += push.x;
 		move.z += push.z;
 
@@ -215,7 +203,7 @@ void Player::Jump()
 {
 	if (Input::IsKeyDown(DIK_SPACE) &&  isGround_) {
 		isGround_ = false;
-		jumpVelocity_ = Set::JUMP_LAUNCH_SPEED;
+		jumpVelocity_ = initial_jump_velocity_;
 	}
 }
 
@@ -225,8 +213,8 @@ void Player::Fall()
 		jumpVelocity_ -= Set::GRAVITY * DT::GetDeltaTime();
 	}
 
-	if (jumpVelocity_ < Set::MAX_FALL_VELOCITY) {
-		jumpVelocity_ = Set::MAX_FALL_VELOCITY;
+	if (jumpVelocity_ < max_fall_velocity_) {
+		jumpVelocity_ = max_fall_velocity_;
 	}
 
 	float fallSpeed = jumpVelocity_ * DT::GetDeltaTime();
@@ -235,7 +223,7 @@ void Player::Fall()
 	Stage* stage = nullptr;
 	stage = (Stage*)FindObject("Stage");
 	if (stage != nullptr) {
-		float radius = Set::FALL_RAY_CAST_RADIUS;
+		float radius = player_radius_;
 		for (int i = 0; i < Set::NUM_SECTORS; i++) {
 			RayCastData rayData;
 			XMFLOAT3 pos = transform_.position_;

@@ -23,9 +23,6 @@ public:
     static constexpr int FUNCTION_INDEX_MAX = static_cast<int>(FunctionIndex::MAX);
 private:
     class FallObject;
-    FallObject* heldObject_;
-    using AT = AnimType;
-    using FI = FunctionIndex;
     enum CaneraDir {
         LEFT = -1,
         RIGHT = 1
@@ -35,15 +32,25 @@ private:
         int animFrameNum;
         bool isAnimAction;
     };
+
+    const float move_speed_;
+    const float player_radius_;
+    const float initial_jump_velocity_;
+    const float max_fall_velocity_;
+
+    FallObject* heldObject_;
+    using AT = AnimType;
+    using FI = FunctionIndex;
+    
     AnimType animID_;
     AnimData animData_[ANIM_TYPE_MAX];
     bool isGround_;
+    bool isCameraRotateStart_;
     bool isFunctionEnabled_[FUNCTION_INDEX_MAX];
+    int CameraRotateDir_;
     float jumpVelocity_;
     XMINT3 framePos_;
     XMINT3 pastPos_;
-    bool isCameraRotateStart_;
-    int CameraRotateDir_;
     PlayerAnimContext* animContext_;
 public:
     Player(GameObject* parent);
