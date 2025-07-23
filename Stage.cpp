@@ -18,14 +18,14 @@ namespace StageSet {
 	const int  MAX_SHADOW_OBJECTS(2);
 	const float SOFTNESS(3.0f);
 	void Initialize(std::string _name) {
-		float size = JR::Get<float>(_name, "BLOCK_SIZE");
+		float size = JR::Get<float>(_name, "block_size");
 		BLOCK_SIZE = { size,size,size };
-		JR::Get<int>(_name, "STAGE_SIZE_X", STAGE_SIZE.x);
-		JR::Get<int>(_name, "STAGE_SIZE_Y", STAGE_SIZE.y);
-		JR::Get<int>(_name, "STAGE_SIZE_Z", STAGE_SIZE.z);
-		JR::Get<float>(_name, "FALL_LIMIT", FALL_LIMIT);
-		JR::Get<float>(_name, "RETURN_BLOCK_SPEED", RETURN_BLOCK_SPEED);
-		JR::Get<float>(_name, "FALL_SPEED", FALL_SPEED);
+		JR::Get<int>(_name, "stage_size_x", STAGE_SIZE.x);
+		JR::Get<int>(_name, "stage_size_y", STAGE_SIZE.y);
+		JR::Get<int>(_name, "stage_size_z", STAGE_SIZE.z);
+		JR::Get<float>(_name, "fall_limit", FALL_LIMIT);
+		JR::Get<float>(_name, "return_block_speed", RETURN_BLOCK_SPEED);
+		JR::Get<float>(_name, "fall_speed", FALL_SPEED);
 	}
 }
 
@@ -44,12 +44,12 @@ Stage::~Stage()
 void Stage::Initialize()
 {
 	Set::Initialize(objectName_);
-	hModel_ = Model::Load(JR::Get<std::string>(objectName_,"MODEL_PATH_GRASS"));
+	hModel_ = Model::Load(JR::Get<std::string>(objectName_,"model_path_grass"));
 	assert(hModel_ >= 0);
 	Model::SetShaderType(hModel_, SHADER_STAGE);
 
 	hKazan_ = Model::Load("Kazan.fbx");
-	hFrame_ = Model::Load(JR::Get<std::string>(objectName_, "MODEL_PATH_FRAME"));
+	hFrame_ = Model::Load(JR::Get<std::string>(objectName_, "model_path_frame"));
 	assert(hFrame_ >= 0);
 
 	for (int z = 0; z < Set::STAGE_SIZE.z; z++) {

@@ -22,8 +22,8 @@ namespace FallBlockManagerSet {
 	//const float BLOCK_DEAD_HIGHT(-10);
 	float NEXT_SPAWN_TIME(0);
 	void Initialize(std::string _name) {
-		JR::Get<float>(_name, "SPAWN_HEIGHT", SPAWN_HEIGHT);
-		JR::Get<float>(_name, "NEXT_SPAWN_TIME", NEXT_SPAWN_TIME);
+		JR::Get<float>(_name, "spawn_height", SPAWN_HEIGHT);
+		JR::Get<float>(_name, "next_spawn_time", NEXT_SPAWN_TIME);
 	}
 }
 

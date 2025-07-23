@@ -24,7 +24,7 @@ void PlayScene::Initialize()
 	Instantiate<PlayTimerGauge>(this);
 	Instantiate<FallIslandManager>(this);
 
-	Instantiate<PlaySceneReady>(this);
+	//Instantiate<PlaySceneReady>(this);
 
 	int index = Sound::Load("Assets/Sound/BackgroundMusic/n001.wav");
 	assert(index >= 0);

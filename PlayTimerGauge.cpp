@@ -11,12 +11,12 @@ namespace PlayTimerGaugeSet {
 	XMFLOAT3 GAUGE_FRAME_SIZE(0, 0, 0);
 	XMFLOAT3 GAUGE_POSITION(0, 0, 0);
 	void Initialize(std::string _name) {
-		JR::Get<float>(_name, "GAUGE_SIZE_X", GAUGE_SIZE.x);
-		JR::Get<float>(_name, "GAUGE_SIZE_Y", GAUGE_SIZE.y);
-		JR::Get<float>(_name, "GAUGE_FRAME_SIZE_X", GAUGE_FRAME_SIZE.x);
-		JR::Get<float>(_name, "GAUGE_FRAME_SIZE_Y", GAUGE_FRAME_SIZE.y);
-		JR::Get<float>(_name, "GAUGE_POSITION_X", GAUGE_POSITION.x);
-		JR::Get<float>(_name, "GAUGE_POSITION_Y", GAUGE_POSITION.y);
+		JR::Get<float>(_name, "gauge_size_x", GAUGE_SIZE.x);
+		JR::Get<float>(_name, "gauge_size_y", GAUGE_SIZE.y);
+		JR::Get<float>(_name, "gauge_frame_size_x", GAUGE_FRAME_SIZE.x);
+		JR::Get<float>(_name, "gauge_frame_size_y", GAUGE_FRAME_SIZE.y);
+		JR::Get<float>(_name, "gauge_position_x", GAUGE_POSITION.x);
+		JR::Get<float>(_name, "gauge_position_y", GAUGE_POSITION.y);
 	}
 }
 
@@ -37,9 +37,9 @@ void PlayTimerGauge::Initialize()
 	Set::Initialize(objectName_);
 	transform_.position_ = Set::GAUGE_POSITION;
 	gaugeFrame_ = new Sprite();
-	gaugeFrame_->Load(JR::Get<std::string>(objectName_,"IMAGE_PATH_FRAME"));
+	gaugeFrame_->Load(JR::Get<std::string>(objectName_,"image_path_frame"));
 	gauge_ = new Sprite();
-	gauge_->Load(JR::Get<std::string>(objectName_, "IMAGE_PATH_GAUGE"));
+	gauge_->Load(JR::Get<std::string>(objectName_, "image_path_gauge"));
 }
 
 void PlayTimerGauge::Release()

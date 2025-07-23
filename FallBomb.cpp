@@ -17,7 +17,7 @@ FallBomb::~FallBomb()
 
 void FallBomb::Initialize()
 {
-	hModel_ = Model::Load(JR::Get<std::string>(objectName_, "MODEL_PATH"));
+	hModel_ = Model::Load(JR::Get<std::string>(objectName_, "model_path"));
 
 	explosionTimer_ = new Timer();
 }
@@ -43,7 +43,7 @@ void FallBomb::Explosion()
 		explosionTimer_->StartTimer();
 	}
 	
-	if (explosionTimer_->IsTimeOver(JR::Get<float>(objectName_, "EXPLOSION_TIME"))) {
+	if (explosionTimer_->IsTimeOver(JR::Get<float>(objectName_, "explosion_time"))) {
 		Stage* stage = (Stage*)FindObject("Stage");
 		if (stage == nullptr)
 			return;

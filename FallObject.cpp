@@ -16,13 +16,13 @@ namespace FallObjectSet {
 	float RAY_CAST_INITIALIZE_DISTANCE(0);
 	XMFLOAT4 RAY_CAST_DIR(0, 0, 0, 0);
 	void Initialize(std::string _name) {
-		JR::Get<float>(_name, "OBJECT_SIZE", FALL_OBJECT_SIZE);
-		JR::Get<float>(_name, "FALL_SPEED", FALL_SPEED);
-		JR::Get<float>(_name, "FALL_LIMIT", FALL_LIMIT_HEIGHT);
-		JR::Get<float>(_name, "RAY_CAST_INITIALIZE_DISTANCE", RAY_CAST_INITIALIZE_DISTANCE);
-		JR::Get<float>(_name, "RAY_CAST_DIR_X", RAY_CAST_DIR.x);
-		JR::Get<float>(_name, "RAY_CAST_DIR_Y", RAY_CAST_DIR.y);
-		JR::Get<float>(_name, "RAY_CAST_DIR_Z", RAY_CAST_DIR.z);
+		JR::Get<float>(_name, "object_size", FALL_OBJECT_SIZE);
+		JR::Get<float>(_name, "fall_speed", FALL_SPEED);
+		JR::Get<float>(_name, "fall_limit", FALL_LIMIT_HEIGHT);
+		JR::Get<float>(_name, "ray_cast_initialize_distance", RAY_CAST_INITIALIZE_DISTANCE);
+		JR::Get<float>(_name, "ray_cast_dir_x", RAY_CAST_DIR.x);
+		JR::Get<float>(_name, "ray_cast_dir_y", RAY_CAST_DIR.y);
+		JR::Get<float>(_name, "ray_cast_dir_z", RAY_CAST_DIR.z);
 		FALL_OBJECT_CENTER = FALL_OBJECT_SIZE / 2;
 	}
 }
@@ -47,7 +47,7 @@ FallObject::~FallObject()
 
 void FallObject::Initialize()
 {
-	hModel_ = Model::Load(JR::Get<string>("FallObject","MODEL_PATH"));
+	hModel_ = Model::Load(JR::Get<string>("FallObject","model_path"));
 }
 
 void FallObject::Release()

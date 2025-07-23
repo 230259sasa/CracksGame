@@ -17,15 +17,15 @@ namespace FallIslandManagerSet {
 	XMFLOAT3 ISLAND_SIZE(0, 0, 0);
 	XMFLOAT3 ISLAND_POSITION(0, 0, 0);
 	void Initialize(std::string _name) {
-		JR::Get<float>(_name, "FALL_SPEED", FALL_SPEED);
-		JR::Get<float>(_name, "FRAME_IMAGE_SIZE_X", FRAME_SIZE.x);
-		JR::Get<float>(_name, "FRAME_IMAGE_SIZE_Y", FRAME_SIZE.y);
-		JR::Get<float>(_name, "FRAME_IMAGE_POSITION_X", FRAME_POSITION.x);
-		JR::Get<float>(_name, "FRAME_IMAGE_POSITION_Y", FRAME_POSITION.y);
-		JR::Get<float>(_name, "ISLAND_IMAGE_SIZE_X", ISLAND_SIZE.x);
-		JR::Get<float>(_name, "ISLAND_IMAGE_SIZE_Y", ISLAND_SIZE.y);
-		JR::Get<float>(_name, "ISLAND_IMAGE_POSITION_X", ISLAND_POSITION.x);
-		JR::Get<float>(_name, "ISLAND_IMAGE_POSITION_Y", ISLAND_POSITION.y);
+		JR::Get<float>(_name, "fall_speed", FALL_SPEED);
+		JR::Get<float>(_name, "frame_image_size_x", FRAME_SIZE.x);
+		JR::Get<float>(_name, "frame_image_size_y", FRAME_SIZE.y);
+		JR::Get<float>(_name, "frame_image_position_x", FRAME_POSITION.x);
+		JR::Get<float>(_name, "frame_image_position_y", FRAME_POSITION.y);
+		JR::Get<float>(_name, "island_image_size_x", ISLAND_SIZE.x);
+		JR::Get<float>(_name, "island_image_size_y", ISLAND_SIZE.y);
+		JR::Get<float>(_name, "island_image_position_x", ISLAND_POSITION.x);
+		JR::Get<float>(_name, "island_image_position_y", ISLAND_POSITION.y);
 	}
 }
 
@@ -45,9 +45,9 @@ void FallIslandManager::Initialize()
 {
 	Set::Initialize(objectName_);
 	frame_ = new Sprite();
-	frame_->Load(JR::Get<std::string>(objectName_,"IMAGE_PATH_FRAME"));
+	frame_->Load(JR::Get<std::string>(objectName_,"image_path_frame"));
 	island_ = new Sprite();
-	island_->Load(JR::Get<std::string>(objectName_, "IMAGE_PATH_GAUGE"));
+	island_->Load(JR::Get<std::string>(objectName_, "image_path_gauge"));
 
 	transform_.scale_ = Set::FRAME_SIZE;
 	transform_.position_ = Set::FRAME_POSITION;

@@ -38,10 +38,10 @@ Player::Player(GameObject* parent)
 	:GameObject(parent, "Player"), jumpVelocity_(0.0f), isGround_(true),
 	framePos_({ 0,0,0 }), pastPos_(0, 0, 0),isCameraRotateStart_(false),
 	CameraRotateDir_(0),heldObject_(nullptr),animContext_(new PlayerAnimContext(this)),
-	move_speed_(JR::Get<float>(objectName_, "MOVE_SPEED")),
-	player_radius_(JR::Get<float>(objectName_, "PLAYER_RADIUS")),
-	initial_jump_velocity_(sqrtf(JR::Get<float>(objectName_, "JUMP_HEIGHT")*Set::GRAVITY*2)),
-	max_fall_velocity_(JR::Get<float>(objectName_, "MAX_FALL_VELOCITY"))
+	move_speed_(JR::Get<float>(objectName_, "move_speed")),
+	player_radius_(JR::Get<float>(objectName_, "player_radius")),
+	initial_jump_velocity_(sqrtf(JR::Get<float>(objectName_, "jump_height")*Set::GRAVITY*2)),
+	max_fall_velocity_(JR::Get<float>(objectName_, "max_fall_velocity"))
 {
 }
 
@@ -53,17 +53,17 @@ void Player::Initialize()
 {
 	//hModel_ = Model::Load("Player/.fbx");
 	//assert(hModel_ >= 0);
-	animData_[(int)AT::STAND].hModel = Model::Load(JR::Get<std::string>(objectName_,"MODEL_PATH_STAND"));
+	animData_[(int)AT::STAND].hModel = Model::Load(JR::Get<std::string>(objectName_,"model_path_stand"));
 	int frameNum = 0;
-	JR::Get<int>(objectName_, "FRAME_NUM_STAND",frameNum);
+	JR::Get<int>(objectName_, "frame_num_stand",frameNum);
 	Model::SetAnimFrame(animData_[(int)AT::STAND].hModel, 0, frameNum);
 	animData_[(int)AT::STAND].animFrameNum = frameNum;
-	animData_[(int)AT::PUNCH].hModel = Model::Load(JR::Get<std::string>(objectName_, "MODEL_PATH_PUNCH"));
-	JR::Get<int>(objectName_, "FRAME_NUM_PUNCH", frameNum);
+	animData_[(int)AT::PUNCH].hModel = Model::Load(JR::Get<std::string>(objectName_, "model_path_punch"));
+	JR::Get<int>(objectName_, "frame_num_punch", frameNum);
 	Model::SetAnimFrame(animData_[(int)AT::PUNCH].hModel, 0, frameNum);
 	animData_[(int)AT::PUNCH].animFrameNum = frameNum;
-	animData_[(int)AT::MOVE].hModel = Model::Load(JR::Get<std::string>(objectName_, "MODEL_PATH_RUN"));
-	JR::Get<int>(objectName_, "FRAME_NUM_RUN", frameNum);
+	animData_[(int)AT::MOVE].hModel = Model::Load(JR::Get<std::string>(objectName_, "model_path_run"));
+	JR::Get<int>(objectName_, "frame_num_run", frameNum);
 	Model::SetAnimFrame(animData_[(int)AT::MOVE].hModel, 0, frameNum);
 	animData_[(int)AT::MOVE].animFrameNum = frameNum;
 
