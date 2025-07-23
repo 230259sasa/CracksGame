@@ -62,5 +62,11 @@
 		"gauge_position_y": 0.85,
 		"image_path_frame": "GaugeFrame.png",
 		"image_path_gauge": "Gauge.png"
+	},
+	"PlaySceneReady": {
+		"ready_time": 5.0,
+		"start_image_position_y": 0.5,
+		"image_size_x": 0.1,
+		"image_size_y": 0.1
 	}
 }
