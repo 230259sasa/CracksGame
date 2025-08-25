@@ -52,10 +52,14 @@ void FallBomb::Explosion()
 		XMINT3 pos = {	(int)transform_.position_.x,
 						(int)transform_.position_.y,
 						(int)transform_.position_.z };
-		for (int x = -1;x < 2;x++) {
-			for (int y = -1;y < 2;y++) {
-				for (int z = -1;z < 2;z++) {
-					stage->SetFallBlock(pos.x + x, pos.y + y, pos.z + z);
+		int size = 3;
+		int center = size / 2;
+		int end = size - center;
+		int start = -center;
+		for (int x = start;x < end;x++) {
+			for (int y = start;y < end;y++) {
+				for (int z = start;z < end;z++) {
+					stage->BreakBlock(pos.x + x, pos.y + y, pos.z + z);
 				}
 			}
 		}

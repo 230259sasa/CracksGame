@@ -252,12 +252,20 @@ XMFLOAT3 Stage::GetPushBack(XMFLOAT3 _pos, float _radius)
 	return push;
 }
 
+void Stage::BreakBlock(int x, int y, int z)
+{
+	if (x >= 0 && x < stage_size_.x && y >= 0 && y < stage_size_.y &&
+		z >= 0 && z < stage_size_.z &&
+		blockData_[z][y][x].type != NONE && blockData_[z][y][x].state == NORMAL) {
+		blockData_[z][y][x].type = NONE;
+	}
+}
+
 void Stage::SetFallBlock(int x, int y, int z)
 {
 	if (x >= 0 && x < stage_size_.x && y >= 0 && y < stage_size_.y &&
 		z >= 0 && z < stage_size_.z &&
 		blockData_[z][y][x].type != NONE && blockData_[z][y][x].state == NORMAL) {
-		//blockData_[z][y][x].type = NONE;
 		blockData_[z][y][x].state = FALL;
 		blockData_[z][y][x].trans.position_ = XMFLOAT3(x, y, z);
 		fallBlock_.push_back(XMINT3(x,y,z));

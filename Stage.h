@@ -57,6 +57,7 @@ public:
     void FallRayCast(RayCastData& _rayData);
     XMFLOAT3 GetBlockSize();
     XMFLOAT3 GetPushBack(XMFLOAT3 _pos, float _radius);
+    void BreakBlock(int x, int y, int z);
     void SetFallBlock(int x, int y, int z);
     void ChangeBlockTypeNone(int x, int y, int z);
     void DrawFrame(XMFLOAT3 _pos);
