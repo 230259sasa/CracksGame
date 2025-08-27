@@ -254,8 +254,7 @@ XMFLOAT3 Stage::GetPushBack(XMFLOAT3 _pos, float _radius)
 
 void Stage::BreakBlock(int x, int y, int z)
 {
-	if (x >= 0 && x < stage_size_.x && y >= 0 && y < stage_size_.y &&
-		z >= 0 && z < stage_size_.z &&
+	if (IsInStageSize(x, y, z) &&
 		blockData_[z][y][x].type != NONE && blockData_[z][y][x].state == NORMAL) {
 		blockData_[z][y][x].type = NONE;
 	}
@@ -263,8 +262,7 @@ void Stage::BreakBlock(int x, int y, int z)
 
 void Stage::SetFallBlock(int x, int y, int z)
 {
-	if (x >= 0 && x < stage_size_.x && y >= 0 && y < stage_size_.y &&
-		z >= 0 && z < stage_size_.z &&
+	if (IsInStageSize(x,y,z) &&
 		blockData_[z][y][x].type != NONE && blockData_[z][y][x].state == NORMAL) {
 		blockData_[z][y][x].state = FALL;
 		blockData_[z][y][x].trans.position_ = XMFLOAT3(x, y, z);
@@ -274,8 +272,7 @@ void Stage::SetFallBlock(int x, int y, int z)
 
 void Stage::ChangeBlockTypeNone(int x, int y, int z)
 {
-	if (x >= 0 && x < stage_size_.x && y >= 0 && y < stage_size_.y &&
-		z >= 0 && z < stage_size_.z &&
+	if (IsInStageSize(x,y,z) &&
 		blockData_[z][y][x].type != NONE && blockData_[z][y][x].state == NORMAL) {
 		blockData_[z][y][x].type = NONE;
 	}
@@ -333,8 +330,7 @@ XMFLOAT3 Stage::GetRandomScaffoldPos()
 
 bool Stage::GetIsOnBlock(XMINT3 _pos)
 {
-	if (_pos.x >= 0 && _pos.x < stage_size_.x && _pos.y >= 0 && _pos.y < stage_size_.y &&
-		_pos.z >= 0 && _pos.z < stage_size_.z) {
+	if (IsInStageSize(_pos.x,_pos.y,_pos.z)) {
 		if (blockData_[_pos.z][_pos.y][_pos.x].type == GROUND)
 			return true;
 	}
@@ -478,5 +474,13 @@ void Stage::ReturnBlock()
 	for (auto itr = eraseNum.rbegin(); itr != eraseNum.rend(); ++itr) {
 		returnBlock_.erase(returnBlock_.begin() + *itr);
 	}
+}
+
+bool Stage::IsInStageSize(int x, int y, int z)
+{
+	if (x >= 0 && x < stage_size_.x && y >= 0 && y < stage_size_.y &&
+		z >= 0 && z < stage_size_.z)
+		return true;
+	return false;
 }
 

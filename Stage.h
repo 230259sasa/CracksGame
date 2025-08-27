@@ -74,5 +74,6 @@ private:
     float GetClosestPoint(float _bpos,float _pos);
     void FallStageBlock();
     void ReturnBlock();
+    bool IsInStageSize(int x, int y, int z);
 };
 
