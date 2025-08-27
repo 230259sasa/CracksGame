@@ -17,9 +17,7 @@ void TitleScene::Initialize()
 void TitleScene::Update()
 {
 	if (Input::IsKeyDown(DIK_J)) {
-		SceneManager* pSM = (SceneManager*)FindObject("SceneManager");
-		if (pSM != nullptr)
-			pSM->ChangeScene(SCENE_ID_PLAY);
+		ChangePlayScene();
 	}
 }
 
@@ -30,4 +28,11 @@ void TitleScene::Draw()
 
 void TitleScene::Release()
 {
+}
+
+void TitleScene::ChangePlayScene()
+{
+	SceneManager* pSM = (SceneManager*)FindObject("SceneManager");
+	if (pSM != nullptr)
+		pSM->ChangeScene(SCENE_ID_PLAY);
 }
