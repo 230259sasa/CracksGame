@@ -89,7 +89,7 @@ void Player::Release()
 
 void Player::Update()
 {
-	animData_[(int)AT::MOVE].isAnimAction = Move();
+	Move();
 	Jump();
 	Fall();
 	Relocate();
@@ -137,7 +137,7 @@ void Player::AnimationManager()
 	}
 }
 
-bool Player::Move()
+void Player::Move()
 {
 	int angle = Camera::GetRotateAngle() % Set::DEGREES_360;
 
@@ -175,11 +175,14 @@ bool Player::Move()
 	XMFLOAT3 move(0, 0, 0), push(0, 0, 0);
 	dir.x = vectorX;
 	dir.z = vectorZ;
+
+	animData_[(int)AT::MOVE].isAnimAction = false;
 	if (dir.x != 0 || dir.z != 0) {
+		animData_[(int)AT::MOVE].isAnimAction = true;
 		Stage* stage = nullptr;
 		stage = (Stage*)FindObject("Stage");
 		if (stage == nullptr)
-			return false;
+			return ;
 
 		XMFLOAT3 pos = transform_.position_;
 		float speed = move_speed_ * DT::GetDeltaTime();
@@ -201,9 +204,7 @@ bool Player::Move()
 			(int)transform_.position_.z };
 		transform_.position_.x += move.x;
 		transform_.position_.z += move.z;
-		return true;
 	}
-	return false;
 }
 
 void Player::Jump()

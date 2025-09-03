@@ -62,7 +62,7 @@ public:
     bool GetIsAnimAction(AnimType _type);
 private:
     void AnimationManager();
-    bool Move();
+    void Move();
     void Jump();
     void Fall();
     void Relocate();
