@@ -31,6 +31,7 @@ namespace Set = FallObjectSet;
 
 FallObject::FallObject(GameObject* _parent, string _name)
 	:GameObject(_parent, _name), isFall_(false), isOnGround_(false), hModel_(0),
+	isLift_(false),
 	fall_object_center_(JR::Get<float>("FallObject", "object_size")/2),
 	fall_speed_(JR::Get<float>("FallObject", "fall_speed")),
 	fall_limit_height_(JR::Get<float>("FallObject", "fall_limit")),
@@ -81,6 +82,23 @@ void FallObject::RayCast(RayCastData& _rayData)
 	Model::RayCast(hModel_, _rayData, transform_);
 }
 
+void FallObject::OnLiftable()
+{
+	isLift_ = true;
+}
+
+void FallObject::OnThrow()
+{
+	isLift_ = false;
+}
+
+void FallObject::OnThrow(XMFLOAT3 _dir, float _dist)
+{
+	isLift_ = false;
+	throwDir_ = _dir;
+	throwDist_ = _dist;
+}
+
 void FallObject::Fall()
 {
 	fallSpeed_ = fall_speed_ * DT::GetDeltaTime();
@@ -115,6 +133,26 @@ void FallObject::Fall()
 		transform_.position_.y -= fallSpeed_;
 		isFall_ = true;
 		isOnGround_ = false;
+	}
+}
+
+void FallObject::ThrowMove()
+{
+	XMFLOAT3 move;
+	float speed = 5;
+	float fallspeed = 5;
+	move.x = throwDir_.x * speed * DT::GetDeltaTime();
+	move.z = throwDir_.z * speed * DT::GetDeltaTime();
+	move.y = fallspeed * DT::GetDeltaTime();
+
+	Stage* stage = (Stage*)FindObject("Stage");
+	XMFLOAT3 pos = move + transform_.position_;
+	XMFLOAT3 push = stage->GetPushBack(pos);
+	if (push.x != 0 || push.y != 0 || push.z != 0) {
+		KillMe();
+	}
+	else {
+		transform_.position_ = move;
 	}
 }
 

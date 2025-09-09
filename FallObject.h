@@ -14,8 +14,12 @@ private:
 	float fallSpeed_;
 	bool isFall_;
 	bool isOnGround_;
+
+	XMFLOAT3 throwDir_;
+	float throwDist_;
 protected:
 	int hModel_;
+	bool isLift_;
 public:
 	FallObject(GameObject* _parent,std::string _name);
 	FallObject(GameObject* _parent);
@@ -29,9 +33,14 @@ public:
 	//void StartFall() { isFall_ = true; }
 	//void StopFall() { isFall_ = false; }
 	bool IsOnGround() { return isOnGround_; }
+	bool IsLift() { return isLift_; }
 	void RayCast(RayCastData& _rayData);
+	void OnLiftable();
+	void OnThrow();
+	void OnThrow(XMFLOAT3 _dir, float _dist);
 protected:
 	void Fall();
+	void ThrowMove();
 	void Dead();
 private:
 	void FallObjectRayCast(RayCastData& _rayData);
