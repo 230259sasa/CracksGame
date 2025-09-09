@@ -85,22 +85,6 @@ std::vector<XMFLOAT4> FallBlockManager::GetFallingObjectCenterPosition()
 	return vec;
 }
 
-FallObject* FallBlockManager::GetLiftObject(XMINT3 _pos)
-{
-	std::vector<XMFLOAT4> vec;
-	std::list<GameObject*> objs = FindAllChildObjectList();
-	for (auto obj : objs) {
-		FallObject* o = (FallObject*)obj;
-		if (!o->IsLift() && (int)o->GetPosition().x == _pos.x &&
-			(int)o->GetPosition().y == _pos.y &&
-			(int)o->GetPosition().z == _pos.z) {
-			o->OnLiftable();
-			return o;
-		}
-	}
-	return nullptr;
-}
-
 void FallBlockManager::FallControle()
 {
 	if (!timer_->IsTimeOver(next_spawn_time_) && !isFirstBlock_)

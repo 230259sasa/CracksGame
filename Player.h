@@ -2,7 +2,6 @@
 #include "Engine\GameObject.h"
 
 class PlayerAnimContext;
-class FallObject;
 
 class Player :
     public GameObject
@@ -23,6 +22,7 @@ public:
     static constexpr int ANIM_TYPE_MAX = static_cast<int>(AnimType::MAX);
     static constexpr int FUNCTION_INDEX_MAX = static_cast<int>(FunctionIndex::MAX);
 private:
+    class FallObject;
     enum CaneraDir {
         LEFT = -1,
         RIGHT = 1
@@ -52,9 +52,6 @@ private:
     XMINT3 framePos_;
     XMINT3 pastPos_;
     PlayerAnimContext* animContext_;
-
-    FallObject* liftObject_;
-    XMFLOAT3 playerDir_;
 public:
     Player(GameObject* parent);
     ~Player();
@@ -71,10 +68,5 @@ private:
     void Relocate();
     void MoveCamera();
     void BreakStageBlock();
-
-
-    //LiftObject
-    void LiftObjectOverHead();
-    void SetLiftedObjectOverHeadPosition();
-    void ThrowLiftedObject();
 };
+

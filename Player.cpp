@@ -7,7 +7,6 @@
 #include"Stage.h"
 #include "FallBlockManager.h"
 #include"PlayerAnimContext.h"
-#include"FallObject.h"
 #include<numbers>
 
 #include "imgui/imgui.h"
@@ -31,20 +30,15 @@ namespace PlayerSet {
 
 	const int CAMERA_ROTATE_SPEED(3);
 	const int CAMERA_ROTATE_ANGLE(90);
-
-	const float THROW_SPEED(5.0);
 }
 
 namespace Set = PlayerSet;
-
-//********//別のファイルへ分離すること
-XMFLOAT3 operator+ (XMFLOAT3 a, XMFLOAT3 b) { return { a.x + b.x, a.y + b.y, a.z + b.z }; }
 
 Player::Player(GameObject* parent)
 	:GameObject(parent, "Player"), jumpVelocity_(0.0f), isGround_(true),
 	framePos_({ 0,0,0 }), pastPos_(0, 0, 0), isCameraRotateStart_(false),
 	CameraRotateDir_(0), heldObject_(nullptr), animContext_(new PlayerAnimContext(this)),
-	animID_(AT::STAND),liftObject_(nullptr),playerDir_({0,0,0}),
+	animID_(AT::STAND),
 	move_speed_(JR::Get<float>(objectName_, "move_speed")),
 	player_radius_(JR::Get<float>(objectName_, "player_radius")),
 	initial_jump_velocity_(sqrtf(JR::Get<float>(objectName_, "jump_height")*Set::GRAVITY*2)),
@@ -101,9 +95,6 @@ void Player::Update()
 	Relocate();
 	MoveCamera();
 	BreakStageBlock();
-
-	LiftObjectOverHead();
-	SetLiftedObjectOverHeadPosition();
 
 	AnimationManager();
 }
@@ -187,7 +178,6 @@ void Player::Move()
 
 	animData_[(int)AT::MOVE].isAnimAction = false;
 	if (dir.x != 0 || dir.z != 0) {
-		playerDir_ = dir;
 		animData_[(int)AT::MOVE].isAnimAction = true;
 		Stage* stage = nullptr;
 		stage = (Stage*)FindObject("Stage");
@@ -281,7 +271,6 @@ void Player::Relocate()
 	}
 }
 
-//カメラか別のクラスで処理できたらいいな
 void Player::MoveCamera()
 {
 	if (Input::IsKey(DIK_Q)) {
@@ -337,34 +326,5 @@ void Player::BreakStageBlock()
 				height = sy;
 		}
 		framePos_ = XMINT3(x, height, z);
-	}
-}
-
-void Player::LiftObjectOverHead()
-{
-	if (Input::IsKeyDown(DIK_K) && liftObject_ == nullptr) {
-		FallBlockManager* fm = (FallBlockManager*)FindObject("FallBlockManager");
-		XMINT3 p = framePos_;
-		p.y++;
-		liftObject_ = (FallObject*)fm->GetLiftObject(p);
-	}
-}
-
-void Player::SetLiftedObjectOverHeadPosition()
-{
-	if (liftObject_ == nullptr)
-		return;
-	XMFLOAT3 p;
-	p = transform_.position_;
-	p.x -= 0.5;
-	p.z -= 0.5;
-	p.y += 2;
-	liftObject_->SetPosition(p);
-}
-
-void Player::ThrowLiftedObject()
-{
-	if (Input::IsKeyDown(DIK_K) && liftObject_ != nullptr) {
-		liftObject_->OnThrow();
 	}
 }

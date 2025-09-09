@@ -30,7 +30,6 @@ public:
     void StartSpawnBlock();
     int GetOnGroundBlockNum();
     std::vector<XMFLOAT4> GetFallingObjectCenterPosition();
-    FallObject* GetLiftObject(XMINT3 _pos);
 private:
     void FallControle();
 };

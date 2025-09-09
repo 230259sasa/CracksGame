@@ -31,7 +31,6 @@ namespace Set = FallObjectSet;
 
 FallObject::FallObject(GameObject* _parent, string _name)
 	:GameObject(_parent, _name), isFall_(false), isOnGround_(false), hModel_(0),
-	isLift_(false),
 	fall_object_center_(JR::Get<float>("FallObject", "object_size")/2),
 	fall_speed_(JR::Get<float>("FallObject", "fall_speed")),
 	fall_limit_height_(JR::Get<float>("FallObject", "fall_limit")),
@@ -82,16 +81,6 @@ void FallObject::RayCast(RayCastData& _rayData)
 	Model::RayCast(hModel_, _rayData, transform_);
 }
 
-void FallObject::OnLiftable()
-{
-	isLift_ = true;
-}
-
-void FallObject::OnThrow()
-{
-	isLift_ = false;
-}
-
 void FallObject::Fall()
 {
 	fallSpeed_ = fall_speed_ * DT::GetDeltaTime();
@@ -127,11 +116,6 @@ void FallObject::Fall()
 		isFall_ = true;
 		isOnGround_ = false;
 	}
-}
-
-void FallObject::ThrowMove()
-{
-
 }
 
 void FallObject::FallObjectRayCast(RayCastData& _rayData)

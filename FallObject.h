@@ -16,7 +16,6 @@ private:
 	bool isOnGround_;
 protected:
 	int hModel_;
-	bool isLift_;
 public:
 	FallObject(GameObject* _parent,std::string _name);
 	FallObject(GameObject* _parent);
@@ -30,13 +29,9 @@ public:
 	//void StartFall() { isFall_ = true; }
 	//void StopFall() { isFall_ = false; }
 	bool IsOnGround() { return isOnGround_; }
-	bool IsLift() { return isLift_; }
 	void RayCast(RayCastData& _rayData);
-	void OnLiftable();
-	void OnThrow();
 protected:
 	void Fall();
-	void ThrowMove();
 	void Dead();
 private:
 	void FallObjectRayCast(RayCastData& _rayData);
