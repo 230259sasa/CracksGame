@@ -52,6 +52,7 @@ FallObject::~FallObject()
 void FallObject::Initialize()
 {
 	hModel_ = Model::Load(JR::Get<string>("FallObject","model_path"));
+	func_ = [this]() {this->Fall();};
 }
 
 void FallObject::Release()
@@ -60,7 +61,7 @@ void FallObject::Release()
 
 void FallObject::Update()
 {
-	Fall();
+	func_();
 	Dead();
 }
 
@@ -97,6 +98,7 @@ void FallObject::OnThrow(XMFLOAT3 _dir, float _dist)
 	isLift_ = false;
 	throwDir_ = _dir;
 	throwDist_ = _dist;
+	func_ = [this]() {this->ThrowMove();};
 }
 
 void FallObject::Fall()
@@ -140,19 +142,22 @@ void FallObject::ThrowMove()
 {
 	XMFLOAT3 move;
 	float speed = 5;
-	float fallspeed = 5;
+	float fallspeed = 1;
 	move.x = throwDir_.x * speed * DT::GetDeltaTime();
 	move.z = throwDir_.z * speed * DT::GetDeltaTime();
-	move.y = fallspeed * DT::GetDeltaTime();
+	move.y = -fallspeed * DT::GetDeltaTime();
 
 	Stage* stage = (Stage*)FindObject("Stage");
-	XMFLOAT3 pos = move + transform_.position_;
-	XMFLOAT3 push = stage->GetPushBack(pos);
-	if (push.x != 0 || push.y != 0 || push.z != 0) {
+	//XMFLOAT3 pos = move + transform_.position_;
+	XMFLOAT3 pos = { move.x + transform_.position_.x,
+	move.y + transform_.position_.y,move.z + transform_.position_.z };
+	XMFLOAT3 push = stage->GetPushBack(pos,0.5f);
+	if (push.x != 0 || push.y != 0 || push.z != 0 ||
+		transform_.position_.z <= fall_limit_height_) {
 		KillMe();
 	}
 	else {
-		transform_.position_ = move;
+		transform_.position_ = pos;
 	}
 }
 

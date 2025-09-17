@@ -113,10 +113,10 @@ void FallBlockManager::FallControle()
 		return;
 
 	FallObject* fobj;
-	if (rand() % 2 == 0)
+	//if (rand() % 2 == 0)
 		fobj = Instantiate<FallObject>(this);
-	else
-		fobj = Instantiate<FallBomb>(this);
+	/*else
+		fobj = Instantiate<FallBomb>(this);*/
 	XMFLOAT3 pos;
 	pos = stage->GetRandomScaffoldPos();
 	pos.y = spawn_height_;

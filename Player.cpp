@@ -101,8 +101,9 @@ void Player::Update()
 	Relocate();
 	MoveCamera();
 	BreakStageBlock();
-
+	
 	LiftObjectOverHead();
+	ThrowLiftedObject();
 	SetLiftedObjectOverHeadPosition();
 
 	AnimationManager();
@@ -365,6 +366,7 @@ void Player::SetLiftedObjectOverHeadPosition()
 void Player::ThrowLiftedObject()
 {
 	if (Input::IsKeyDown(DIK_K) && liftObject_ != nullptr) {
-		liftObject_->OnThrow();
+		liftObject_->OnThrow(playerDir_,3.0f);
+		liftObject_ = nullptr;
 	}
 }

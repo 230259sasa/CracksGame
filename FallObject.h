@@ -1,6 +1,7 @@
 #pragma once
 #include"Engine/GameObject.h"
 #include"Engine/FBX.h"
+#include<functional>
 
 class FallObject
 	:public GameObject
@@ -20,6 +21,7 @@ private:
 protected:
 	int hModel_;
 	bool isLift_;
+	std::function<void()> func_;
 public:
 	FallObject(GameObject* _parent,std::string _name);
 	FallObject(GameObject* _parent);
